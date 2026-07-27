@@ -1,0 +1,9 @@
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
+User::create([
+    'name'=>'Administrator',
+    'username'=>'admin',
+    'email'=>'admin@wantowash.com',
+    'password'=>Hash::make('admin123'),
+]);
