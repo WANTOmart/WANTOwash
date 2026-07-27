@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Data Pelanggan - WANTO Wash</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="logo">
+
+<img src="img/logo.png" width="80">
+
+<h2>WANTO <span>Wash</span></h2>
+
+<p>Sistem Kasir</p>
+
+</div>
+
+<ul class="menu">
+
+<li><a href="dashboard.html"><i class="fa fa-home"></i> Dashboard</a></li>
+
+<li><a class="active" href="pelanggan.html"><i class="fa fa-users"></i> Pelanggan</a></li>
+
+<li><a href="kasir.html"><i class="fa fa-cash-register"></i> Kasir</a></li>
+
+<li><a href="harga.html"><i class="fa fa-tags"></i> Daftar Harga</a></li>
+
+<li><a href="laporan.html"><i class="fa fa-chart-line"></i> Laporan</a></li>
+
+<li><a href="setting.html"><i class="fa fa-cog"></i> Setting</a></li>
+
+</ul>
+
+</div>
+
+<div class="content">
+
+<div class="header">
+
+<h1>👥 Data Pelanggan</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Tambah Pelanggan</h3>
+
+<br>
+
+<div style="text-align:center;">
+
+<img
+id="preview"
+src="img/no-image.png"
+width="220"
+height="170"
+style="border:1px solid #ccc;border-radius:10px;object-fit:cover;">
+
+<br><br>
+
+<input
+type="file"
+accept="image/*"
+onchange="previewFoto(event)">
+
+</div>
+
+<br>
+
+<div class="row">
+
+<div class="col">
+
+<label>Nama Pelanggan</label>
+
+<input
+type="text"
+id="nama"
+placeholder="Nama pelanggan">
+
+</div>
+
+<div class="col">
+
+<label>No HP</label>
+
+<input
+type="text"
+id="hp"
+placeholder="08xxxxxxxxxx">
+
+</div>
+
+</div>
+
+<div class="row">
+
+<div class="col">
+
+<label>Plat Nomor</label>
+
+<input
+type="text"
+id="plat"
+placeholder="B 1234 ABC">
+
+</div>
+
+<div class="col">
+
+<label>Jenis Motor</label>
+
+<select id="motor">
+
+<option>Honda Beat</option>
+
+<option>Honda Vario</option>
+
+<option>Honda Scoopy</option>
+
+<option>Yamaha Mio</option>
+
+<option>Yamaha NMAX</option>
+
+<option>Yamaha Aerox</option>
+
+<option>Suzuki Nex</option>
+
+<option>Lainnya</option>
+
+</select>
+
+</div>
+
+</div>
+
+<button class="btn btn-success" onclick="tambahPelanggan()">
+
+<i class="fa fa-save"></i>
+
+Simpan
+
+</button>
+
+</div>
+
+<br>
+
+<div class="card">
+
+<h3>Daftar Pelanggan</h3>
+
+<br>
+
+<table id="tabel">
+
+<thead>
+
+<tr>
+
+<th>No</th>
+
+<th>Nama</th>
+
+<th>No HP</th>
+
+<th>Plat</th>
+
+<th>Motor</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script src="js/script.js"></script>
+
+<script>
+
+function tambahPelanggan(){
+
+let nama=document.getElementById("nama").value;
+
+let hp=document.getElementById("hp").value;
+
+let plat=document.getElementById("plat").value;
+
+let motor=document.getElementById("motor").value;
+
+if(nama==""||hp==""||plat==""){
+
+alert("Lengkapi data.");
+
+return;
+
+}
+
+let tbody=document.querySelector("#tabel tbody");
+
+let row=tbody.insertRow();
+
+row.innerHTML=`
+
+<td>${tbody.rows.length}</td>
+
+<td>${nama}</td>
+
+<td>${hp}</td>
+
+<td>${plat.toUpperCase()}</td>
+
+<td>${motor}</td>
+
+`;
+
+document.getElementById("nama").value="";
+document.getElementById("hp").value="";
+document.getElementById("plat").value="";
+document.getElementById("preview").src="img/no-image.png";
+
+}
+
+</script>
+
+</body>
+</html>
