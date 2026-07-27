@@ -1,1 +1,1 @@
-WANTOwash cuci kedaraan bermotor
+WANTOwash cuci kendaraan bermotor
