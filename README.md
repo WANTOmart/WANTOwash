@@ -1,1 +1,1 @@
-WANTOwash cuci motor
+WANTOwash cuci kedaraan bermotor
