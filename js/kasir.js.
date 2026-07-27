@@ -1,0 +1,110 @@
+// ======================================
+// WANTO Wash
+// kasir.js
+// ======================================
+
+// Data pelanggan
+let pelanggan = JSON.parse(localStorage.getItem("pelanggan")) || [];
+
+// Data transaksi
+let transaksi = JSON.parse(localStorage.getItem("transaksi")) || [];
+
+// =============================
+// Cari pelanggan berdasarkan plat
+// =============================
+
+function cariPlat(){
+
+    let plat = document.getElementById("plat").value.toUpperCase();
+
+    let data = pelanggan.find(function(item){
+
+        return item.plat === plat;
+
+    });
+
+    if(data){
+
+        document.getElementById("nama").value = data.nama;
+        document.getElementById("hp").value = data.hp;
+        document.getElementById("motor").value = data.motor;
+
+    }else{
+
+        document.getElementById("nama").value = "";
+        document.getElementById("hp").value = "";
+        document.getElementById("motor").value = "";
+
+    }
+
+}
+
+// =============================
+// Hitung Total
+// =============================
+
+function hitungTotal(){
+
+    let harga = Number(document.getElementById("harga").value);
+
+    document.getElementById("total").value = harga;
+
+}
+
+// =============================
+// Hitung Kembalian
+// =============================
+
+function hitungKembalian(){
+
+    let total = Number(document.getElementById("total").value);
+
+    let bayar = Number(document.getElementById("bayar").value);
+
+    document.getElementById("kembali").value = bayar-total;
+
+}
+
+// =============================
+// Simpan Transaksi
+// =============================
+
+function simpanTransaksi(){
+
+    let data = {
+
+        tanggal : new Date().toLocaleString(),
+
+        nama : document.getElementById("nama").value,
+
+        hp : document.getElementById("hp").value,
+
+        plat : document.getElementById("plat").value,
+
+        motor : document.getElementById("motor").value,
+
+        paket : document.getElementById("paket").value,
+
+        harga : document.getElementById("harga").value,
+
+        total : document.getElementById("total").value,
+
+        bayar : document.getElementById("bayar").value,
+
+        kembali : document.getElementById("kembali").value
+
+    };
+
+    transaksi.push(data);
+
+    localStorage.setItem(
+
+        "transaksi",
+
+        JSON.stringify(transaksi)
+
+    );
+
+    alert("Transaksi berhasil disimpan.");
+
+}
