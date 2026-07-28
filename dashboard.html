@@ -230,3 +230,826 @@ window.location.href="login.html";
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard - WANTO WASH</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+
+<style>
+
+body{
+    background:#f4f6f9;
+}
+
+
+.sidebar{
+
+position:fixed;
+left:0;
+top:0;
+width:250px;
+height:100%;
+background:#0d6efd;
+color:white;
+
+}
+
+
+.sidebar h3{
+
+text-align:center;
+padding:20px;
+
+}
+
+
+.sidebar a{
+
+display:block;
+padding:15px 20px;
+color:white;
+text-decoration:none;
+
+}
+
+
+.sidebar a:hover{
+
+background:rgba(255,255,255,.2);
+
+}
+
+
+.content{
+
+margin-left:250px;
+padding:30px;
+
+}
+
+
+
+.card-box{
+
+border-radius:15px;
+padding:20px;
+color:white;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+
+}
+
+
+.icon{
+
+font-size:40px;
+
+}
+
+
+</style>
+
+
+</head>
+
+
+<body>
+
+
+<div class="sidebar">
+
+
+<h3>🛵 WANTO WASH</h3>
+
+
+<a href="dashboard.html">
+<i class="bi bi-speedometer2"></i>
+Dashboard
+</a>
+
+
+<a href="pelanggan.html">
+<i class="bi bi-people"></i>
+Data Pelanggan
+</a>
+
+
+<a href="motor.html">
+<i class="bi bi-bicycle"></i>
+Data Motor
+</a>
+
+
+<a href="paket.html">
+<i class="bi bi-tags"></i>
+Paket Cuci
+</a>
+
+
+<a href="transaksi.html">
+<i class="bi bi-cart-check"></i>
+Transaksi
+</a>
+
+
+<a href="pembayaran.html">
+<i class="bi bi-cash-stack"></i>
+Pembayaran
+</a>
+
+
+<a href="nota.html">
+<i class="bi bi-printer"></i>
+Cetak Nota
+</a>
+
+
+<a href="laporan.html">
+<i class="bi bi-bar-chart"></i>
+Laporan
+</a>
+
+
+<a href="karyawan.html">
+<i class="bi bi-person-badge"></i>
+Karyawan
+</a>
+
+
+<a href="pengaturan.html">
+<i class="bi bi-gear"></i>
+Pengaturan
+</a>
+
+
+
+<hr>
+
+
+<a href="login.html">
+
+<i class="bi bi-box-arrow-right"></i>
+
+Logout
+
+</a>
+
+
+</div>
+
+
+
+
+
+<div class="content">
+
+
+<h2>
+
+<i class="bi bi-speedometer2"></i>
+
+Dashboard WANTO WASH
+
+</h2>
+
+
+<hr>
+
+
+
+<div class="row mt-4">
+
+
+
+<div class="col-md-4 mb-3">
+
+
+<div class="card-box bg-primary">
+
+
+<div class="icon">
+
+<i class="bi bi-people-fill"></i>
+
+</div>
+
+
+<h5>Pelanggan</h5>
+
+
+<h2 id="jumlahPelanggan">
+0
+</h2>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="col-md-4 mb-3">
+
+
+<div class="card-box bg-success">
+
+
+<div class="icon">
+
+<i class="bi bi-bicycle"></i>
+
+</div>
+
+
+<h5>Motor</h5>
+
+
+<h2 id="jumlahMotor">
+0
+</h2>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="col-md-4 mb-3">
+
+
+<div class="card-box bg-warning">
+
+
+<div class="icon">
+
+<i class="bi bi-cart-check"></i>
+
+</div>
+
+
+<h5>Transaksi</h5>
+
+
+<h2 id="jumlahTransaksi">
+0
+</h2>
+
+
+</div>
+
+
+</div>
+
+
+
+
+</div>
+    <div class="row mt-2">
+
+
+<div class="col-md-6 mb-3">
+
+<div class="card-box bg-danger">
+
+<div class="icon">
+
+<i class="bi bi-cash-stack"></i>
+
+</div>
+
+
+<h5>Total Pendapatan</h5>
+
+
+<h2 id="totalPendapatan">
+
+Rp 0
+
+</h2>
+
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="col-md-6 mb-3">
+
+<div class="card-box bg-dark">
+
+<div class="icon">
+
+<i class="bi bi-person-badge"></i>
+
+</div>
+
+
+<h5>Jumlah Karyawan</h5>
+
+
+<h2 id="jumlahKaryawan">
+
+0
+
+</h2>
+
+
+</div>
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="card mt-4 p-3">
+
+
+<h4>
+
+<i class="bi bi-clock-history"></i>
+
+Transaksi Terbaru
+
+</h4>
+
+
+
+<table class="table table-bordered table-striped">
+
+
+<thead class="table-primary">
+
+
+<tr>
+
+<th>No</th>
+
+<th>Tanggal</th>
+
+<th>Pelanggan</th>
+
+<th>Motor</th>
+
+<th>Paket</th>
+
+<th>Total</th>
+
+<th>Status</th>
+
+</tr>
+
+
+</thead>
+
+
+<tbody id="transaksiTerbaru">
+
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+
+
+
+<script>
+
+
+// ============================
+// CEK LOGIN
+// ============================
+
+if(localStorage.getItem("login")!="true"){
+
+location.href="login.html";
+
+}
+
+
+
+// ============================
+// AMBIL DATA LOCAL STORAGE
+// ============================
+
+
+let pelanggan =
+
+JSON.parse(localStorage.getItem("pelanggan")) || [];
+
+
+
+let motor =
+
+JSON.parse(localStorage.getItem("motor")) || [];
+
+
+
+let transaksi =
+
+JSON.parse(localStorage.getItem("transaksi")) || [];
+
+
+
+let pembayaran =
+
+JSON.parse(localStorage.getItem("pembayaran")) || [];
+
+
+
+let karyawan =
+
+JSON.parse(localStorage.getItem("karyawan")) || [];
+
+
+
+// ============================
+// JUMLAH DATA
+// ============================
+
+
+document.getElementById("jumlahPelanggan").innerHTML =
+
+pelanggan.length;
+
+
+
+document.getElementById("jumlahMotor").innerHTML =
+
+motor.length;
+
+
+
+document.getElementById("jumlahTransaksi").innerHTML =
+
+transaksi.length;
+
+
+
+document.getElementById("jumlahKaryawan").innerHTML =
+
+karyawan.length;
+
+
+
+// ============================
+// TOTAL PENDAPATAN
+// ============================
+
+
+let total=0;
+
+
+pembayaran.forEach(function(item){
+
+
+total += Number(item.total);
+
+
+});
+
+
+
+document.getElementById("totalPendapatan").innerHTML =
+
+"Rp " + total.toLocaleString("id-ID");
+
+
+
+
+// ============================
+// TRANSAKSI TERBARU
+// ============================
+
+
+let terbaru = transaksi.slice(-5).reverse();
+
+
+let html="";
+
+
+
+terbaru.forEach(function(item,index){
+
+
+html += `
+
+
+<tr>
+
+
+<td>${index+1}</td>
+
+
+<td>${item.tanggal}</td>
+
+
+<td>${item.pelanggan}</td>
+
+
+<td>${item.motor}</td>
+
+
+<td>${item.paket}</td>
+
+
+<td>
+
+Rp ${Number(item.total).toLocaleString("id-ID")}
+
+</td>
+
+
+<td>
+
+
+<span class="badge bg-success">
+
+${item.status}
+
+</span>
+
+
+</td>
+
+
+</tr>
+
+
+`;
+
+
+});
+
+
+
+document.getElementById("transaksiTerbaru").innerHTML = html;
+
+
+</script>
+    <div class="card mt-4 p-3">
+
+<div class="d-flex justify-content-between">
+
+<h4>
+<i class="bi bi-bar-chart-fill"></i>
+Paket Cuci Terlaris
+</h4>
+
+
+<button 
+class="btn btn-primary"
+onclick="refreshDashboard()">
+
+<i class="bi bi-arrow-clockwise"></i>
+
+Refresh
+
+</button>
+
+
+</div>
+
+
+<table class="table table-bordered mt-3">
+
+<thead class="table-success">
+
+<tr>
+
+<th>Paket</th>
+
+<th>Jumlah Cuci</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="paketTerlaris">
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+
+<script>
+
+
+// ===============================
+// CEK DATA KOSONG
+// ===============================
+
+
+if(pelanggan.length==0){
+
+document.getElementById("jumlahPelanggan").innerHTML="0";
+
+}
+
+
+
+if(motor.length==0){
+
+document.getElementById("jumlahMotor").innerHTML="0";
+
+}
+
+
+
+if(transaksi.length==0){
+
+document.getElementById("transaksiTerbaru").innerHTML=
+
+`
+
+<tr>
+
+<td colspan="7" class="text-center">
+
+Belum ada transaksi
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+
+
+if(karyawan.length==0){
+
+document.getElementById("jumlahKaryawan").innerHTML="0";
+
+}
+
+
+
+// ===============================
+// STATISTIK PAKET TERLARIS
+// ===============================
+
+
+function tampilPaketTerlaris(){
+
+
+let data={};
+
+
+
+transaksi.forEach(function(item){
+
+
+let nama=item.paket || "Tidak Ada";
+
+
+if(data[nama]){
+
+data[nama]++;
+
+}else{
+
+data[nama]=1;
+
+}
+
+
+});
+
+
+
+let html="";
+
+
+
+let urut=Object.entries(data)
+.sort((a,b)=>b[1]-a[1]);
+
+
+
+if(urut.length==0){
+
+
+html=`
+
+<tr>
+
+<td colspan="2" class="text-center">
+
+Belum ada data paket
+
+</td>
+
+</tr>
+
+`;
+
+
+}else{
+
+
+urut.forEach(function(item){
+
+
+html+=`
+
+<tr>
+
+<td>${item[0]}</td>
+
+<td>
+
+${item[1]} Motor
+
+</td>
+
+</tr>
+
+`;
+
+
+});
+
+
+}
+
+
+
+document.getElementById("paketTerlaris").innerHTML=html;
+
+
+}
+
+
+
+tampilPaketTerlaris();
+
+
+
+
+// ===============================
+// REFRESH DASHBOARD
+// ===============================
+
+
+function refreshDashboard(){
+
+location.reload();
+
+}
+
+
+
+// ===============================
+// UPDATE OTOMATIS SETIAP BUKA
+// ===============================
+
+
+window.onload=function(){
+
+tampilPaketTerlaris();
+
+};
+
+
+
+</script>
+
+
+</body>
+
+</html>
+    
