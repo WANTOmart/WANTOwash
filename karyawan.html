@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manajemen Karyawan - WANTO WASH</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+body{
+    background:#f4f6f9;
+}
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:250px;
+    height:100%;
+    background:#0d6efd;
+    color:#fff;
+}
+.sidebar h3{
+    text-align:center;
+    padding:20px;
+    border-bottom:1px solid rgba(255,255,255,.2);
+}
+.sidebar a{
+    display:block;
+    color:#fff;
+    text-decoration:none;
+    padding:15px 20px;
+}
+.sidebar a:hover{
+    background:rgba(255,255,255,.15);
+}
+.content{
+    margin-left:250px;
+    padding:30px;
+}
+.card{
+    border:none;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+</style>
+
+</head>
+<body>
+
+<div class="sidebar">
+
+<h3>🛵 WANTO WASH</h3>
+
+<a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+<a href="transaksi.html"><i class="bi bi-cart-check"></i> Transaksi</a>
+<a href="pelanggan.html"><i class="bi bi-people"></i> Pelanggan</a>
+<a href="motor.html"><i class="bi bi-bicycle"></i> Data Motor</a>
+<a href="paket.html"><i class="bi bi-tags"></i> Paket Cuci</a>
+<a href="pembayaran.html"><i class="bi bi-cash-stack"></i> Pembayaran</a>
+<a href="karyawan.html"><i class="bi bi-person-badge"></i> Karyawan</a>
+<a href="laporan.html"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a>
+
+<hr>
+
+<a href="login.html"><i class="bi bi-box-arrow-right"></i> Logout</a>
+
+</div>
+
+<div class="content">
+
+<div class="d-flex justify-content-between mb-3">
+<h2>Manajemen Karyawan</h2>
+
+<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">
+<i class="bi bi-plus-circle"></i> Tambah Karyawan
+</button>
+
+</div>
+
+<div class="card p-3">
+
+<table class="table table-bordered table-hover">
+
+<thead class="table-primary">
+
+<tr>
+<th>No</th>
+<th>Nama</th>
+<th>Jabatan</th>
+<th>No HP</th>
+<th>Alamat</th>
+<th>Status</th>
+<th>Aksi</th>
+</tr>
+
+</thead>
+
+<tbody id="tabel">
+
+<tr>
+<td>1</td>
+<td>Ahmad</td>
+<td>Operator Cuci</td>
+<td>081234567890</td>
+<td>Banyuwangi</td>
+<td><span class="badge bg-success">Aktif</span></td>
+<td>
+<button class="btn btn-warning btn-sm">Edit</button>
+<button class="btn btn-danger btn-sm" onclick="hapus(this)">Hapus</button>
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalTambah">
+<div class="modal-dialog">
+<div class="modal-content">
+
+<div class="modal-header">
+<h5>Tambah Karyawan</h5>
+<button class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+
+<input id="nama" class="form-control mb-2" placeholder="Nama Karyawan">
+
+<select id="jabatan" class="form-select mb-2">
+<option>Operator Cuci</option>
+<option>Kasir</option>
+<option>Supervisor</option>
+<option>Admin</option>
+</select>
+
+<input id="hp" class="form-control mb-2" placeholder="No HP">
+
+<textarea id="alamat" class="form-control mb-2" placeholder="Alamat"></textarea>
+
+<select id="status" class="form-select">
+<option>Aktif</option>
+<option>Nonaktif</option>
+</select>
+
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-success" onclick="tambah()">Simpan</button>
+</div>
+
+</div>
+</div>
+</div>
+
+<script>
+
+let nomor = 2;
+
+function tambah(){
+
+let nama=document.getElementById("nama").value;
+let jabatan=document.getElementById("jabatan").value;
+let hp=document.getElementById("hp").value;
+let alamat=document.getElementById("alamat").value;
+let status=document.getElementById("status").value;
+
+if(nama==""){
+alert("Nama karyawan harus diisi");
+return;
+}
+
+let warna = status=="Aktif" ? "success" : "secondary";
+
+document.getElementById("tabel").innerHTML += `
+<tr>
+<td>${nomor++}</td>
+<td>${nama}</td>
+<td>${jabatan}</td>
+<td>${hp}</td>
+<td>${alamat}</td>
+<td><span class="badge bg-${warna}">${status}</span></td>
+<td>
+<button class="btn btn-warning btn-sm">Edit</button>
+<button class="btn btn-danger btn-sm" onclick="hapus(this)">Hapus</button>
+</td>
+</tr>
+`;
+
+bootstrap.Modal.getInstance(document.getElementById("modalTambah")).hide();
+
+document.getElementById("nama").value="";
+document.getElementById("hp").value="";
+document.getElementById("alamat").value="";
+document.getElementById("jabatan").selectedIndex=0;
+document.getElementById("status").selectedIndex=0;
+
+}
+
+function hapus(btn){
+if(confirm("Yakin ingin menghapus data karyawan?")){
+btn.parentElement.parentElement.remove();
+}
+}
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
