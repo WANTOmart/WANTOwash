@@ -371,6 +371,87 @@ ${item.status}
 document.getElementById("tabelTransaksi").innerHTML=html;
 
 }
+    function simpanTransaksi(){
+
+let pelanggan=document.getElementById("pelanggan").value;
+let motor=document.getElementById("motor").value;
+let paket=document.getElementById("paket").value;
+let tanggal=document.getElementById("tanggal").value;
+
+let harga=document.getElementById("harga").value
+.replace("Rp ","")
+.replace(/\./g,"")
+.replace(/,/g,"");
+
+if(pelanggan==""){
+
+alert("Pilih pelanggan.");
+
+return;
+
+}
+
+if(motor==""){
+
+alert("Pilih motor.");
+
+return;
+
+}
+
+if(paket==""){
+
+alert("Pilih paket.");
+
+return;
+
+}
+
+let nomor="TRX"+String(transaksi.length+1).padStart(5,"0");
+
+transaksi.push({
+
+nomor:nomor,
+
+tanggal:tanggal,
+
+pelanggan:pelanggan,
+
+motor:motor,
+
+paket:paket,
+
+total:Number(harga),
+
+status:"Belum Dibayar"
+
+});
+
+localStorage.setItem(
+
+"transaksi",
+
+JSON.stringify(transaksi)
+
+);
+
+// Simpan transaksi terakhir untuk halaman pembayaran & nota
+localStorage.setItem(
+"transaksiTerakhir",
+JSON.stringify(transaksi[transaksi.length-1])
+);
+
+alert("Transaksi berhasil disimpan.");
+
+document.getElementById("pelanggan").selectedIndex=0;
+document.getElementById("motor").innerHTML="<option value=''>-- Pilih Motor --</option>";
+document.getElementById("paket").selectedIndex=0;
+document.getElementById("harga").value="";
+document.getElementById("total").value="";
+
+tampil();
+
+}
 
 </script>
 
