@@ -221,3 +221,158 @@ Simpan Transaksi
 </table>
 
 </div>
+<script>
+
+if(localStorage.getItem("login")!="true"){
+    location.href="login.html";
+}
+
+document.getElementById("tanggal").value=
+new Date().toISOString().split("T")[0];
+
+let pelanggan=
+JSON.parse(localStorage.getItem("pelanggan")) || [];
+
+let motor=
+JSON.parse(localStorage.getItem("motor")) || [];
+
+let paket=
+JSON.parse(localStorage.getItem("paket")) || [];
+
+let transaksi=
+JSON.parse(localStorage.getItem("transaksi")) || [];
+
+//========================
+// TAMPILKAN PELANGGAN
+//========================
+
+let pilihPelanggan=document.getElementById("pelanggan");
+
+pelanggan.forEach(function(item){
+
+let option=document.createElement("option");
+
+option.value=item.nama;
+
+option.text=item.nama;
+
+pilihPelanggan.appendChild(option);
+
+});
+
+//========================
+// SAAT PELANGGAN DIPILIH
+//========================
+
+pilihPelanggan.onchange=function(){
+
+let html="<option value=''>-- Pilih Motor --</option>";
+
+motor.forEach(function(item){
+
+if(item.pemilik==this.value){
+
+html+=`
+<option value="${item.merk} ${item.tipe} (${item.plat})">
+
+${item.merk} ${item.tipe} (${item.plat})
+
+</option>
+`;
+
+}
+
+},this);
+
+document.getElementById("motor").innerHTML=html;
+
+}
+
+//========================
+// TAMPILKAN PAKET
+//========================
+
+let pilihPaket=document.getElementById("paket");
+
+paket.forEach(function(item){
+
+let option=document.createElement("option");
+
+option.value=item.nama;
+
+option.text=item.nama;
+
+option.dataset.harga=item.harga;
+
+pilihPaket.appendChild(option);
+
+});
+
+//========================
+// SAAT PAKET DIPILIH
+//========================
+
+pilihPaket.onchange=function(){
+
+let harga=this.options[this.selectedIndex].dataset.harga || 0;
+
+document.getElementById("harga").value=
+"Rp "+Number(harga).toLocaleString("id-ID");
+
+document.getElementById("total").value=
+"Rp "+Number(harga).toLocaleString("id-ID");
+
+}
+
+//========================
+// TAMPILKAN TRANSAKSI
+//========================
+
+tampil();
+
+function tampil(){
+
+let html="";
+
+transaksi.forEach(function(item,index){
+
+html+=`
+
+<tr>
+
+<td>${index+1}</td>
+
+<td>${item.tanggal}</td>
+
+<td>${item.pelanggan}</td>
+
+<td>${item.motor}</td>
+
+<td>${item.paket}</td>
+
+<td>Rp ${Number(item.total).toLocaleString("id-ID")}</td>
+
+<td>
+
+<span class="badge bg-success">
+
+${item.status}
+
+</span>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById("tabelTransaksi").innerHTML=html;
+
+}
+
+</script>
+
+</body>
+</html>    
