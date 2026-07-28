@@ -495,6 +495,110 @@ Lunas
 document.getElementById("tabelPembayaran").innerHTML=html;
 
 }
+    function prosesBayar(){
+
+if(!transaksiAktif){
+
+alert("Tidak ada transaksi yang harus dibayar.");
+
+return;
+
+}
+
+let bayar = Number(document.getElementById("bayar").value);
+
+let total = Number(transaksiAktif.total);
+
+if(bayar < total){
+
+alert("Uang pembayaran kurang.");
+
+return;
+
+}
+
+let kembali = bayar-total;
+
+//======================
+// Simpan Pembayaran
+//======================
+
+let dataPembayaran={
+
+nomor:transaksiAktif.nomor,
+
+tanggal:transaksiAktif.tanggal,
+
+pelanggan:transaksiAktif.pelanggan,
+
+motor:transaksiAktif.motor,
+
+paket:transaksiAktif.paket,
+
+total:total,
+
+bayar:bayar,
+
+kembali:kembali,
+
+status:"Lunas"
+
+};
+
+pembayaran.push(dataPembayaran);
+
+localStorage.setItem(
+"pembayaran",
+JSON.stringify(pembayaran)
+);
+
+//======================
+// Ubah Status Transaksi
+//======================
+
+transaksi.forEach(function(item){
+
+if(item.nomor==transaksiAktif.nomor){
+
+item.status="Lunas";
+
+}
+
+});
+
+localStorage.setItem(
+"transaksi",
+JSON.stringify(transaksi)
+);
+
+//======================
+// Simpan untuk Nota
+//======================
+
+localStorage.setItem(
+"nota",
+JSON.stringify(dataPembayaran)
+);
+
+//======================
+// Simpan ke Laporan
+//======================
+
+let laporan=
+JSON.parse(localStorage.getItem("laporan")) || [];
+
+laporan.push(dataPembayaran);
+
+localStorage.setItem(
+"laporan",
+JSON.stringify(laporan)
+);
+
+alert("Pembayaran berhasil.");
+
+window.location.href="nota.html";
+
+}
 
 </script>
 
