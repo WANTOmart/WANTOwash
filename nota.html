@@ -560,3 +560,176 @@ Dashboard
 
 </body>
 </html>
+    <script>
+
+// Cek Login
+if(localStorage.getItem("login")!="true"){
+    location.href="login.html";
+}
+
+// ==============================
+// Ambil Data Nota
+// ==============================
+
+let nota = JSON.parse(localStorage.getItem("nota")) || {};
+
+// ==============================
+// Ambil Pengaturan Usaha
+// ==============================
+
+let pengaturan = JSON.parse(localStorage.getItem("pengaturan")) || {
+
+nama_usaha:"WANTO WASH",
+
+alamat:"Jl. Contoh Alamat",
+
+telp:"0812-3456-7890"
+
+};
+
+// ==============================
+// Isi Data Usaha
+// ==============================
+
+document.getElementById("namaUsaha").innerHTML =
+pengaturan.nama_usaha;
+
+document.getElementById("alamatUsaha").innerHTML =
+pengaturan.alamat;
+
+document.getElementById("telpUsaha").innerHTML =
+pengaturan.telp;
+
+// ==============================
+// Isi Data Nota
+// ==============================
+
+document.getElementById("nomor").innerHTML =
+nota.nomor || "-";
+
+document.getElementById("tanggal").innerHTML =
+nota.tanggal || "-";
+
+document.getElementById("pelanggan").innerHTML =
+nota.pelanggan || "-";
+
+document.getElementById("motor").innerHTML =
+nota.motor || "-";
+
+document.getElementById("paket").innerHTML =
+nota.paket || "-";
+
+document.getElementById("total").innerHTML =
+"Rp " + Number(nota.total || 0).toLocaleString("id-ID");
+
+document.getElementById("bayar").innerHTML =
+"Rp " + Number(nota.bayar || 0).toLocaleString("id-ID");
+
+document.getElementById("kembali").innerHTML =
+"Rp " + Number(nota.kembali || 0).toLocaleString("id-ID");
+
+</script>
+    // ==============================
+// Format Tanggal Indonesia
+// ==============================
+
+if(nota.tanggal){
+
+let tgl = new Date(nota.tanggal);
+
+if(!isNaN(tgl)){
+
+document.getElementById("tanggal").innerHTML =
+tgl.toLocaleDateString("id-ID",{
+day:"2-digit",
+month:"long",
+year:"numeric"
+});
+
+}
+
+}
+
+// ==============================
+// Nomor Nota Otomatis
+// ==============================
+
+if(!nota.nomor){
+
+let nomor="WW"+Date.now();
+
+document.getElementById("nomor").innerHTML=nomor;
+
+nota.nomor=nomor;
+
+localStorage.setItem(
+"nota",
+JSON.stringify(nota)
+);
+
+}
+
+// ==============================
+// Simpan Riwayat Cetak
+// ==============================
+
+let riwayatCetak =
+JSON.parse(localStorage.getItem("riwayatNota")) || [];
+
+if(nota.nomor){
+
+let ada = riwayatCetak.find(function(item){
+return item.nomor==nota.nomor;
+});
+
+if(!ada){
+
+riwayatCetak.push(nota);
+
+localStorage.setItem(
+"riwayatNota",
+JSON.stringify(riwayatCetak)
+);
+
+}
+
+}
+
+// ==============================
+// Shortcut Keyboard
+// ==============================
+
+document.addEventListener("keydown",function(e){
+
+if(e.ctrlKey && e.key==="p"){
+
+e.preventDefault();
+
+window.print();
+
+}
+
+});
+
+// ==============================
+// Fokus Tombol Cetak
+// ==============================
+
+window.onload=function(){
+
+let btn=document.querySelector(".btn-primary");
+
+if(btn){
+
+btn.focus();
+
+}
+
+};
+
+</script>
+
+</body>
+</html>
+    
+    
