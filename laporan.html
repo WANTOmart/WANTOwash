@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laporan - WANTO WASH</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+body{
+    background:#f4f6f9;
+}
+.sidebar{
+    position:fixed;
+    width:250px;
+    height:100%;
+    background:#0d6efd;
+    color:#fff;
+}
+.sidebar h3{
+    text-align:center;
+    padding:20px;
+    border-bottom:1px solid rgba(255,255,255,.2);
+}
+.sidebar a{
+    display:block;
+    color:#fff;
+    text-decoration:none;
+    padding:15px 20px;
+}
+.sidebar a:hover{
+    background:rgba(255,255,255,.15);
+}
+.content{
+    margin-left:250px;
+    padding:30px;
+}
+.card{
+    border:none;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+@media print{
+.sidebar,.btn{
+display:none;
+}
+.content{
+margin-left:0;
+}
+}
+</style>
+
+</head>
+<body>
+
+<div class="sidebar">
+
+<h3>🛵 WANTO WASH</h3>
+
+<a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+<a href="transaksi.html"><i class="bi bi-cart-check"></i> Transaksi</a>
+<a href="pelanggan.html"><i class="bi bi-people"></i> Pelanggan</a>
+<a href="motor.html"><i class="bi bi-bicycle"></i> Data Motor</a>
+<a href="paket.html"><i class="bi bi-tags"></i> Paket Cuci</a>
+<a href="pembayaran.html"><i class="bi bi-cash-stack"></i> Pembayaran</a>
+<a href="laporan.html"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a>
+<a href="login.html"><i class="bi bi-box-arrow-right"></i> Logout</a>
+
+</div>
+
+<div class="content">
+
+<h2>Laporan Pendapatan</h2>
+
+<div class="row mt-4">
+
+<div class="col-md-4">
+<div class="card p-4 text-center">
+<h5>Harian</h5>
+<h2>Rp875.000</h2>
+<p>25 Motor</p>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card p-4 text-center">
+<h5>Bulanan</h5>
+<h2>Rp26.500.000</h2>
+<p>760 Motor</p>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card p-4 text-center">
+<h5>Tahunan</h5>
+<h2>Rp318.000.000</h2>
+<p>9.120 Motor</p>
+</div>
+</div>
+
+</div>
+
+<div class="card mt-4 p-3">
+
+<h4>Detail Transaksi</h4>
+
+<table class="table table-bordered table-striped mt-3">
+
+<thead class="table-primary">
+
+<tr>
+<th>No</th>
+<th>Tanggal</th>
+<th>Pelanggan</th>
+<th>Motor</th>
+<th>Paket</th>
+<th>Total</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+<td>1</td>
+<td>28/07/2026</td>
+<td>Budi</td>
+<td>Honda Beat</td>
+<td>Cuci Premium</td>
+<td>Rp35.000</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>28/07/2026</td>
+<td>Andi</td>
+<td>Vario 160</td>
+<td>Steam</td>
+<td>Rp40.000</td>
+</tr>
+
+<tr>
+<td>3</td>
+<td>28/07/2026</td>
+<td>Rudi</td>
+<td>NMAX</td>
+<td>Cuci Biasa</td>
+<td>Rp20.000</td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>28/07/2026</td>
+<td>Agus</td>
+<td>Aerox</td>
+<td>Cuci + Semir Ban</td>
+<td>Rp25.000</td>
+</tr>
+
+</tbody>
+
+<tfoot>
+
+<tr class="table-success">
+
+<th colspan="5">TOTAL PENDAPATAN</th>
+<th>Rp120.000</th>
+
+</tr>
+
+</tfoot>
+
+</table>
+
+<button class="btn btn-success">
+<i class="bi bi-file-earmark-excel"></i>
+Export Excel
+</button>
+
+<button class="btn btn-danger">
+<i class="bi bi-file-earmark-pdf"></i>
+Export PDF
+</button>
+
+<button class="btn btn-primary" onclick="window.print()">
+<i class="bi bi-printer"></i>
+Cetak Laporan
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html>
