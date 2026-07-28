@@ -12,39 +12,45 @@
 body{
     background:#f4f6f9;
 }
+
 .sidebar{
     position:fixed;
     width:250px;
     height:100%;
     background:#0d6efd;
-    color:#fff;
+    color:white;
 }
+
 .sidebar h3{
-    padding:20px;
     text-align:center;
-    border-bottom:1px solid rgba(255,255,255,.2);
+    padding:20px;
 }
+
 .sidebar a{
     display:block;
-    color:#fff;
+    color:white;
     text-decoration:none;
     padding:15px 20px;
 }
+
 .sidebar a:hover{
-    background:rgba(255,255,255,.15);
+    background:rgba(255,255,255,.2);
 }
+
 .content{
     margin-left:250px;
     padding:30px;
 }
+
 .card{
     border:none;
     border-radius:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 </style>
 
 </head>
+
 <body>
 
 <div class="sidebar">
@@ -52,15 +58,15 @@ body{
 <h3>🛵 WANTO WASH</h3>
 
 <a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
-<a href="transaksi.html"><i class="bi bi-cart-check"></i> Transaksi</a>
 <a href="pelanggan.html"><i class="bi bi-people"></i> Data Pelanggan</a>
 <a href="motor.html"><i class="bi bi-bicycle"></i> Data Motor</a>
 <a href="paket.html"><i class="bi bi-tags"></i> Paket Cuci</a>
+<a href="transaksi.html"><i class="bi bi-cart-check"></i> Transaksi</a>
 <a href="pembayaran.html"><i class="bi bi-cash-stack"></i> Pembayaran</a>
-<a href="nota.html"><i class="bi bi-printer"></i> Cetak Nota</a>
-<a href="laporan.html"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a>
+<a href="nota.html"><i class="bi bi-printer"></i> Nota</a>
+<a href="laporan.html"><i class="bi bi-bar-chart"></i> Laporan</a>
 <a href="karyawan.html"><i class="bi bi-person-badge"></i> Karyawan</a>
-<a href="pengaturan.html"><i class="bi bi-gear"></i> Pengaturan Harga</a>
+<a href="pengaturan.html"><i class="bi bi-gear"></i> Pengaturan</a>
 
 <hr>
 
@@ -71,11 +77,14 @@ body{
 <div class="content">
 
 <div class="d-flex justify-content-between mb-3">
+
 <h2>Data Pelanggan</h2>
 
 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">
-<i class="bi bi-plus-circle"></i> Tambah Pelanggan
+<i class="bi bi-plus-circle"></i>
+Tambah
 </button>
+
 </div>
 
 <div class="card p-3">
@@ -83,30 +92,19 @@ body{
 <table class="table table-bordered table-hover">
 
 <thead class="table-primary">
+
 <tr>
 <th>No</th>
 <th>Nama</th>
 <th>No HP</th>
 <th>Alamat</th>
-<th>Motor</th>
-<th>Plat Nomor</th>
 <th>Aksi</th>
 </tr>
+
 </thead>
 
-<tbody id="dataPelanggan">
-<tr>
-<td>1</td>
-<td>Budi</td>
-<td>081234567890</td>
-<td>Banyuwangi</td>
-<td>Honda Beat</td>
-<td>P 1234 AB</td>
-<td>
-<button class="btn btn-warning btn-sm">Edit</button>
-<button class="btn btn-danger btn-sm">Hapus</button>
-</td>
-</tr>
+<tbody id="tabel">
+
 </tbody>
 
 </table>
@@ -116,13 +114,19 @@ body{
 </div>
 
 <!-- Modal -->
+
 <div class="modal fade" id="modalTambah">
+
 <div class="modal-dialog">
+
 <div class="modal-content">
 
 <div class="modal-header">
+
 <h5>Tambah Pelanggan</h5>
+
 <button class="btn-close" data-bs-dismiss="modal"></button>
+
 </div>
 
 <div class="modal-body">
@@ -131,63 +135,134 @@ body{
 
 <input id="hp" class="form-control mb-2" placeholder="No HP">
 
-<input id="alamat" class="form-control mb-2" placeholder="Alamat">
-
-<input id="motor" class="form-control mb-2" placeholder="Motor">
-
-<input id="plat" class="form-control mb-2" placeholder="Plat Nomor">
+<textarea id="alamat" class="form-control" placeholder="Alamat"></textarea>
 
 </div>
 
 <div class="modal-footer">
-<button class="btn btn-primary" onclick="tambah()">Simpan</button>
+
+<button class="btn btn-success" onclick="simpan()">
+Simpan
+</button>
+
 </div>
 
 </div>
+
 </div>
+
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-let no=2;
 
-function tambah(){
+//cek login
+if(localStorage.getItem("login")!="true"){
+location.href="login.html";
+}
+
+let data =
+JSON.parse(localStorage.getItem("pelanggan")) || [];
+
+tampil();
+
+function tampil(){
+
+let html="";
+
+data.forEach(function(item,index){
+
+html += `
+<tr>
+
+<td>${index+1}</td>
+
+<td>${item.nama}</td>
+
+<td>${item.hp}</td>
+
+<td>${item.alamat}</td>
+
+<td>
+
+<button class="btn btn-danger btn-sm"
+onclick="hapus(${index})">
+
+<i class="bi bi-trash"></i>
+
+</button>
+
+</td>
+
+</tr>
+`;
+
+});
+
+document.getElementById("tabel").innerHTML=html;
+
+}
+
+function simpan(){
 
 let nama=document.getElementById("nama").value;
 let hp=document.getElementById("hp").value;
 let alamat=document.getElementById("alamat").value;
-let motor=document.getElementById("motor").value;
-let plat=document.getElementById("plat").value;
 
-if(nama=="") return alert("Nama wajib diisi");
+if(nama==""){
 
-let tabel=document.getElementById("dataPelanggan");
+alert("Nama harus diisi");
 
-tabel.innerHTML+=`
-<tr>
-<td>${no++}</td>
-<td>${nama}</td>
-<td>${hp}</td>
-<td>${alamat}</td>
-<td>${motor}</td>
-<td>${plat}</td>
-<td>
-<button class="btn btn-warning btn-sm">Edit</button>
-<button class="btn btn-danger btn-sm" onclick="this.parentElement.parentElement.remove()">Hapus</button>
-</td>
-</tr>`;
+return;
+
+}
+
+data.push({
+
+nama:nama,
+
+hp:hp,
+
+alamat:alamat
+
+});
+
+localStorage.setItem(
+"pelanggan",
+JSON.stringify(data)
+);
+
+bootstrap.Modal.getInstance(
+document.getElementById("modalTambah")
+).hide();
 
 document.getElementById("nama").value="";
 document.getElementById("hp").value="";
 document.getElementById("alamat").value="";
-document.getElementById("motor").value="";
-document.getElementById("plat").value="";
 
-bootstrap.Modal.getInstance(document.getElementById('modalTambah')).hide();
+tampil();
 
 }
-</script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+function hapus(index){
+
+if(confirm("Hapus pelanggan?")){
+
+data.splice(index,1);
+
+localStorage.setItem(
+"pelanggan",
+JSON.stringify(data)
+);
+
+tampil();
+
+}
+
+}
+
+</script>
 
 </body>
 </html>
