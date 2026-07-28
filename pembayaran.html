@@ -391,3 +391,112 @@ Proses Pembayaran
 </table>
 
 </div>
+<script>
+
+if(localStorage.getItem("login")!="true"){
+    location.href="login.html";
+}
+
+let transaksi = JSON.parse(localStorage.getItem("transaksi")) || [];
+let pembayaran = JSON.parse(localStorage.getItem("pembayaran")) || [];
+
+let transaksiAktif = transaksi.find(item => item.status=="Belum Dibayar");
+
+if(transaksiAktif){
+
+document.getElementById("nomor").innerHTML = transaksiAktif.nomor;
+
+document.getElementById("pelanggan").innerHTML = transaksiAktif.pelanggan;
+
+document.getElementById("motor").innerHTML = transaksiAktif.motor;
+
+document.getElementById("paket").innerHTML = transaksiAktif.paket;
+
+document.getElementById("total").innerHTML =
+"Rp " + Number(transaksiAktif.total).toLocaleString("id-ID");
+
+}else{
+
+document.getElementById("nomor").innerHTML="-";
+
+document.getElementById("pelanggan").innerHTML="-";
+
+document.getElementById("motor").innerHTML="-";
+
+document.getElementById("paket").innerHTML="-";
+
+document.getElementById("total").innerHTML="Tidak ada transaksi";
+
+}
+
+document.getElementById("bayar").addEventListener("input",function(){
+
+if(!transaksiAktif) return;
+
+let bayar = Number(this.value);
+
+let total = Number(transaksiAktif.total);
+
+let kembali = bayar-total;
+
+if(kembali>=0){
+
+document.getElementById("kembali").value =
+"Rp " + kembali.toLocaleString("id-ID");
+
+}else{
+
+document.getElementById("kembali").value="";
+
+}
+
+});
+
+tampilPembayaran();
+
+function tampilPembayaran(){
+
+let html="";
+
+pembayaran.forEach(function(item,index){
+
+html+=`
+
+<tr>
+
+<td>${index+1}</td>
+
+<td>${item.nomor}</td>
+
+<td>${item.pelanggan}</td>
+
+<td>Rp ${Number(item.total).toLocaleString("id-ID")}</td>
+
+<td>Rp ${Number(item.bayar).toLocaleString("id-ID")}</td>
+
+<td>Rp ${Number(item.kembali).toLocaleString("id-ID")}</td>
+
+<td>
+
+<span class="badge bg-success">
+
+Lunas
+
+</span>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById("tabelPembayaran").innerHTML=html;
+
+}
+
+</script>
+
+</body>
+</html>
