@@ -12,6 +12,7 @@
 body{
     background:#f4f6f9;
 }
+
 .sidebar{
     position:fixed;
     left:0;
@@ -19,30 +20,34 @@ body{
     width:250px;
     height:100%;
     background:#0d6efd;
-    color:#fff;
+    color:white;
 }
+
 .sidebar h3{
     text-align:center;
     padding:20px;
-    border-bottom:1px solid rgba(255,255,255,.2);
 }
+
 .sidebar a{
     display:block;
-    color:#fff;
+    color:white;
     text-decoration:none;
     padding:15px 20px;
 }
+
 .sidebar a:hover{
-    background:rgba(255,255,255,.15);
+    background:rgba(255,255,255,.2);
 }
+
 .content{
     margin-left:250px;
     padding:30px;
 }
+
 .card{
     border:none;
     border-radius:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 </style>
 
@@ -54,15 +59,15 @@ body{
 <h3>🛵 WANTO WASH</h3>
 
 <a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
-<a href="transaksi.html"><i class="bi bi-cart-check"></i> Transaksi</a>
 <a href="pelanggan.html"><i class="bi bi-people"></i> Data Pelanggan</a>
 <a href="motor.html"><i class="bi bi-bicycle"></i> Data Motor</a>
 <a href="paket.html"><i class="bi bi-tags"></i> Paket Cuci</a>
+<a href="transaksi.html"><i class="bi bi-cart-check"></i> Transaksi</a>
 <a href="pembayaran.html"><i class="bi bi-cash-stack"></i> Pembayaran</a>
-<a href="nota.html"><i class="bi bi-printer"></i> Cetak Nota</a>
-<a href="laporan.html"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a>
+<a href="nota.html"><i class="bi bi-printer"></i> Nota</a>
+<a href="laporan.html"><i class="bi bi-bar-chart"></i> Laporan</a>
 <a href="karyawan.html"><i class="bi bi-person-badge"></i> Karyawan</a>
-<a href="pengaturan.html"><i class="bi bi-gear"></i> Pengaturan Harga</a>
+<a href="pengaturan.html"><i class="bi bi-gear"></i> Pengaturan</a>
 
 <hr>
 
@@ -73,11 +78,13 @@ body{
 <div class="content">
 
 <div class="d-flex justify-content-between mb-3">
+
 <h2>Data Motor</h2>
 
-<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalMotor">
+<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">
 <i class="bi bi-plus-circle"></i> Tambah Motor
 </button>
+
 </div>
 
 <div class="card p-3">
@@ -85,31 +92,20 @@ body{
 <table class="table table-bordered table-hover">
 
 <thead class="table-primary">
+
 <tr>
 <th>No</th>
+<th>Pemilik</th>
 <th>Plat Nomor</th>
 <th>Merk</th>
 <th>Tipe</th>
 <th>Warna</th>
-<th>Pemilik</th>
 <th>Aksi</th>
 </tr>
+
 </thead>
 
-<tbody id="tblMotor">
-
-<tr>
-<td>1</td>
-<td>P 1234 AB</td>
-<td>Honda</td>
-<td>Beat</td>
-<td>Hitam</td>
-<td>Budi</td>
-<td>
-<button class="btn btn-warning btn-sm">Edit</button>
-<button class="btn btn-danger btn-sm" onclick="hapus(this)">Hapus</button>
-</td>
-</tr>
+<tbody id="tabelMotor">
 
 </tbody>
 
@@ -120,90 +116,186 @@ body{
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="modalMotor">
+
+<div class="modal fade" id="modalTambah">
+
 <div class="modal-dialog">
+
 <div class="modal-content">
 
 <div class="modal-header">
-<h5>Tambah Data Motor</h5>
+
+<h5>Tambah Motor</h5>
+
 <button class="btn-close" data-bs-dismiss="modal"></button>
+
 </div>
 
 <div class="modal-body">
+
+<label>Pemilik</label>
+
+<select id="pemilik" class="form-select mb-2"></select>
 
 <input id="plat" class="form-control mb-2" placeholder="Plat Nomor">
 
 <input id="merk" class="form-control mb-2" placeholder="Merk">
 
-<input id="tipe" class="form-control mb-2" placeholder="Tipe Motor">
+<input id="tipe" class="form-control mb-2" placeholder="Tipe">
 
-<input id="warna" class="form-control mb-2" placeholder="Warna">
-
-<input id="pemilik" class="form-control mb-2" placeholder="Nama Pemilik">
+<input id="warna" class="form-control" placeholder="Warna">
 
 </div>
 
 <div class="modal-footer">
-<button class="btn btn-primary" onclick="tambahMotor()">Simpan</button>
+
+<button class="btn btn-success" onclick="simpanMotor()">
+Simpan
+</button>
+
 </div>
 
 </div>
+
 </div>
+
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 
-let nomor = 2;
+if(localStorage.getItem("login")!="true"){
+location.href="login.html";
+}
 
-function tambahMotor(){
+let pelanggan=JSON.parse(localStorage.getItem("pelanggan")) || [];
+let motor=JSON.parse(localStorage.getItem("motor")) || [];
 
+isiPelanggan();
+tampilMotor();
+
+function isiPelanggan(){
+
+let option="<option value=''>-- Pilih Pelanggan --</option>";
+
+pelanggan.forEach(function(item){
+
+option+=`
+<option value="${item.nama}">
+${item.nama}
+</option>
+`;
+
+});
+
+document.getElementById("pemilik").innerHTML=option;
+
+}
+
+function tampilMotor(){
+
+let html="";
+
+motor.forEach(function(item,index){
+
+html+=`
+<tr>
+
+<td>${index+1}</td>
+
+<td>${item.pemilik}</td>
+
+<td>${item.plat}</td>
+
+<td>${item.merk}</td>
+
+<td>${item.tipe}</td>
+
+<td>${item.warna}</td>
+
+<td>
+
+<button class="btn btn-danger btn-sm"
+onclick="hapusMotor(${index})">
+
+<i class="bi bi-trash"></i>
+
+</button>
+
+</td>
+
+</tr>
+`;
+
+});
+
+document.getElementById("tabelMotor").innerHTML=html;
+
+}
+
+function simpanMotor(){
+
+let pemilik=document.getElementById("pemilik").value;
 let plat=document.getElementById("plat").value;
 let merk=document.getElementById("merk").value;
 let tipe=document.getElementById("tipe").value;
 let warna=document.getElementById("warna").value;
-let pemilik=document.getElementById("pemilik").value;
 
-if(plat=="" || merk==""){
-alert("Data belum lengkap!");
+if(pemilik=="" || plat==""){
+
+alert("Lengkapi data.");
+
 return;
+
 }
 
-let tabel=document.getElementById("tblMotor");
+motor.push({
 
-tabel.innerHTML += `
-<tr>
-<td>${nomor++}</td>
-<td>${plat}</td>
-<td>${merk}</td>
-<td>${tipe}</td>
-<td>${warna}</td>
-<td>${pemilik}</td>
-<td>
-<button class="btn btn-warning btn-sm">Edit</button>
-<button class="btn btn-danger btn-sm" onclick="hapus(this)">Hapus</button>
-</td>
-</tr>
-`;
+pemilik:pemilik,
+plat:plat,
+merk:merk,
+tipe:tipe,
+warna:warna
+
+});
+
+localStorage.setItem(
+"motor",
+JSON.stringify(motor)
+);
+
+bootstrap.Modal.getInstance(
+document.getElementById("modalTambah")
+).hide();
 
 document.getElementById("plat").value="";
 document.getElementById("merk").value="";
 document.getElementById("tipe").value="";
 document.getElementById("warna").value="";
-document.getElementById("pemilik").value="";
 
-bootstrap.Modal.getInstance(document.getElementById('modalMotor')).hide();
+tampilMotor();
 
 }
 
-function hapus(btn){
-if(confirm("Yakin ingin menghapus data?")){
-btn.parentElement.parentElement.remove();
+function hapusMotor(index){
+
+if(confirm("Hapus data motor?")){
+
+motor.splice(index,1);
+
+localStorage.setItem(
+"motor",
+JSON.stringify(motor)
+);
+
+tampilMotor();
+
 }
+
 }
 
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
