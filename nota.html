@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nota Pembayaran - WANTO WASH</title>
+
+<style>
+body{
+    font-family:Courier New, monospace;
+    background:#eee;
+}
+
+.nota{
+    width:320px;
+    margin:20px auto;
+    background:#fff;
+    padding:15px;
+    border:1px solid #ddd;
+}
+
+.center{
+    text-align:center;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+td{
+    padding:3px 0;
+}
+
+hr{
+    border:none;
+    border-top:1px dashed #000;
+}
+
+button{
+    width:320px;
+    margin:10px auto;
+    display:block;
+    padding:10px;
+    background:#0d6efd;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+@media print{
+
+button{
+display:none;
+}
+
+body{
+background:white;
+}
+
+.nota{
+border:none;
+box-shadow:none;
+margin:0 auto;
+}
+
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="nota">
+
+<div class="center">
+
+<h2>WANTO WASH</h2>
+
+Jl. Contoh Alamat No.123<br>
+Telp : 0812-3456-7890
+
+</div>
+
+<hr>
+
+<table>
+
+<tr>
+<td>No Nota</td>
+<td>: WW0001</td>
+</tr>
+
+<tr>
+<td>Tanggal</td>
+<td>: 28/07/2026</td>
+</tr>
+
+<tr>
+<td>Pelanggan</td>
+<td>: Budi</td>
+</tr>
+
+<tr>
+<td>Motor</td>
+<td>: Honda Beat</td>
+</tr>
+
+<tr>
+<td>Plat</td>
+<td>: P 1234 AB</td>
+</tr>
+
+</table>
+
+<hr>
+
+<table>
+
+<tr>
+<td>Cuci Premium</td>
+<td align="right">Rp35.000</td>
+</tr>
+
+</table>
+
+<hr>
+
+<table>
+
+<tr>
+<td>Total</td>
+<td align="right"><b>Rp35.000</b></td>
+</tr>
+
+<tr>
+<td>Bayar</td>
+<td align="right">Rp50.000</td>
+</tr>
+
+<tr>
+<td>Kembalian</td>
+<td align="right">Rp15.000</td>
+</tr>
+
+</table>
+
+<hr>
+
+<div class="center">
+
+Terima Kasih
+
+Motor Bersih, Hati Senang 😊
+
+</div>
+
+</div>
+
+<button onclick="window.print()">
+🖨 Cetak Nota
+</button>
+
+</body>
+</html>
