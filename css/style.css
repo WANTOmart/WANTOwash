@@ -26,27 +26,30 @@ body{
     overflow:auto;
 }
 
-.logo{
+.sidebar .logo{
     text-align:center;
-    padding:15px 0;
+    padding:20px 10px;
 }
 
-.logo img{
-    width:80px !important;
-    height:80px !important;
+.sidebar .logo img{
+    width:90px;
+    height:90px;
+    object-fit:cover;
+    border-radius:50%;
+    background:#fff;
+    padding:5px;
     display:block;
-    margin:auto;
-    object-fit:contain;
+    margin:0 auto 10px;
 }
 
-.logo h2{
-    margin-top:10px;
+.sidebar .logo h2{
+    font-size:28px;
+    margin:0;
     color:#fff;
-    font-size:24px;
 }
 
-.logo span{
-    color:#9dd6ff;
+.sidebar .logo span{
+    color:#ffd54f;
 }
 .logo p{
     font-size:12px;
