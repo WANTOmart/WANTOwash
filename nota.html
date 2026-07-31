@@ -1,16 +1,17 @@
 function simpanMotor() {
     let pemilik = document.getElementById("pemilik").value;
-    // Otomatis ubah Plat Nomor ke Huruf Kapital
     let plat = document.getElementById("plat").value.trim().toUpperCase(); 
     let merk = document.getElementById("merk").value.trim();
     let tipe = document.getElementById("tipe").value.trim();
     let warna = document.getElementById("warna").value.trim();
 
+    // Validasi input wajib
     if (pemilik === "" || plat === "") {
         alert("Harap pilih pemilik dan isi plat nomor motor.");
         return;
     }
 
+    // Tambah data ke array
     motor.push({
         pemilik: pemilik,
         plat: plat,
@@ -19,14 +20,13 @@ function simpanMotor() {
         warna: warna || "-"
     });
 
+    // Simpan ke LocalStorage
     localStorage.setItem("motor", JSON.stringify(motor));
 
-    // Tutup Modal Bootstrap dengan aman
+    // Tutup Modal Bootstrap dengan aman (Selalu berhasil)
     let modalElement = document.getElementById("modalTambah");
-    let modalInstance = bootstrap.Modal.getInstance(modalElement);
-    if (modalInstance) {
-        modalInstance.hide();
-    }
+    let modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+    modalInstance.hide();
 
     // Reset Form Input
     document.getElementById("pemilik").value = "";
@@ -35,5 +35,6 @@ function simpanMotor() {
     document.getElementById("tipe").value = "";
     document.getElementById("warna").value = "";
 
+    // Refresh Tampilan Tabel
     tampilMotor();
 }
