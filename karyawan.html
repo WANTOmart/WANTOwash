@@ -1,711 +1,386 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manajemen Karyawan - WANTO WASH</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-<style>
-body{
-    background:#f4f6f9;
-}
-.sidebar{
-    position:fixed;
-    left:0;
-    top:0;
-    width:250px;
-    height:100%;
-    background:#0d6efd;
-    color:#fff;
-}
-.sidebar h3{
-    text-align:center;
-    padding:20px;
-    border-bottom:1px solid rgba(255,255,255,.2);
-}
-.sidebar a{
-    display:block;
-    color:#fff;
-    text-decoration:none;
-    padding:15px 20px;
-}
-.sidebar a:hover{
-    background:rgba(255,255,255,.15);
-}
-.content{
-    margin-left:250px;
-    padding:30px;
-}
-.card{
-    border:none;
-    border-radius:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,.08);
-}
-</style>
-
-</head>
-<body>
-
-<div class="sidebar">
-
-<h3>🛵 WANTO WASH</h3>
-
-<a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
-<a href="transaksi.html"><i class="bi bi-cart-check"></i> Transaksi</a>
-<a href="pelanggan.html"><i class="bi bi-people"></i> Data Pelanggan</a>
-<a href="motor.html"><i class="bi bi-bicycle"></i> Data Motor</a>
-<a href="paket.html"><i class="bi bi-tags"></i> Paket Cuci</a>
-<a href="pembayaran.html"><i class="bi bi-cash-stack"></i> Pembayaran</a>
-<a href="nota.html"><i class="bi bi-printer"></i> Cetak Nota</a>
-<a href="laporan.html"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a>
-<a href="karyawan.html"><i class="bi bi-person-badge"></i> Karyawan</a>
-<a href="pengaturan.html"><i class="bi bi-gear"></i> Pengaturan Harga</a>
-
-<hr>
-
-<a href="login.html"><i class="bi bi-box-arrow-right"></i> Logout</a>
-
-</div>
-
-<div class="content">
-
-<div class="d-flex justify-content-between mb-3">
-<h2>Manajemen Karyawan</h2>
-
-<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">
-<i class="bi bi-plus-circle"></i> Tambah Karyawan
-</button>
-
-</div>
-
-<div class="card p-3">
-
-<table class="table table-bordered table-hover">
-
-<thead class="table-primary">
-
-<tr>
-<th>No</th>
-<th>Nama</th>
-<th>Jabatan</th>
-<th>No HP</th>
-<th>Alamat</th>
-<th>Status</th>
-<th>Aksi</th>
-</tr>
-
-</thead>
-
-<tbody id="tabel">
-
-<tr>
-<td>1</td>
-<td>Ahmad</td>
-<td>Operator Cuci</td>
-<td>081234567890</td>
-<td>Banyuwangi</td>
-<td><span class="badge bg-success">Aktif</span></td>
-<td>
-<button class="btn btn-warning btn-sm">Edit</button>
-<button class="btn btn-danger btn-sm" onclick="hapus(this)">Hapus</button>
-</td>
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="modalTambah">
-<div class="modal-dialog">
-<div class="modal-content">
-
-<div class="modal-header">
-<h5>Tambah Karyawan</h5>
-<button class="btn-close" data-bs-dismiss="modal"></button>
-</div>
-
-<div class="modal-body">
-
-<input id="nama" class="form-control mb-2" placeholder="Nama Karyawan">
-
-<select id="jabatan" class="form-select mb-2">
-<option>Operator Cuci</option>
-<option>Kasir</option>
-<option>Supervisor</option>
-<option>Admin</option>
-</select>
-
-<input id="hp" class="form-control mb-2" placeholder="No HP">
-
-<textarea id="alamat" class="form-control mb-2" placeholder="Alamat"></textarea>
-
-<select id="status" class="form-select">
-<option>Aktif</option>
-<option>Nonaktif</option>
-</select>
-
-</div>
-
-<div class="modal-footer">
-<button class="btn btn-success" onclick="tambah()">Simpan</button>
-</div>
-
-</div>
-</div>
-</div>
-
-<script>
-
-let nomor = 2;
-
-function tambah(){
-
-let nama=document.getElementById("nama").value;
-let jabatan=document.getElementById("jabatan").value;
-let hp=document.getElementById("hp").value;
-let alamat=document.getElementById("alamat").value;
-let status=document.getElementById("status").value;
-
-if(nama==""){
-alert("Nama karyawan harus diisi");
-return;
-}
-
-let warna = status=="Aktif" ? "success" : "secondary";
-
-document.getElementById("tabel").innerHTML += `
-<tr>
-<td>${nomor++}</td>
-<td>${nama}</td>
-<td>${jabatan}</td>
-<td>${hp}</td>
-<td>${alamat}</td>
-<td><span class="badge bg-${warna}">${status}</span></td>
-<td>
-<button class="btn btn-warning btn-sm">Edit</button>
-<button class="btn btn-danger btn-sm" onclick="hapus(this)">Hapus</button>
-</td>
-</tr>
-`;
-
-bootstrap.Modal.getInstance(document.getElementById("modalTambah")).hide();
-
-document.getElementById("nama").value="";
-document.getElementById("hp").value="";
-document.getElementById("alamat").value="";
-document.getElementById("jabatan").selectedIndex=0;
-document.getElementById("status").selectedIndex=0;
-
-}
-
-function hapus(btn){
-if(confirm("Yakin ingin menghapus data karyawan?")){
-btn.parentElement.parentElement.remove();
-}
-}
-
-</script>
-    <!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Data Karyawan - WANTO WASH</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-<style>
-
-body{
-    background:#f4f6f9;
-}
-
-.sidebar{
-    position:fixed;
-    left:0;
-    top:0;
-    width:250px;
-    height:100%;
-    background:#0d6efd;
-    color:#fff;
-}
-
-.sidebar h3{
-    text-align:center;
-    padding:20px;
-}
-
-.sidebar a{
-    display:block;
-    color:#fff;
-    text-decoration:none;
-    padding:15px 20px;
-}
-
-.sidebar a:hover{
-    background:rgba(255,255,255,.15);
-}
-
-.content{
-    margin-left:250px;
-    padding:30px;
-}
-
-.card{
-    border:none;
-    border-radius:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,.1);
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="sidebar">
-
-<h3>🛵 WANTO WASH</h3>
-
-<a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
-<a href="pelanggan.html"><i class="bi bi-people"></i> Data Pelanggan</a>
-<a href="motor.html"><i class="bi bi-bicycle"></i> Data Motor</a>
-<a href="paket.html"><i class="bi bi-tags"></i> Paket Cuci</a>
-<a href="transaksi.html"><i class="bi bi-cart-check"></i> Transaksi</a>
-<a href="pembayaran.html"><i class="bi bi-cash-stack"></i> Pembayaran</a>
-<a href="nota.html"><i class="bi bi-printer"></i> Cetak Nota</a>
-<a href="laporan.html"><i class="bi bi-bar-chart"></i> Laporan</a>
-<a href="karyawan.html"><i class="bi bi-person-badge"></i> Karyawan</a>
-<a href="pengaturan.html"><i class="bi bi-gear"></i> Pengaturan</a>
-
-<hr>
-
-<a href="login.html">
-<i class="bi bi-box-arrow-right"></i>
-Logout
-</a>
-
-</div>
-
-<div class="content">
-
-<div class="d-flex justify-content-between align-items-center mb-3">
-
-<h2>
-<i class="bi bi-person-badge-fill"></i>
-Data Karyawan
-</h2>
-
-<button
-class="btn btn-primary"
-data-bs-toggle="modal"
-data-bs-target="#modalKaryawan">
-
-<i class="bi bi-plus-circle"></i>
-
-Tambah Karyawan
-
-</button>
-
-</div>
-
-<div class="card p-3">
-
-<div class="row mb-3">
-
-<div class="col-md-4">
-
-<input
-type="text"
-id="cari"
-class="form-control"
-placeholder="Cari Nama Karyawan...">
-
-</div>
-
-</div>
-
-<table class="table table-bordered table-striped table-hover">
-
-<thead class="table-primary">
-
-<tr>
-
-<th width="60">No</th>
-<th>Nama</th>
-<th>Jabatan</th>
-<th>No HP</th>
-<th>Alamat</th>
-<th width="160">Aksi</th>
-
-</tr>
-
-</thead>
-
-<tbody id="tabelKaryawan">
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-<!-- Modal -->
-
-<div
-class="modal fade"
-id="modalKaryawan">
-
-<div class="modal-dialog">
-
-<div class="modal-content">
-
-<div class="modal-header">
-
-<h5 class="modal-title">
-
-Data Karyawan
-
-</h5>
-
-<button
-class="btn-close"
-data-bs-dismiss="modal">
-
-</button>
-
-</div>
-
-<div class="modal-body">
-
-<input
-type="hidden"
-id="indexEdit">
-
-<label>Nama</label>
-
-<input
-type="text"
-id="nama"
-class="form-control mb-3">
-
-<label>Jabatan</label>
-
-<select
-id="jabatan"
-class="form-select mb-3">
-
-<option value="">Pilih Jabatan</option>
-<option>Kasir</option>
-<option>Operator Cuci</option>
-<option>Supervisor</option>
-<option>Admin</option>
-
-</select>
-
-<label>No HP</label>
-
-<input
-type="text"
-id="hp"
-class="form-control mb-3">
-
-<label>Alamat</label>
-
-<textarea
-id="alamat"
-class="form-control"
-rows="3"></textarea>
-
-</div>
-
-<div class="modal-footer">
-
-<button
-class="btn btn-success"
-onclick="simpanKaryawan()">
-
-<i class="bi bi-save"></i>
-
-Simpan
-
-</button>
-
-<button
-class="btn btn-secondary"
-data-bs-dismiss="modal">
-
-Batal
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-    // ===============================
-// CEK LOGIN
-// ===============================
-
-if(localStorage.getItem("login")!="true"){
-    location.href="login.html";
-}
-
-// ===============================
-// DATA KARYAWAN
-// ===============================
-
-let karyawan =
-JSON.parse(localStorage.getItem("karyawan")) || [];
-
-let modal =
-document.getElementById("modalKaryawan");
-
-// ===============================
-// TAMPILKAN DATA
-// ===============================
-
-tampilkanKaryawan();
-
-function tampilkanKaryawan(data=karyawan){
-
-let html="";
-
-data.forEach(function(item,index){
-
-html += `
-
-<tr>
-
-<td>${index+1}</td>
-
-<td>${item.nama}</td>
-
-<td>${item.jabatan}</td>
-
-<td>${item.hp}</td>
-
-<td>${item.alamat}</td>
-
-<td>
-
-<button
-class="btn btn-warning btn-sm me-1"
-onclick="editKaryawan(${index})">
-
-<i class="bi bi-pencil-square"></i>
-
-</button>
-
-<button
-class="btn btn-danger btn-sm"
-onclick="hapusKaryawan(${index})">
-
-<i class="bi bi-trash"></i>
-
-</button>
-
-</td>
-
-</tr>
-
-`;
-
-});
-
-document.getElementById("tabelKaryawan").innerHTML = html;
-
-}
-
-// ===============================
-// SIMPAN
-// ===============================
-
-function simpanKaryawan(){
-
-let index =
-document.getElementById("indexEdit").value;
-
-let nama =
-document.getElementById("nama").value.trim();
-
-let jabatan =
-document.getElementById("jabatan").value;
-
-let hp =
-document.getElementById("hp").value.trim();
-
-let alamat =
-document.getElementById("alamat").value.trim();
-
-if(nama=="" || jabatan==""){
-
-alert("Nama dan Jabatan wajib diisi.");
-
-return;
-
-}
-
-let data={
-
-nama:nama,
-jabatan:jabatan,
-hp:hp,
-alamat:alamat
-
-};
-
-if(index===""){
-
-karyawan.push(data);
-
-}else{
-
-karyawan[index]=data;
-
-}
-
-localStorage.setItem(
-"karyawan",
-JSON.stringify(karyawan)
-);
-
-bootstrap.Modal
-.getInstance(modal)
-.hide();
-
-resetForm();
-
-tampilkanKaryawan();
-
-}
-
-// ===============================
-// EDIT
-// ===============================
-
-function editKaryawan(index){
-
-let item = karyawan[index];
-
-document.getElementById("indexEdit").value=index;
-
-document.getElementById("nama").value=item.nama;
-
-document.getElementById("jabatan").value=item.jabatan;
-
-document.getElementById("hp").value=item.hp;
-
-document.getElementById("alamat").value=item.alamat;
-
-new bootstrap.Modal(modal).show();
-
-}
-
-// ===============================
-// HAPUS
-// ===============================
-
-function hapusKaryawan(index){
-
-if(confirm("Hapus data karyawan ini?")){
-
-karyawan.splice(index,1);
-
-localStorage.setItem(
-"karyawan",
-JSON.stringify(karyawan)
-);
-
-tampilkanKaryawan();
-
-}
-
-}
-    // ===============================
-// PENCARIAN
-// ===============================
-
-document.getElementById("cari").addEventListener("keyup",function(){
-
-let keyword=this.value.toLowerCase();
-
-let hasil=karyawan.filter(function(item){
-
-return item.nama.toLowerCase().includes(keyword) ||
-       item.jabatan.toLowerCase().includes(keyword) ||
-       item.hp.toLowerCase().includes(keyword);
-
-});
-
-tampilkanKaryawan(hasil);
-
-});
-
-// ===============================
-// RESET FORM
-// ===============================
-
-function resetForm(){
-
-document.getElementById("indexEdit").value="";
-
-document.getElementById("nama").value="";
-
-document.getElementById("jabatan").selectedIndex=0;
-
-document.getElementById("hp").value="";
-
-document.getElementById("alamat").value="";
-
-}
-
-// ===============================
-// SAAT MODAL DITUTUP
-// ===============================
-
-modal.addEventListener("hidden.bs.modal",function(){
-
-resetForm();
-
-});
-
-// ===============================
-// AUTO TAMPILKAN
-// ===============================
-
-window.onload=function(){
-
-tampilkanKaryawan();
-
-};
-
-</script>
-
-</body>
-</html>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WANTO Wash - Dashboard Kasir</title>
     
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        /* --- RESET & BASIC STYLES --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-</body>
-</html>
+        body {
+            background: #f4f6f9;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* --- MOBILE NAVBAR HEADER --- */
+        .mobile-navbar {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: #111827;
+            color: white;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1001;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .mobile-navbar .menu-toggle {
+            font-size: 22px;
+            cursor: pointer;
+            color: white;
+            background: none;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+        }
+
+        .mobile-navbar .menu-toggle:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-navbar .brand-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff3b3b;
+            letter-spacing: 0.5px;
+        }
+
+        .mobile-navbar .brand-name span {
+            color: #2196f3;
+        }
+
+        /* --- SIDEBAR NAVIGASI --- */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background: #111827;
+            color: white;
+            z-index: 1000;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+
+        .logo {
+            padding: 20px 15px;
+            text-align: center;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        .logo img {
+            width: 75px;
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+
+        .logo h2 {
+            color: #ff3b3b;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .logo span {
+            color: #2196f3;
+        }
+
+        .logo small {
+            color: #9ca3af;
+            font-size: 12px;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .menu {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .menu li {
+            border-bottom: 1px solid #1f2937;
+        }
+
+        .menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 15px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .menu li a i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .menu li a:hover, .menu li.active a {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* --- OVERLAY MOBILE --- */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* --- CONTENT MAIN AREA --- */
+        .content {
+            margin-left: 250px;
+            padding: 25px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.04);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            color: #111827;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* --- STATISTIC CARDS GRID --- */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.04);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card h3 {
+            font-size: 26px;
+            margin-top: 12px;
+            color: #111827;
+        }
+
+        .card p {
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card i {
+            font-size: 28px;
+        }
+
+        .red { border-left: 4px solid #dc3545; }
+        .red i { color: #dc3545; }
+
+        .blue { border-left: 4px solid #0d6efd; }
+        .blue i { color: #0d6efd; }
+
+        .green { border-left: 4px solid #198754; }
+        .green i { color: #198754; }
+
+        .orange { border-left: 4px solid #fd7e14; }
+        .orange i { color: #fd7e14; }
+
+        /* --- TABEL TRANSAKSI --- */
+        .table-container {
+            margin-top: 25px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.04);
+        }
+
+        .table-container h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #111827;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 550px;
+        }
+
+        table th {
+            background: #dc3545;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success { background: #d1e7dd; color: #0f5132; }
+        .badge-warning { background: #fff3cd; color: #664d03; }
+
+        .btn-action {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-action:active {
+            transform: scale(0.98);
+        }
+
+        .btn-action:hover {
+            background: #bb2d3b;
+        }
+
+        /* --- RESPONSIVE MOBILE & TABLET RULES --- */
+        @media (max-width: 768px) {
+            .mobile-navbar {
+                display: flex;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 75px 15px 20px 15px;
+            }
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .card h3 {
+                font-size: 20px;
+            }
+
+            .card p {
+                font-size: 11px;
+            }
+
+            .card i {
+                font-size: 22px;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .table-container {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-action {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
