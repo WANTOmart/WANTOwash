@@ -3,442 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WANTO Wash - Dashboard</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background: #f4f6f9;
-        }
-
-        /* --- NAVIGATION BAR MOBILE --- */
-        .mobile-navbar {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 60px;
-            background: #111827;
-            color: white;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1001;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .mobile-navbar .menu-toggle {
-            font-size: 24px;
-            cursor: pointer;
-            color: white;
-            background: none;
-            border: none;
-            padding: 5px;
-        }
-
-        .mobile-navbar .brand-name {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ff3b3b;
-        }
-
-        .mobile-navbar .brand-name span {
-            color: #2196f3;
-        }
-
-        /* --- SIDEBAR --- */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 250px;
-            height: 100%;
-            background: #111827;
-            color: white;
-            z-index: 1000;
-            transition: transform 0.3s ease;
-        }
-
-        .logo {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid #333;
-        }
-
-        .logo img {
-            width: 80px;
-            height: auto;
-            margin-bottom: 10px;
-        }
-
-        .logo h2 {
-            color: #ff3b3b;
-            font-size: 22px;
-        }
-
-        .logo span {
-            color: #2196f3;
-        }
-
-        .logo small {
-            color: #aaa;
-            font-size: 12px;
-        }
-
-        .menu {
-            list-style: none;
-            margin-top: 10px;
-        }
-
-        .menu li {
-            border-bottom: 1px solid #1f2937;
-        }
-
-        .menu li a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 15px 20px;
-            color: #d1d5db;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .menu li a:hover {
-            background: #dc3545;
-            color: white;
-        }
-
-        /* --- OVERLAY UNTUK MOBILE --- */
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-
-        /* --- CONTENT AREA --- */
-        .content {
-            margin-left: 250px;
-            padding: 20px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .header {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.05);
-        }
-
-        .header h1 {
-            font-size: 24px;
-            color: #1f2937;
-        }
-
-        .header p {
-            color: #6b7280;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        /* --- CARDS RESPONSIVE GRID --- */
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.05);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .card-info {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .card h3 {
-            font-size: 26px;
-            margin-top: 10px;
-            color: #111827;
-        }
-
-        .card p {
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        .card i {
-            font-size: 32px;
-        }
-
-        .red { border-left: 5px solid #dc3545; }
-        .red i { color: #dc3545; }
-
-        .blue { border-left: 5px solid #0d6efd; }
-        .blue i { color: #0d6efd; }
-
-        .green { border-left: 5px solid #198754; }
-        .green i { color: #198754; }
-
-        .orange { border-left: 5px solid #ff1900; }
-        .orange i { color: #ff1900; }
-
-        /* --- TABLE AREA --- */
-        .table-container {
-            margin-top: 25px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.05);
-        }
-
-        .table-container h2 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #111827;
-        }
-
-        /* Wrap tabel agar bisa di-scroll horizontal di layar kecil */
-        .table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 500px; /* Menjaga struktur tabel tetap terbaca */
-        }
-
-        table th {
-            background: #dc3545;
-            color: white;
-            padding: 12px;
-            text-align: left;
-            font-size: 14px;
-        }
-
-        table td {
-            padding: 12px;
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 14px;
-            color: #374151;
-        }
-
-        .btn-action {
-            margin-top: 20px;
-            padding: 12px 20px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.2s;
-        }
-
-        .btn-action:hover {
-            background: #bb2d3b;
-        }
-
-        /* --- MEDIA QUERIES (HP & TABLET) --- */
-        @media (max-width: 768px) {
-            .mobile-navbar {
-                display: flex;
-            }
-
-            .sidebar {
-                transform: translateX(-100%); /* Sembunyikan sidebar ke luar layar */
-            }
-
-            .sidebar.active {
-                transform: translateX(0); /* Tampilkan sidebar */
-            }
-
-            .overlay.active {
-                display: block;
-            }
-
-            .content {
-                margin-left: 0;
-                padding: 80px 15px 20px 15px; /* Beri jarak atas untuk navbar mobile */
-            }
-
-            .cards {
-                grid-template-columns: repeat(2, 1fr); /* 2 kolom di HP */
-                gap: 12px;
-            }
-
-            .card {
-                padding: 15px;
-            }
-
-            .card h3 {
-                font-size: 20px;
-            }
-
-            .card i {
-                font-size: 24px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .cards {
-                grid-template-columns: 1fr; /* 1 kolom penuh untuk HP layar kecil */
-            }
-        }
-    </style>
+    <title>WANTOwash - Pilihan Paket & Laporan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
-<body>
+<body class="bg-light p-4">
 
-    <div class="mobile-navbar">
-        <button class="menu-toggle" onclick="toggleSidebar()">
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="brand-name">WANTO <span>Wash</span></div>
-        <div style="width: 24px;"></div> </div>
+<div class="container">
+    <h3 class="mb-4 text-center fw-bold">WANTOwash - Transaksi Cuci</h3>
 
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
-
-    <div class="sidebar" id="sidebar">
-        <div class="logo">
-            <img src="img/logo.png" alt="Logo WANTO Wash" onerror="this.style.display='none'">
-            <h2>WANTO <span>Wash</span></h2>
-            <small>Sistem Kasir Cuci Motor</small>
+    <div class="row mb-4">
+        <div class="col-md-6 mb-2">
+            <div class="card bg-primary text-white p-3 shadow-sm">
+                <h6>Total Pendapatan:</h6>
+                <h3 id="sumFilter" class="fw-bold m-0">Rp 0</h3>
+            </div>
         </div>
-
-        <ul class="menu">
-            <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
-            <li><a href="kasir.html"><i class="fas fa-cash-register"></i> Kasir</a></li>
-            <li><a href="harga.html"><i class="fas fa-tags"></i> Daftar Harga</a></li>
-            <li><a href="laporan.html"><i class="fas fa-chart-bar"></i> Laporan</a></li>
-            <li><a href="setting.html"><i class="fas fa-cogs"></i> Setting</a></li>
-            <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-        </ul>
+        <div class="col-md-6 mb-2">
+            <div class="card bg-success text-white p-3 shadow-sm">
+                <h6>Total Transaksi:</h6>
+                <h3 id="countFilter" class="fw-bold m-0"><i class="bi bi-motorcycle"></i> 0 Transaksi</h3>
+            </div>
+        </div>
     </div>
 
-    <div class="content">
-        <div class="header">
-            <h1>Dashboard WANTO Wash</h1>
-            <p>Selamat datang di Sistem Kasir Cuci Motor</p>
-        </div>
-
-        <div class="cards">
-            <div class="card red">
-                <div class="card-info">
-                    <p>Motor Hari Ini</p>
-                    <i class="fas fa-motorcycle"></i>
-                </div>
-                <h3>25</h3>
-            </div>
-
-            <div class="card green">
-                <div class="card-info">
-                    <p>Pendapatan Hari Ini</p>
-                    <i class="fas fa-money-bill-wave"></i>
-                </div>
-                <h3>Rp375.000</h3>
-            </div>
-
-            <div class="card blue">
-                <div class="card-info">
-                    <p>Pelanggan</p>
-                    <i class="fas fa-users"></i>
-                </div>
-                <h3>18</h3>
-            </div>
-
-            <div class="card orange">
-                <div class="card-info">
-                    <p>Selesai Dicuci</p>
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <h3>20</h3>
-            </div>
-        </div>
-
-        <div class="table-container">
-            <h2>Transaksi Terakhir</h2>
-            
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Plat</th>
-                            <th>Paket</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Budi</td>
-                            <td>B 1234 ABC</td>
-                            <td>Cuci Motor</td>
-                            <td>Rp15.000</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Andi</td>
-                            <td>D 4567 EFG</td>
-                            <td>Cuci Premium</td>
-                            <td>Rp25.000</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Rudi</td>
-                            <td>F 8888 ZZ</td>
-                            <td>Cuci + Semir</td>
-                            <td>Rp20.000</td>
-                        </tr>
+    <div class="card shadow-sm p-3 mb-4">
+        <h5 class="card-title mb-3">Laporan Transaksi</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>No Trx</th>
+                        <th>Tanggal</th>
+                        <th>Pelanggan</th>
+                        <th>Motor</th>
+                        <th>Paket Cuci</th>
+                        <th class="text-end">Total</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelLaporan">
                     </tbody>
-                </table>
-            </div>
-
-            <button class="btn-action" onclick="location.href='kasir.html'">
-                <i class="fas fa-plus"></i> Transaksi Baru
-            </button>
+                <tfoot>
+                    <tr class="fw-bold table-secondary">
+                        <td colspan="6" class="text-end">Grand Total:</td>
+                        <td id="grandTotalTabel" class="text-end">Rp 0</td>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
     </div>
+</div>
 
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        }
-    </script>
+<script>
+// --- DATA DUMMY TRANSAKSI DENGAN PILIHAN PAKET ---
+const dataTransaksi = [
+    {
+        noTrx: "TRX-001",
+        tanggal: "2026-03-30",
+        namaPelanggan: "Budi",
+        namaMotor: "Vario 150",
+        paket: "Cuci Biasa",
+        total: 20000
+    },
+    {
+        noTrx: "TRX-002",
+        tanggal: "2026-03-30",
+        namaPelanggan: "Andi",
+        namaMotor: "NMAX",
+        paket: "Cuci + Semir Ban",
+        total: 25000
+    },
+    {
+        noTrx: "TRX-003",
+        tanggal: "2026-03-30",
+        namaPelanggan: "Siti",
+        namaMotor: "Beat",
+        paket: "Cuci Biasa",
+        total: 20000
+    }
+];
+
+// Helper terpisah untuk merapikan logika ekstraksi nama paket
+function formatNamaPaket(paket) {
+    if (Array.isArray(paket)) {
+        return paket
+            .map(p => (typeof p === 'object' && p !== null) ? (p.nama || p.namaPaket || '-') : p)
+            .filter(Boolean)
+            .join(", ") || "-";
+    }
+    if (typeof paket === 'object' && paket !== null) {
+        return paket.nama || paket.namaPaket || "-";
+    }
+    if (typeof paket === 'string' && paket.trim() !== "") {
+        return paket;
+    }
+    return "-";
+}
+
+function tampilLaporan(listData) {
+    // Memastikan listData selalu berbentuk Array aman
+    const data = Array.isArray(listData) ? listData : [];
+    let totalTabel = 0;
+    let html = "";
+
+    if (data.length === 0) {
+        html = `<tr><td colspan="7" class="text-center text-muted py-3">Tidak ada data transaksi yang sesuai.</td></tr>`;
+    } else {
+        html = data.map((item, index) => {
+            const totalNominal = Number(item.total) || 0;
+            totalTabel += totalNominal;
+
+            const namaPaket = formatNamaPaket(item.paket);
+
+            return `
+            <tr>
+                <td>${index + 1}</td>
+                <td class="fw-bold">${item.nomor || item.noTrx || '-'}</td>
+                <td>${item.tanggal || '-'}</td>
+                <td class="fw-semibold">${item.pelanggan || item.namaPelanggan || '-'}</td>
+                <td>${item.motor || item.namaMotor || '-'}</td>
+                <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle fw-medium fs-6">${namaPaket}</span></td>
+                <td class="fw-semibold text-end">Rp ${totalNominal.toLocaleString("id-ID")}</td>
+            </tr>`;
+        }).join('');
+    }
+
+    // Format mata uang sekali untuk efisiensi
+    const formattedTotal = "Rp " + totalTabel.toLocaleString("id-ID");
+
+    // Rendering ke DOM
+    document.getElementById("tabelLaporan").innerHTML = html;
+    document.getElementById("grandTotalTabel").innerHTML = formattedTotal;
+    document.getElementById("sumFilter").innerHTML = formattedTotal;
+    document.getElementById("countFilter").innerHTML = `<i class="bi bi-motorcycle"></i> ${data.length} Transaksi`;
+}
+
+// Jalankan fungsi saat halaman pertama kali dimuat
+document.addEventListener("DOMContentLoaded", function() {
+    tampilLaporan(dataTransaksi);
+});
+</script>
+
 </body>
 </html>
