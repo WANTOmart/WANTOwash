@@ -1,203 +1,384 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Laporan - WANTO WASH</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan - WANTO Wash</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-<style>
-body{
-    background:#f4f6f9;
-}
-.sidebar{
-    position:fixed;
-    width:250px;
-    height:100%;
-    background:#0d6efd;
-    color:#fff;
-}
-.sidebar h3{
-    text-align:center;
-    padding:20px;
-    border-bottom:1px solid rgba(255,255,255,.2);
-}
-.sidebar a{
-    display:block;
-    color:#fff;
-    text-decoration:none;
-    padding:15px 20px;
-}
-.sidebar a:hover{
-    background:rgba(255,255,255,.15);
-}
-.content{
-    margin-left:250px;
-    padding:30px;
-}
-.card{
-    border:none;
-    border-radius:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,.08);
-}
-@media print{
-.sidebar,.btn{
-display:none;
-}
-.content{
-margin-left:0;
-}
-}
-</style>
+    <style>
+        /* --- RESET & GLOBAL STYLES --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
+        body {
+            background: #f4f6f9;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* --- MOBILE TOP NAVBAR --- */
+        .mobile-navbar {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: #111827;
+            color: white;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 1001;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .mobile-navbar .brand-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff3b3b;
+        }
+
+        .mobile-navbar .brand-name span {
+            color: #2196f3;
+        }
+
+        /* --- SIDEBAR NAVIGASI (DESKTOP & MOBILE OFFCANVAS) --- */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background: #111827;
+            color: white;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .logo {
+            padding: 20px 15px;
+            text-align: center;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        .logo h2 {
+            color: #ff3b3b;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        .logo span {
+            color: #2196f3;
+        }
+
+        .logo small {
+            color: #9ca3af;
+            font-size: 12px;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .menu {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        .menu li {
+            border-bottom: 1px solid #1f2937;
+        }
+
+        .menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 15px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .menu li a i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .menu li a:hover, .menu li a.active {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* --- CONTENT AREA --- */
+        .content {
+            margin-left: 250px;
+            padding: 25px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .card-summary {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.04);
+            background: white;
+            transition: transform 0.2s;
+        }
+
+        .card-summary h5 {
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .card-summary h2 {
+            color: #111827;
+            font-size: 26px;
+            font-weight: 700;
+            margin: 10px 0 5px 0;
+        }
+
+        .card-summary p {
+            color: #0d6efd;
+            font-weight: 600;
+            margin-bottom: 0;
+            font-size: 14px;
+        }
+
+        .table-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.04);
+            background: white;
+        }
+
+        .table thead {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .table th {
+            padding: 12px 15px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .table td {
+            padding: 12px 15px;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        /* --- MEDIA QUERIES & PRINT STYLES --- */
+        @media (max-width: 768px) {
+            .mobile-navbar {
+                display: flex;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 75px 15px 20px 15px;
+            }
+        }
+
+        @media print {
+            .sidebar, .mobile-navbar, .btn-export-group, .filter-card {
+                display: none !important;
+            }
+            .content {
+                margin-left: 0 !important;
+                padding: 0 !important;
+            }
+            .table-card, .card-summary {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="sidebar">
+    <div class="mobile-navbar">
+        <button class="btn btn-dark text-white border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+            <i class="bi bi-list fs-4"></i>
+        </button>
+        <div class="brand-name">WANTO <span>Wash</span></div>
+        <div style="width: 30px;"></div>
+    </div>
 
-<h3>🛵 WANTO WASH</h3>
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileSidebar" style="width: 250px;">
+        <div class="offcanvas-header border-bottom border-secondary">
+            <h5 class="offcanvas-title text-danger fw-bold">WANTO <span class="text-primary">Wash</span></h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <ul class="menu">
+                <li><a href="index.html"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                <li><a href="kasir.html"><i class="bi bi-cart-check"></i> Kasir</a></li>
+                <li><a href="harga.html"><i class="bi bi-tags"></i> Daftar Harga</a></li>
+                <li><a class="active" href="laporan.html"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a></li>
+                <li><a href="setting.html"><i class="bi bi-gear"></i> Setting</a></li>
+                <li><a href="login.html"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+            </ul>
+        </div>
+    </div>
 
-<a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
-<a href="transaksi.html"><i class="bi bi-cart-check"></i> Transaksi</a>
-<a href="pelanggan.html"><i class="bi bi-people"></i> Data Pelanggan</a>
-<a href="motor.html"><i class="bi bi-bicycle"></i> Data Motor</a>
-<a href="paket.html"><i class="bi bi-tags"></i> Paket Cuci</a>
-<a href="pembayaran.html"><i class="bi bi-cash-stack"></i> Pembayaran</a>
-<a href="nota.html"><i class="bi bi-printer"></i> Cetak Nota</a>
-<a href="laporan.html"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a>
-<a href="karyawan.html"><i class="bi bi-person-badge"></i> Karyawan</a>
-<a href="pengaturan.html"><i class="bi bi-gear"></i> Pengaturan Harga</a>
+    <div class="sidebar d-none d-md-block">
+        <div class="logo">
+            <h2>WANTO <span>Wash</span></h2>
+            <small>Sistem Laporan Kasir</small>
+        </div>
 
-<hr>
+        <ul class="menu">
+            <li><a href="index.html"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+            <li><a href="kasir.html"><i class="bi bi-cart-check"></i> Kasir</a></li>
+            <li><a href="harga.html"><i class="bi bi-tags"></i> Daftar Harga</a></li>
+            <li><a class="active" href="laporan.html"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a></li>
+            <li><a href="setting.html"><i class="bi bi-gear"></i> Setting</a></li>
+            <li><a href="login.html"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+        </ul>
+    </div>
 
-<a href="login.html"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    <div class="content">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h2><i class="bi bi-file-earmark-bar-graph text-danger"></i> Laporan Pendapatan</h2>
+            <div class="btn-export-group d-flex gap-2 flex-wrap">
+                <button class="btn btn-outline-success">
+                    <i class="bi bi-file-earmark-excel"></i> Excel
+                </button>
+                <button class="btn btn-outline-danger">
+                    <i class="bi bi-file-earmark-pdf"></i> PDF
+                </button>
+                <button class="btn btn-primary" onclick="window.print()">
+                    <i class="bi bi-printer"></i> Cetak
+                </button>
+            </div>
+        </div>
 
-</div>
-<div class="content">
+        <div class="card filter-card p-3 mb-4 shadow-sm border-0">
+            <form class="row g-3 align-items-center">
+                <div class="col-md-4 col-sm-6">
+                    <label class="form-label fw-semibold">Dari Tanggal</label>
+                    <input type="date" class="form-control" value="2026-07-01">
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <label class="form-label fw-semibold">Sampai Tanggal</label>
+                    <input type="date" class="form-control" value="2026-07-28">
+                </div>
+                <div class="col-md-4 col-12 d-flex align-items-end">
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="bi bi-filter"></i> Filter Laporan
+                    </button>
+                </div>
+            </form>
+        </div>
 
-<h2>Laporan Pendapatan</h2>
+        <div class="row g-3 mb-4">
+            <div class="col-md-4 col-sm-6">
+                <div class="card card-summary p-3 text-center border-start border-4 border-danger">
+                    <h5>Harian</h5>
+                    <h2>Rp875.000</h2>
+                    <p><i class="bi bi-motorcycle"></i> 25 Motor</p>
+                </div>
+            </div>
 
-<div class="row mt-4">
+            <div class="col-md-4 col-sm-6">
+                <div class="card card-summary p-3 text-center border-start border-4 border-success">
+                    <h5>Bulanan</h5>
+                    <h2>Rp26.500.000</h2>
+                    <p><i class="bi bi-motorcycle"></i> 760 Motor</p>
+                </div>
+            </div>
 
-<div class="col-md-4">
-<div class="card p-4 text-center">
-<h5>Harian</h5>
-<h2>Rp875.000</h2>
-<p>25 Motor</p>
-</div>
-</div>
+            <div class="col-md-4 col-12">
+                <div class="card card-summary p-3 text-center border-start border-4 border-primary">
+                    <h5>Tahunan</h5>
+                    <h2>Rp318.000.000</h2>
+                    <p><i class="bi bi-motorcycle"></i> 9.120 Motor</p>
+                </div>
+            </div>
+        </div>
 
-<div class="col-md-4">
-<div class="card p-4 text-center">
-<h5>Bulanan</h5>
-<h2>Rp26.500.000</h2>
-<p>760 Motor</p>
-</div>
-</div>
+        <div class="card table-card p-3">
+            <h5 class="fw-bold mb-3">Detail Transaksi</h5>
 
-<div class="col-md-4">
-<div class="card p-4 text-center">
-<h5>Tahunan</h5>
-<h2>Rp318.000.000</h2>
-<p>9.120 Motor</p>
-</div>
-</div>
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">No</th>
+                            <th scope="col">Tanggal</th>
+                            <th scope="col">Pelanggan</th>
+                            <th scope="col">Motor</th>
+                            <th scope="col">Paket</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>28/07/2026</td>
+                            <td>Budi</td>
+                            <td>Honda Beat</td>
+                            <td>Cuci Premium</td>
+                            <td class="fw-semibold">Rp35.000</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>28/07/2026</td>
+                            <td>Andi</td>
+                            <td>Vario 160</td>
+                            <td>Steam</td>
+                            <td class="fw-semibold">Rp40.000</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>28/07/2026</td>
+                            <td>Rudi</td>
+                            <td>NMAX</td>
+                            <td>Cuci Biasa</td>
+                            <td class="fw-semibold">Rp20.000</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>28/07/2026</td>
+                            <td>Agus</td>
+                            <td>Aerox</td>
+                            <td>Cuci + Semir Ban</td>
+                            <td class="fw-semibold">Rp25.000</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-danger">
+                            <th colspan="5" class="text-end">TOTAL PENDAPATAN</th>
+                            <th class="fw-bold fs-6">Rp120.000</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
 
-</div>
-
-<div class="card mt-4 p-3">
-
-<h4>Detail Transaksi</h4>
-
-<table class="table table-bordered table-striped mt-3">
-
-<thead class="table-primary">
-
-<tr>
-<th>No</th>
-<th>Tanggal</th>
-<th>Pelanggan</th>
-<th>Motor</th>
-<th>Paket</th>
-<th>Total</th>
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-<td>1</td>
-<td>28/07/2026</td>
-<td>Budi</td>
-<td>Honda Beat</td>
-<td>Cuci Premium</td>
-<td>Rp35.000</td>
-</tr>
-
-<tr>
-<td>2</td>
-<td>28/07/2026</td>
-<td>Andi</td>
-<td>Vario 160</td>
-<td>Steam</td>
-<td>Rp40.000</td>
-</tr>
-
-<tr>
-<td>3</td>
-<td>28/07/2026</td>
-<td>Rudi</td>
-<td>NMAX</td>
-<td>Cuci Biasa</td>
-<td>Rp20.000</td>
-</tr>
-
-<tr>
-<td>4</td>
-<td>28/07/2026</td>
-<td>Agus</td>
-<td>Aerox</td>
-<td>Cuci + Semir Ban</td>
-<td>Rp25.000</td>
-</tr>
-
-</tbody>
-
-<tfoot>
-
-<tr class="table-success">
-
-<th colspan="5">TOTAL PENDAPATAN</th>
-<th>Rp120.000</th>
-
-</tr>
-
-</tfoot>
-
-</table>
-
-<button class="btn btn-success">
-<i class="bi bi-file-earmark-excel"></i>
-Export Excel
-</button>
-
-<button class="btn btn-danger">
-<i class="bi bi-file-earmark-pdf"></i>
-Export PDF
-</button>
-
-<button class="btn btn-primary" onclick="window.print()">
-<i class="bi bi-printer"></i>
-Cetak Laporan
-</button>
-
-</div>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
-    
