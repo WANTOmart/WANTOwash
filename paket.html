@@ -1,28 +1,36 @@
-function tampilLaporan(listData) {
-    let html = "";
-    let totalTabel = 0;
+// Helper terpisah untuk merapikan logika ekstraksi nama paket
+function formatNamaPaket(paket) {
+    if (Array.isArray(paket)) {
+        return paket
+            .map(p => (typeof p === 'object' && p !== null) ? (p.nama || p.namaPaket || '-') : p)
+            .filter(Boolean)
+            .join(", ") || "-";
+    }
+    if (typeof paket === 'object' && paket !== null) {
+        return paket.nama || paket.namaPaket || "-";
+    }
+    if (typeof paket === 'string' && paket.trim() !== "") {
+        return paket;
+    }
+    return "-";
+}
 
-    if (!listData || listData.length === 0) {
+function tampilLaporan(listData) {
+    // Memastikan listData selalu berbentuk Array aman
+    const data = Array.isArray(listData) ? listData : [];
+    let totalTabel = 0;
+    let html = "";
+
+    if (data.length === 0) {
         html = `<tr><td colspan="7" class="text-center text-muted py-3">Tidak ada data transaksi yang sesuai.</td></tr>`;
     } else {
-        listData.forEach(function(item, index) {
-            let totalNominal = Number(item.total) || 0;
+        html = data.map((item, index) => {
+            const totalNominal = Number(item.total) || 0;
             totalTabel += totalNominal;
 
-            // --- PROTEKSI & FORMATTING PAKET CUCI ---
-            let namaPaket = "-";
-            if (Array.isArray(item.paket)) {
-                // Jika paket berupa array dari string/objek (misal: beberapa paket sekaligus)
-                namaPaket = item.paket.map(p => (typeof p === 'object' && p !== null) ? (p.nama || p.namaPaket || '-') : p).join(", ");
-            } else if (typeof item.paket === 'object' && item.paket !== null) {
-                // Jika paket disimpan sebagai Objek
-                namaPaket = item.paket.nama || item.paket.namaPaket || "-";
-            } else if (typeof item.paket === 'string' && item.paket.trim() !== "") {
-                // Jika paket berupa String biasa
-                namaPaket = item.paket;
-            }
+            const namaPaket = formatNamaPaket(item.paket);
 
-            html += `
+            return `
             <tr>
                 <td>${index + 1}</td>
                 <td class="fw-bold">${item.nomor || item.noTrx || '-'}</td>
@@ -32,13 +40,15 @@ function tampilLaporan(listData) {
                 <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle fw-medium fs-6">${namaPaket}</span></td>
                 <td class="fw-semibold text-end">Rp ${totalNominal.toLocaleString("id-ID")}</td>
             </tr>`;
-        });
+        }).join('');
     }
 
+    // Format mata uang sekali untuk efisiensi
+    const formattedTotal = "Rp " + totalTabel.toLocaleString("id-ID");
+
+    // Rendering ke DOM
     document.getElementById("tabelLaporan").innerHTML = html;
-    document.getElementById("grandTotalTabel").innerHTML = "Rp " + totalTabel.toLocaleString("id-ID");
-    
-    // Set Card Ringkasan Filter
-    document.getElementById("sumFilter").innerHTML = "Rp " + totalTabel.toLocaleString("id-ID");
-    document.getElementById("countFilter").innerHTML = `<i class="bi bi-motorcycle"></i> ${listData.length} Transaksi`;
+    document.getElementById("grandTotalTabel").innerHTML = formattedTotal;
+    document.getElementById("sumFilter").innerHTML = formattedTotal;
+    document.getElementById("countFilter").innerHTML = `<i class="bi bi-motorcycle"></i> ${data.length} Transaksi`;
 }
