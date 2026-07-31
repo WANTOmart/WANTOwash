@@ -1,40 +1,44 @@
-function simpanMotor() {
-    let pemilik = document.getElementById("pemilik").value;
-    let plat = document.getElementById("plat").value.trim().toUpperCase(); 
-    let merk = document.getElementById("merk").value.trim();
-    let tipe = document.getElementById("tipe").value.trim();
-    let warna = document.getElementById("warna").value.trim();
+function tampilLaporan(listData) {
+    let html = "";
+    let totalTabel = 0;
 
-    // Validasi input wajib
-    if (pemilik === "" || plat === "") {
-        alert("Harap pilih pemilik dan isi plat nomor motor.");
-        return;
+    if (!listData || listData.length === 0) {
+        html = `<tr><td colspan="7" class="text-center text-muted py-3">Tidak ada data transaksi yang sesuai.</td></tr>`;
+    } else {
+        listData.forEach(function(item, index) {
+            let totalNominal = Number(item.total) || 0;
+            totalTabel += totalNominal;
+
+            // --- PROTEKSI & FORMATTING PAKET CUCI ---
+            let namaPaket = "-";
+            if (Array.isArray(item.paket)) {
+                // Jika paket berupa array dari string/objek (misal: beberapa paket sekaligus)
+                namaPaket = item.paket.map(p => (typeof p === 'object' && p !== null) ? (p.nama || p.namaPaket || '-') : p).join(", ");
+            } else if (typeof item.paket === 'object' && item.paket !== null) {
+                // Jika paket disimpan sebagai Objek
+                namaPaket = item.paket.nama || item.paket.namaPaket || "-";
+            } else if (typeof item.paket === 'string' && item.paket.trim() !== "") {
+                // Jika paket berupa String biasa
+                namaPaket = item.paket;
+            }
+
+            html += `
+            <tr>
+                <td>${index + 1}</td>
+                <td class="fw-bold">${item.nomor || item.noTrx || '-'}</td>
+                <td>${item.tanggal || '-'}</td>
+                <td class="fw-semibold">${item.pelanggan || item.namaPelanggan || '-'}</td>
+                <td>${item.motor || item.namaMotor || '-'}</td>
+                <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle fw-medium fs-6">${namaPaket}</span></td>
+                <td class="fw-semibold text-end">Rp ${totalNominal.toLocaleString("id-ID")}</td>
+            </tr>`;
+        });
     }
 
-    // Tambahkan data baru ke array motor
-    motor.push({
-        pemilik: pemilik,
-        plat: plat,
-        merk: merk || "-",
-        tipe: tipe || "-",
-        warna: warna || "-"
-    });
-
-    // Simpan ke LocalStorage
-    localStorage.setItem("motor", JSON.stringify(motor));
-
-    // Tutup Modal Bootstrap dengan aman (Gunakan getOrCreateInstance)
-    let modalElement = document.getElementById("modalTambah");
-    let modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
-    modalInstance.hide();
-
-    // Reset Form Input
-    document.getElementById("pemilik").value = "";
-    document.getElementById("plat").value = "";
-    document.getElementById("merk").value = "";
-    document.getElementById("tipe").value = "";
-    document.getElementById("warna").value = "";
-
-    // Refresh Tampilan Tabel
-    tampilMotor();
+    document.getElementById("tabelLaporan").innerHTML = html;
+    document.getElementById("grandTotalTabel").innerHTML = "Rp " + totalTabel.toLocaleString("id-ID");
+    
+    // Set Card Ringkasan Filter
+    document.getElementById("sumFilter").innerHTML = "Rp " + totalTabel.toLocaleString("id-ID");
+    document.getElementById("countFilter").innerHTML = `<i class="bi bi-motorcycle"></i> ${listData.length} Transaksi`;
 }
