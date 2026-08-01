@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         :root {
@@ -239,23 +240,34 @@
     <main class="content">
         <div class="d-flex justify-content-between align-items-center mb-4 no-print">
             <div>
-                <h3 class="fw-bold mb-1"><i class="bi bi-printer text-primary me-2"></i>Cetak Nota Transaksi</h3>
-                <p class="text-muted mb-0">Pilih transaksi dan cetak bukti pembayaran pelanggan</p>
+                <h3 class="fw-bold mb-1"><i class="bi bi-printer text-primary me-2"></i>Cetak & Kirim Nota</h3>
+                <p class="text-muted mb-0">Cetak nota fisik atau kirim pesan rapi ke WhatsApp pelanggan</p>
             </div>
         </div>
 
         <div class="row g-4">
             <div class="col-lg-5 no-print">
                 <div class="card custom-card p-4">
-                    <h5 class="fw-bold mb-3"><i class="bi bi-receipt me-2 text-primary"></i>Pilih Nota Lunas</h5>
+                    <h5 class="fw-bold mb-3"><i class="bi bi-receipt me-2 text-primary"></i>Pilih Transaksi</h5>
                     <div class="mb-3">
                         <select id="selectNota" class="form-select" onchange="tampilkanNota()">
-                            <option value="">-- Pilih Transaksi Lunas --</option>
+                            <option value="">-- Pilih Transaksi --</option>
                         </select>
                     </div>
-                    <button class="btn btn-primary w-100 py-2 fw-semibold" onclick="prosesCetak()">
-                        <i class="bi bi-printer-fill me-1"></i> Cetak Nota Sekarang
-                    </button>
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary py-2 fw-semibold" onclick="prosesCetak()">
+                            <i class="bi bi-printer-fill me-1"></i> Cetak Kertas (Print)
+                        </button>
+                        
+                        <button class="btn btn-success py-2 fw-semibold" onclick="kirimWA()">
+                            <i class="bi bi-whatsapp me-1"></i> Kirim Teks Struk via WA
+                        </button>
+
+                        <button class="btn btn-outline-dark py-2 fw-semibold" onclick="downloadGambar()">
+                            <i class="bi bi-file-image me-1"></i> Download Gambar Nota (PNG)
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -267,7 +279,7 @@
                         <hr style="border-top: 2px dashed #000;" class="my-2">
 
                         <div id="detailNotaBody">
-                            <p class="text-muted py-4">Silakan pilih transaksi lunas di sebelah kiri untuk menampilkan preview nota.</p>
+                            <p class="text-muted py-4">Silakan pilih transaksi di sebelah kiri untuk melihat preview nota.</p>
                         </div>
 
                         <hr style="border-top: 2px dashed #000;" class="my-2">
@@ -295,19 +307,15 @@
 
         function muatOptionNota() {
             let select = document.getElementById("selectNota");
-            select.innerHTML = '<option value="">-- Pilih Transaksi Lunas --</option>';
+            select.innerHTML = '<option value="">-- Pilih Transaksi --</option>';
 
-            let adaLunas = false;
-            transaksi.forEach((t, idx) => {
-                // Mendukung status "Lunas" atau transaksi yang sudah memiliki pembayaran
-                if (t.pembayaranStatus === "Lunas" || t.status === "Selesai") {
-                    adaLunas = true;
-                    select.innerHTML += `<option value="${idx}">${t.kode || 'TRX'} - ${t.pelanggan || 'Pelanggan'} (${t.plat || '-'})</option>`;
-                }
-            });
-
-            if (!adaLunas) {
-                select.innerHTML = '<option value="">-- Tidak ada transaksi lunas --</option>';
+            if (transaksi.length === 0) {
+                select.innerHTML = '<option value="">-- Belum Ada Data Transaksi --</option>';
+            } else {
+                transaksi.forEach((t, idx) => {
+                    let statusTxt = t.pembayaranStatus === "Lunas" ? "[LUNAS]" : "[BELUM BAYAR]";
+                    select.innerHTML += `<option value="${idx}">${t.kode || 'TRX'} - ${t.pelanggan || 'Pelanggan'} (${t.plat || '-'}) ${statusTxt}</option>`;
+                });
             }
         }
 
@@ -316,11 +324,14 @@
             let container = document.getElementById("detailNotaBody");
 
             if (idx === "") {
-                container.innerHTML = `<p class="text-muted py-4">Silakan pilih transaksi lunas di sebelah kiri untuk menampilkan preview nota.</p>`;
+                container.innerHTML = `<p class="text-muted py-4">Silakan pilih transaksi di sebelah kiri untuk melihat preview nota.</p>`;
                 return;
             }
 
             let data = transaksi[idx];
+            let isLunas = data.pembayaranStatus === "Lunas";
+            let badgeColor = isLunas ? "bg-success" : "bg-danger";
+
             let html = `
                 <div class="d-flex justify-content-between small text-start mb-1">
                     <span>No. Nota: <strong>${data.kode || '-'}</strong></span>
@@ -352,19 +363,73 @@
                     <span>Kembali:</span>
                     <span>Rp ${Number(data.kembalian || 0).toLocaleString("id-ID")}</span>
                 </div>
-                <div class="badge bg-success text-white w-100 py-1 mb-1">LUNAS</div>
+                <div class="badge ${badgeColor} text-white w-100 py-1 mb-1">${isLunas ? 'LUNAS' : 'BELUM BAYAR'}</div>
             `;
 
             container.innerHTML = html;
         }
 
+        // 1. FUNGSI CETAK PRINT KERTAS
         function prosesCetak() {
             let idx = document.getElementById("selectNota").value;
             if (idx === "") {
-                alert("Pilih transaksi lunas yang ingin dicetak terlebih dahulu!");
+                alert("Pilih transaksi terlebih dahulu!");
                 return;
             }
             window.print();
+        }
+
+        // 2. FUNGSI KIRIM NOTA STRUK RAPI KE WHATSAPP
+        function kirimWA() {
+            let idx = document.getElementById("selectNota").value;
+            if (idx === "") {
+                alert("Pilih transaksi terlebih dahulu!");
+                return;
+            }
+
+            let data = transaksi[idx];
+            
+            // Format Pesan Monospace agar rapi presisi
+            let pesan = `*WANTOwash - NOTA PEMBAYARAN*
+Jl. Raya Utama No. 123 - Telp/WA: 0812-3456-7890
+--------------------------------
+
+\`\`\`
+No. Nota  : ${data.kode || '-'}
+Tanggal   : ${data.tanggal || '-'}
+Pelanggan : ${data.pelanggan || '-'}
+Plat No.  : ${data.plat || '-'}
+--------------------------------
+Layanan   : ${data.paket || 'Cuci Motor'}
+Total     : Rp ${Number(data.total || 0).toLocaleString("id-ID")}
+Metode    : ${data.metodeBayar || 'Cash'}
+Bayar     : Rp ${Number(data.jumlahBayar || data.total || 0).toLocaleString("id-ID")}
+Kembali   : Rp ${Number(data.kembalian || 0).toLocaleString("id-ID")}
+--------------------------------
+Status    : ${data.pembayaranStatus || 'LUNAS'}
+\`\`\`
+
+Terima kasih telah mencuci kendaraan Anda di *WANTOwash*! 🙏`;
+
+            let url = `https://api.whatsapp.com/send?text=${encodeURIComponent(pesan)}`;
+            window.open(url, '_blank');
+        }
+
+        // 3. FUNGSI DOWNLOAD NOTA MENJADI GAMBAR PNG
+        function downloadGambar() {
+            let idx = document.getElementById("selectNota").value;
+            if (idx === "") {
+                alert("Pilih transaksi terlebih dahulu!");
+                return;
+            }
+
+            let area = document.getElementById("areaNota");
+            html2canvas(area).then(canvas => {
+                let link = document.createElement('a');
+                link.download = `Nota-${transaksi[idx].kode || 'WANTOwash'}.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+            });
         }
 
         function logout() {
@@ -375,7 +440,6 @@
             }
         }
 
-        // Panggil otomatis saat halaman dimuat
         document.addEventListener("DOMContentLoaded", function () {
             muatOptionNota();
         });
