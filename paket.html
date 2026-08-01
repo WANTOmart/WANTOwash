@@ -346,10 +346,10 @@
                         <div class="mb-3">
                             <label class="form-label fw-semibold text-secondary">Kategori Motor</label>
                             <select id="kategoriMotor" class="form-select rounded-3" required>
-                                <option value="Matic Biasa">Matic Biasa (Beat, Mio, Vario, dll)</option>
-                                <option value="Matic Besar">Matic Besar (N-MAX, PCX, ADV, Aerox)</option>
-                                <option value="Motor Biasa">Motor Laki Biasa (Bebek, Supra, dll)</option>
-                                <option value="Motor Sport">Motor Sport (CBR, R15, Ninja, Vixion)</option>
+                                <option value="Matic Biasa (Beat, Mio, Vario, dll)">Matic Biasa (Beat, Mio, Vario, dll)</option>
+                                <option value="Matic Besar (N-MAX, PCX, ADV, Aerox)">Matic Besar (N-MAX, PCX, ADV, Aerox)</option>
+                                <option value="Motor Biasa (Bebek, Supra, dll)">Motor Laki Biasa (Bebek, Supra, dll)</option>
+                                <option value="Motor Sport (CBR, R15, Ninja, Vixion)">Motor Sport (CBR, R15, Ninja, Vixion)</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -392,10 +392,10 @@
         }
 
         let defaultPaket = [
-            { nama: "Cuci  (S)", kategori: "Matic Biasa", (Beat, Mio, Vario, dll)", harga: 20000, deskripsi: "Cuci Bersih " },
-            { nama: "Cuci  (S)", kategori: "motor Biasa", (Laki, bebek, dll)", harga: 20000, deskripsi: "Cuci Bersih " },
-            { nama: "Cuci (L)", kategori: "Matic Besar" ,(N-MAX, PCX, ADV, Aerox)", harga: 25000, deskripsi: "Cuci Besih" },
-            { nama: "Cuci (XL)", kategori: "Motor Sport",(CBR, R15, Ninja, Vixion)", harga: 30000, deskripsi: "Cuci Besih" }
+            { nama: "Cuci (S)", kategori: "Matic Biasa (Beat, Mio, Vario, dll)", harga: 20000, deskripsi: "Cuci Bersih" },
+            { nama: "Cuci (S)", kategori: "Motor Biasa (Laki, Bebek, dll)", harga: 20000, deskripsi: "Cuci Bersih" },
+            { nama: "Cuci (L)", kategori: "Matic Besar (N-MAX, PCX, ADV, Aerox)", harga: 25000, deskripsi: "Cuci Bersih" },
+            { nama: "Cuci (XL)", kategori: "Motor Sport (CBR, R15, Ninja, Vixion)", harga: 30000, deskripsi: "Cuci Bersih" }
         ];
 
         let paket = JSON.parse(localStorage.getItem("paket")) || defaultPaket;
