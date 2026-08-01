@@ -1,386 +1,390 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WANTO Wash - Dashboard Kasir</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <title>Data & Penggajian Karyawan - WANTOwash</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- RESET & BASIC STYLES --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            -webkit-tap-highlight-color: transparent;
+        :root {
+            --primary-blue: #0d6efd;
+            --sidebar-width: 260px;
         }
 
         body {
-            background: #f4f6f9;
-            color: #333;
-            min-height: 100vh;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f4f6f9;
+            color: #2c3e50;
         }
 
-        /* --- MOBILE NAVBAR HEADER --- */
-        .mobile-navbar {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 60px;
-            background: #111827;
-            color: white;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            z-index: 1001;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-
-        .mobile-navbar .menu-toggle {
-            font-size: 22px;
-            cursor: pointer;
-            color: white;
-            background: none;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-        }
-
-        .mobile-navbar .menu-toggle:active {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .mobile-navbar .brand-name {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ff3b3b;
-            letter-spacing: 0.5px;
-        }
-
-        .mobile-navbar .brand-name span {
-            color: #2196f3;
-        }
-
-        /* --- SIDEBAR NAVIGASI --- */
+        /* Sidebar Styling */
         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
-            width: 250px;
-            height: 100%;
-            background: #111827;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #0d6efd 0%, #0a58ca 100%);
             color: white;
-            z-index: 1000;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow-y: auto;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
         }
 
-        .logo {
+        .sidebar .brand-container {
             padding: 20px 15px;
-            text-align: center;
-            border-bottom: 1px solid #1f2937;
+            background: rgba(0, 0, 0, 0.1);
         }
 
-        .logo img {
-            width: 75px;
-            height: auto;
-            margin-bottom: 10px;
-            border-radius: 8px;
-        }
-
-        .logo h2 {
-            color: #ff3b3b;
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .logo span {
-            color: #2196f3;
-        }
-
-        .logo small {
-            color: #9ca3af;
-            font-size: 12px;
-            display: block;
-            margin-top: 2px;
-        }
-
-        .menu {
-            list-style: none;
-            margin-top: 10px;
-        }
-
-        .menu li {
-            border-bottom: 1px solid #1f2937;
-        }
-
-        .menu li a {
+        .sidebar .nav-link-custom {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 14px 20px;
-            color: #d1d5db;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.85);
             text-decoration: none;
-            font-size: 15px;
-            transition: background 0.2s, color 0.2s;
+            font-weight: 500;
+            border-left: 4px solid transparent;
+            transition: all 0.2s ease;
         }
 
-        .menu li a i {
-            width: 20px;
-            text-align: center;
-            font-size: 16px;
+        .sidebar .nav-link-custom:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.12);
         }
 
-        .menu li a:hover, .menu li.active a {
-            background: #dc3545;
-            color: white;
+        .sidebar .nav-link-custom.active {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.2);
+            border-left-color: #ffd54f;
+            font-weight: 600;
         }
 
-        /* --- OVERLAY MOBILE --- */
+        /* Main Content */
+        .content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .custom-card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .mobile-header {
+            display: none;
+        }
+
         .overlay {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(2px);
-            z-index: 999;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            z-index: 998;
         }
 
-        .overlay.active {
-            display: block;
-            opacity: 1;
-        }
-
-        /* --- CONTENT MAIN AREA --- */
-        .content {
-            margin-left: 250px;
-            padding: 25px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .header {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.04);
-            margin-bottom: 20px;
-        }
-
-        .header h1 {
-            font-size: 22px;
-            color: #111827;
-        }
-
-        .header p {
-            color: #6b7280;
-            font-size: 14px;
-            margin-top: 4px;
-        }
-
-        /* --- STATISTIC CARDS GRID --- */
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.04);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .card-info {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .card h3 {
-            font-size: 26px;
-            margin-top: 12px;
-            color: #111827;
-        }
-
-        .card p {
-            color: #6b7280;
-            font-size: 13px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .card i {
-            font-size: 28px;
-        }
-
-        .red { border-left: 4px solid #dc3545; }
-        .red i { color: #dc3545; }
-
-        .blue { border-left: 4px solid #0d6efd; }
-        .blue i { color: #0d6efd; }
-
-        .green { border-left: 4px solid #198754; }
-        .green i { color: #198754; }
-
-        .orange { border-left: 4px solid #fd7e14; }
-        .orange i { color: #fd7e14; }
-
-        /* --- TABEL TRANSAKSI --- */
-        .table-container {
-            margin-top: 25px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.04);
-        }
-
-        .table-container h2 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #111827;
-        }
-
-        .table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            border-radius: 6px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 550px;
-        }
-
-        table th {
-            background: #dc3545;
-            color: white;
-            padding: 12px 15px;
-            text-align: left;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #f3f4f6;
-            font-size: 14px;
-            color: #374151;
-        }
-
-        table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .badge-success { background: #d1e7dd; color: #0f5132; }
-        .badge-warning { background: #fff3cd; color: #664d03; }
-
-        .btn-action {
-            margin-top: 20px;
-            padding: 12px 20px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.2s, transform 0.1s;
-        }
-
-        .btn-action:active {
-            transform: scale(0.98);
-        }
-
-        .btn-action:hover {
-            background: #bb2d3b;
-        }
-
-        /* --- RESPONSIVE MOBILE & TABLET RULES --- */
-        @media (max-width: 768px) {
-            .mobile-navbar {
-                display: flex;
-            }
-
+        @media (max-width: 991.98px) {
             .sidebar {
-                transform: translateX(-100%);
+                left: calc(-1 * var(--sidebar-width));
             }
 
             .sidebar.active {
-                transform: translateX(0);
+                left: 0;
             }
 
             .content {
                 margin-left: 0;
-                padding: 75px 15px 20px 15px;
+                padding: 20px 15px;
             }
 
-            .cards {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
+            .mobile-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #0d6efd;
+                color: white;
+                padding: 12px 20px;
+                position: sticky;
+                top: 0;
+                z-index: 999;
             }
 
-            .card {
-                padding: 15px;
-            }
-
-            .card h3 {
-                font-size: 20px;
-            }
-
-            .card p {
-                font-size: 11px;
-            }
-
-            .card i {
-                font-size: 22px;
-            }
-
-            .header {
-                padding: 15px;
-            }
-
-            .header h1 {
-                font-size: 18px;
-            }
-
-            .table-container {
-                padding: 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .cards {
-                grid-template-columns: 1fr;
-            }
-
-            .btn-action {
-                width: 100%;
-                justify-content: center;
+            .overlay.active {
+                display: block;
             }
         }
     </style>
+</head>
+
+<body>
+
+    <div class="mobile-header shadow-sm">
+        <button class="btn text-white p-0 border-0" onclick="toggleSidebar()">
+            <i class="bi bi-list fs-1"></i>
+        </button>
+        <h4 class="m-0 fw-bold">WANTO<span class="text-warning">wash</span></h4>
+        <div style="width: 32px;"></div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <aside class="sidebar d-flex flex-column" id="sidebar">
+        <div class="brand-container text-center">
+            <img src="img/logo.jpeg" alt="Logo WANTOwash" class="shadow-sm mb-2"
+                style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid white;"
+                onerror="this.onerror=null; this.src='https://via.placeholder.com/70?text=Wash';">
+            <h4 class="m-0 fw-bold">WANTO<span class="text-warning">wash</span></h4>
+        </div>
+
+        <nav class="nav flex-column my-3 flex-grow-1">
+            <a href="dashboard.html" class="nav-link-custom"><i class="bi bi-speedometer2 me-3 fs-5"></i> Dashboard</a>
+            <a href="pelanggan.html" class="nav-link-custom"><i class="bi bi-people me-3 fs-5"></i> Data Pelanggan</a>
+            <a href="motor.html" class="nav-link-custom"><i class="bi bi-bicycle me-3 fs-5"></i> Data Motor</a>
+            <a href="paket.html" class="nav-link-custom"><i class="bi bi-tags me-3 fs-5"></i> Paket Cuci</a>
+            <a href="transaksi.html" class="nav-link-custom"><i class="bi bi-cart-check me-3 fs-5"></i> Transaksi</a>
+            <a href="pembayaran.html" class="nav-link-custom"><i class="bi bi-cash-stack me-3 fs-5"></i> Pembayaran</a>
+            <a href="nota.html" class="nav-link-custom"><i class="bi bi-printer me-3 fs-5"></i> Cetak Nota</a>
+            <a href="laporan.html" class="nav-link-custom"><i class="bi bi-bar-chart me-3 fs-5"></i> Laporan</a>
+            <a href="karyawan.html" class="nav-link-custom active"><i class="bi bi-person-badge me-3 fs-5"></i> Karyawan</a>
+            <a href="pengaturan.html" class="nav-link-custom"><i class="bi bi-gear me-3 fs-5"></i> Pengaturan</a>
+        </nav>
+
+        <div class="p-3 border-top border-white-10">
+            <a href="#" onclick="logout()" class="nav-link-custom text-danger bg-white bg-opacity-10 rounded-3">
+                <i class="bi bi-box-arrow-right me-3 fs-5"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+    <main class="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold mb-1"><i class="bi bi-person-badge text-primary me-2"></i>Kelola Karyawan & Penggajian</h3>
+                <p class="text-muted mb-0">Atur jumlah karyawan aktif dan hitung pembagian gaji 40% secara adil</p>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card custom-card p-3 bg-primary text-white">
+                    <span class="small">Total Karyawan Aktif</span>
+                    <h3 class="fw-bold m-0" id="statTotalKaryawan">0 Orang</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card custom-card p-3 bg-dark text-white">
+                    <span class="small">Total Ombat / Pendapatan Kotor</span>
+                    <h3 class="fw-bold m-0" id="statTotalOmset">Rp 0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card custom-card p-3 bg-warning text-dark">
+                    <span class="small">Total Hak Karyawan (40%)</span>
+                    <h3 class="fw-bold m-0" id="statGajiTotal">Rp 0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card custom-card p-3 bg-success text-white">
+                    <span class="small">Gaji Diterima Per Orang</span>
+                    <h3 class="fw-bold m-0" id="statGajiPerOrang">Rp 0</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="card custom-card p-4">
+                    <h5 class="fw-bold mb-3" id="formTitle"><i class="bi bi-person-plus me-2 text-primary"></i>Tambah Karyawan</h5>
+                    <form id="formKaryawan" onsubmit="simpanKaryawan(event)">
+                        <input type="hidden" id="editIndex" value="-1">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nama Karyawan <span class="text-danger">*</span></label>
+                            <input type="text" id="namaKaryawan" class="form-control" placeholder="Contoh: Budi Prasetyo" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">No. WhatsApp / HP</label>
+                            <input type="text" id="hpKaryawan" class="form-control" placeholder="Contoh: 08123456789">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Jabatan / Posisi</label>
+                            <select id="jabatanKaryawan" class="form-select">
+                                <option value="Tukang Cuci">Tukang Cuci Motor</option>
+                                <option value="Kasir">Kasir</option>
+                                <option value="Kepala Washer">Kepala Washer</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary fw-semibold" id="btnSubmit">
+                                <i class="bi bi-save me-1"></i> Simpan Data Karyawan
+                            </button>
+                            <button type="button" class="btn btn-secondary fw-semibold" onclick="resetForm()" id="btnReset" style="display: none;">
+                                Batal Edit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card custom-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold m-0"><i class="bi bi-people me-2 text-primary"></i>Daftar Karyawan & Pembagian Gaji</h5>
+                        <button class="btn btn-sm btn-outline-success fw-semibold" onclick="kirimRincianGajiWA()">
+                            <i class="bi bi-whatsapp me-1"></i> Kirim Rincian Gaji ke WA
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Karyawan</th>
+                                    <th>Jabatan</th>
+                                    <th>No. HP</th>
+                                    <th class="text-end">Estimasi Gaji (Rp)</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelKaryawanBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("active");
+            document.getElementById("overlay").classList.toggle("active");
+        }
+
+        if (localStorage.getItem("login") !== "true") {
+            location.href = "login.html";
+        }
+
+        let karyawan = JSON.parse(localStorage.getItem("karyawan")) || [];
+        let transaksi = JSON.parse(localStorage.getItem("transaksi")) || [];
+
+        function hitungTotalOmsetLunas() {
+            let total = 0;
+            transaksi.forEach(t => {
+                if (t.pembayaranStatus === "Lunas" || t.status === "Selesai") {
+                    total += Number(t.total) || 0;
+                }
+            });
+            return total;
+        }
+
+        function muatKaryawan() {
+            let tbody = document.getElementById("tabelKaryawanBody");
+            tbody.innerHTML = "";
+
+            let omsetLunas = hitungTotalOmsetLunas();
+            let totalGaji40 = omsetLunas * 0.40;
+            let jumlahKaryawan = karyawan.length;
+            let gajiPerKaryawan = jumlahKaryawan > 0 ? (totalGaji40 / jumlahKaryawan) : 0;
+
+            // Update Statistik Card
+            document.getElementById("statTotalKaryawan").innerText = `${jumlahKaryawan} Orang`;
+            document.getElementById("statTotalOmset").innerText = "Rp " + omsetLunas.toLocaleString("id-ID");
+            document.getElementById("statGajiTotal").innerText = "Rp " + totalGaji40.toLocaleString("id-ID");
+            document.getElementById("statGajiPerOrang").innerText = "Rp " + Math.floor(gajiPerKaryawan).toLocaleString("id-ID");
+
+            if (jumlahKaryawan === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Belum ada data karyawan. Silakan tambah karyawan di sebelah kiri.</td></tr>`;
+            } else {
+                karyawan.forEach((k, idx) => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${idx + 1}</td>
+                            <td class="fw-bold">${k.nama}</td>
+                            <td><span class="badge bg-info text-dark">${k.jabatan}</span></td>
+                            <td>${k.hp || '-'}</td>
+                            <td class="text-end fw-bold text-success">Rp ${Math.floor(gajiPerKaryawan).toLocaleString("id-ID")}</td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-warning text-white me-1" onclick="editKaryawan(${idx})"><i class="bi bi-pencil-square"></i></button>
+                                <button class="btn btn-sm btn-danger" onclick="hapusKaryawan(${idx})"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+
+        function simpanKaryawan(e) {
+            e.preventDefault();
+            let nama = document.getElementById("namaKaryawan").value;
+            let hp = document.getElementById("hpKaryawan").value;
+            let jabatan = document.getElementById("jabatanKaryawan").value;
+            let editIdx = document.getElementById("editIndex").value;
+
+            if (editIdx == "-1") {
+                karyawan.push({ nama, hp, jabatan });
+            } else {
+                karyawan[editIdx] = { nama, hp, jabatan };
+            }
+
+            localStorage.setItem("karyawan", JSON.stringify(karyawan));
+            resetForm();
+            muatKaryawan();
+        }
+
+        function editKaryawan(idx) {
+            let k = karyawan[idx];
+            document.getElementById("namaKaryawan").value = k.nama;
+            document.getElementById("hpKaryawan").value = k.hp;
+            document.getElementById("jabatanKaryawan").value = k.jabatan;
+            document.getElementById("editIndex").value = idx;
+
+            document.getElementById("formTitle").innerHTML = '<i class="bi bi-pencil-square me-2 text-warning"></i>Edit Data Karyawan';
+            document.getElementById("btnSubmit").className = "btn btn-warning text-white fw-semibold";
+            document.getElementById("btnSubmit").innerHTML = '<i class="bi bi-check-circle me-1"></i> Update Karyawan';
+            document.getElementById("btnReset").style.display = "block";
+        }
+
+        function resetForm() {
+            document.getElementById("formKaryawan").reset();
+            document.getElementById("editIndex").value = "-1";
+            document.getElementById("formTitle").innerHTML = '<i class="bi bi-person-plus me-2 text-primary"></i>Tambah Karyawan';
+            document.getElementById("btnSubmit").className = "btn btn-primary fw-semibold";
+            document.getElementById("btnSubmit").innerHTML = '<i class="bi bi-save me-1"></i> Simpan Data Karyawan';
+            document.getElementById("btnReset").style.display = "none";
+        }
+
+        function hapusKaryawan(idx) {
+            if (confirm("Apakah Anda yakin ingin menghapus data karyawan ini?")) {
+                karyawan.splice(idx, 1);
+                localStorage.setItem("karyawan", JSON.stringify(karyawan));
+                muatKaryawan();
+            }
+        }
+
+        function kirimRincianGajiWA() {
+            let omsetLunas = hitungTotalOmsetLunas();
+            let totalGaji40 = omsetLunas * 0.40;
+            let jumlahKaryawan = karyawan.length;
+            let gajiPerKaryawan = jumlahKaryawan > 0 ? Math.floor(totalGaji40 / jumlahKaryawan) : 0;
+
+            let listKaryawan = "";
+            karyawan.forEach((k, i) => {
+                listKaryawan += `${i + 1}. ${k.nama} (${k.jabatan}) -> Rp ${gajiPerKaryawan.toLocaleString("id-ID")}\n`;
