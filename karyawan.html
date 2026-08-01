@@ -171,7 +171,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h3 class="fw-bold mb-1"><i class="bi bi-person-badge text-primary me-2"></i>Kelola Karyawan & Penggajian</h3>
-                <p class="text-muted mb-0">Atur jumlah karyawan aktif dan hitung pembagian gaji 40% secara adil</p>
+                <p class="text-muted mb-0">Atur karyawan aktif dan hitung pembagian gaji 40% secara adil</p>
             </div>
         </div>
 
@@ -184,7 +184,7 @@
             </div>
             <div class="col-md-3">
                 <div class="card custom-card p-3 bg-dark text-white">
-                    <span class="small">Total Ombat / Pendapatan Kotor</span>
+                    <span class="small">Total Pendapatan (Omset)</span>
                     <h3 class="fw-bold m-0" id="statTotalOmset">Rp 0</h3>
                 </div>
             </div>
@@ -196,7 +196,7 @@
             </div>
             <div class="col-md-3">
                 <div class="card custom-card p-3 bg-success text-white">
-                    <span class="small">Gaji Diterima Per Orang</span>
+                    <span class="small">Gaji Diterima / Orang</span>
                     <h3 class="fw-bold m-0" id="statGajiPerOrang">Rp 0</h3>
                 </div>
             </div>
@@ -206,7 +206,8 @@
             <div class="col-lg-4">
                 <div class="card custom-card p-4">
                     <h5 class="fw-bold mb-3" id="formTitle"><i class="bi bi-person-plus me-2 text-primary"></i>Tambah Karyawan</h5>
-                    <form id="formKaryawan" onsubmit="simpanKaryawan(event)">
+                    
+                    <form id="formKaryawan" onsubmit="event.preventDefault(); simpanKaryawan();">
                         <input type="hidden" id="editIndex" value="-1">
 
                         <div class="mb-3">
@@ -282,7 +283,8 @@
             location.href = "login.html";
         }
 
-        let karyawan = JSON.parse(localStorage.getItem("karyawan")) || [];
+        // Ambil Data Karyawan dan Transaksi
+        let dataKaryawan = JSON.parse(localStorage.getItem("dataKaryawan")) || JSON.parse(localStorage.getItem("karyawan")) || [];
         let transaksi = JSON.parse(localStorage.getItem("transaksi")) || [];
 
         function hitungTotalOmsetLunas() {
@@ -301,29 +303,29 @@
 
             let omsetLunas = hitungTotalOmsetLunas();
             let totalGaji40 = omsetLunas * 0.40;
-            let jumlahKaryawan = karyawan.length;
+            let jumlahKaryawan = dataKaryawan.length;
             let gajiPerKaryawan = jumlahKaryawan > 0 ? (totalGaji40 / jumlahKaryawan) : 0;
 
-            // Update Statistik Card
+            // Update Statistik Top Cards
             document.getElementById("statTotalKaryawan").innerText = `${jumlahKaryawan} Orang`;
             document.getElementById("statTotalOmset").innerText = "Rp " + omsetLunas.toLocaleString("id-ID");
             document.getElementById("statGajiTotal").innerText = "Rp " + totalGaji40.toLocaleString("id-ID");
             document.getElementById("statGajiPerOrang").innerText = "Rp " + Math.floor(gajiPerKaryawan).toLocaleString("id-ID");
 
             if (jumlahKaryawan === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Belum ada data karyawan. Silakan tambah karyawan di sebelah kiri.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Belum ada data karyawan. Silakan isi form di sebelah kiri.</td></tr>`;
             } else {
-                karyawan.forEach((k, idx) => {
+                dataKaryawan.forEach((k, idx) => {
                     tbody.innerHTML += `
                         <tr>
                             <td>${idx + 1}</td>
                             <td class="fw-bold">${k.nama}</td>
-                            <td><span class="badge bg-info text-dark">${k.jabatan}</span></td>
+                            <td><span class="badge bg-info text-dark">${k.jabatan || 'Tukang Cuci'}</span></td>
                             <td>${k.hp || '-'}</td>
                             <td class="text-end fw-bold text-success">Rp ${Math.floor(gajiPerKaryawan).toLocaleString("id-ID")}</td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-warning text-white me-1" onclick="editKaryawan(${idx})"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-sm btn-danger" onclick="hapusKaryawan(${idx})"><i class="bi bi-trash"></i></button>
+                                <button type="button" class="btn btn-sm btn-warning text-white me-1" onclick="editKaryawan(${idx})"><i class="bi bi-pencil-square"></i></button>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="hapusKaryawan(${idx})"><i class="bi bi-trash"></i></button>
                             </td>
                         </tr>
                     `;
@@ -331,29 +333,37 @@
             }
         }
 
-        function simpanKaryawan(e) {
-            e.preventDefault();
-            let nama = document.getElementById("namaKaryawan").value;
-            let hp = document.getElementById("hpKaryawan").value;
+        function simpanKaryawan() {
+            let nama = document.getElementById("namaKaryawan").value.trim();
+            let hp = document.getElementById("hpKaryawan").value.trim();
             let jabatan = document.getElementById("jabatanKaryawan").value;
             let editIdx = document.getElementById("editIndex").value;
 
-            if (editIdx == "-1") {
-                karyawan.push({ nama, hp, jabatan });
-            } else {
-                karyawan[editIdx] = { nama, hp, jabatan };
+            if (nama === "") {
+                alert("Nama Karyawan wajib diisi!");
+                return;
             }
 
-            localStorage.setItem("karyawan", JSON.stringify(karyawan));
+            if (editIdx == "-1") {
+                dataKaryawan.push({ nama: nama, hp: hp, jabatan: jabatan });
+            } else {
+                dataKaryawan[editIdx] = { nama: nama, hp: hp, jabatan: jabatan };
+            }
+
+            // Simpan ke LocalStorage menggunakan dua kunci agar selalu tersinkron
+            localStorage.setItem("dataKaryawan", JSON.stringify(dataKaryawan));
+            localStorage.setItem("karyawan", JSON.stringify(dataKaryawan));
+
+            alert("Data Karyawan Berhasil Disimpan!");
             resetForm();
             muatKaryawan();
         }
 
         function editKaryawan(idx) {
-            let k = karyawan[idx];
+            let k = dataKaryawan[idx];
             document.getElementById("namaKaryawan").value = k.nama;
-            document.getElementById("hpKaryawan").value = k.hp;
-            document.getElementById("jabatanKaryawan").value = k.jabatan;
+            document.getElementById("hpKaryawan").value = k.hp || "";
+            document.getElementById("jabatanKaryawan").value = k.jabatan || "Tukang Cuci";
             document.getElementById("editIndex").value = idx;
 
             document.getElementById("formTitle").innerHTML = '<i class="bi bi-pencil-square me-2 text-warning"></i>Edit Data Karyawan';
@@ -373,8 +383,9 @@
 
         function hapusKaryawan(idx) {
             if (confirm("Apakah Anda yakin ingin menghapus data karyawan ini?")) {
-                karyawan.splice(idx, 1);
-                localStorage.setItem("karyawan", JSON.stringify(karyawan));
+                dataKaryawan.splice(idx, 1);
+                localStorage.setItem("dataKaryawan", JSON.stringify(dataKaryawan));
+                localStorage.setItem("karyawan", JSON.stringify(dataKaryawan));
                 muatKaryawan();
             }
         }
@@ -382,9 +393,51 @@
         function kirimRincianGajiWA() {
             let omsetLunas = hitungTotalOmsetLunas();
             let totalGaji40 = omsetLunas * 0.40;
-            let jumlahKaryawan = karyawan.length;
+            let jumlahKaryawan = dataKaryawan.length;
             let gajiPerKaryawan = jumlahKaryawan > 0 ? Math.floor(totalGaji40 / jumlahKaryawan) : 0;
 
+            if (jumlahKaryawan === 0) {
+                alert("Belum ada data karyawan!");
+                return;
+            }
+
             let listKaryawan = "";
-            karyawan.forEach((k, i) => {
-                listKaryawan += `${i + 1}. ${k.nama} (${k.jabatan}) -> Rp ${gajiPerKaryawan.toLocaleString("id-ID")}\n`;
+            dataKaryawan.forEach((k, i) => {
+                listKaryawan += `${i + 1}. ${k.nama} (${k.jabatan || 'Tukang Cuci'}) -> Rp ${gajiPerKaryawan.toLocaleString("id-ID")}\n`;
+            });
+
+            let pesan = `*WANTOwash - RINCIAN PENGAJIAN KARYAWAN*
+Jl. Raya Utama No. 123 - Telp/WA: 0812-3456-7890
+--------------------------------
+
+\`\`\`
+Total Omset Wash  : Rp ${omsetLunas.toLocaleString("id-ID")}
+Hak Karyawan 40%  : Rp ${totalGaji40.toLocaleString("id-ID")}
+Jumlah Karyawan   : ${jumlahKaryawan} Orang
+--------------------------------
+Gaji Per Orang    : Rp ${gajiPerKaryawan.toLocaleString("id-ID")}
+\`\`\`
+
+Daftar Penerima:
+${listKaryawan}
+Terima kasih atas kerja keras seluruh tim *WANTOwash*! 🛵💨`;
+
+            let url = `https://api.whatsapp.com/send?text=${encodeURIComponent(pesan)}`;
+            window.open(url, '_blank');
+        }
+
+        function logout() {
+            if (confirm("Apakah Anda yakin ingin keluar dari sistem?")) {
+                localStorage.removeItem("login");
+                localStorage.removeItem("username");
+                location.href = "login.html";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            muatKaryawan();
+        });
+    </script>
+</body>
+
+</html>
