@@ -4,12 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Keuangan & Bagi Hasil - WANTOwash</title>
+    <title>Laporan Keuangan - WANTOwash</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
         :root {
@@ -79,7 +80,6 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
         }
 
-        /* DESAIN BOX LAPORAN */
         .laporan-box {
             position: relative;
             background: #ffffff;
@@ -90,7 +90,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
 
-        /* Responsive Mobile Layout */
+        /* Mobile Header */
         .mobile-header {
             display: none;
         }
@@ -209,18 +209,47 @@
         <div class="d-flex justify-content-between align-items-center mb-4 no-print">
             <div>
                 <h3 class="fw-bold mb-1"><i class="bi bi-bar-chart text-primary me-2"></i>Laporan Keuangan & Bagi Hasil</h3>
-                <p class="text-muted mb-0">Penghitungan Laba Kotor, Gaji Karyawan (40%), dan Laba Bersih Pemilik (60%)</p>
+                <p class="text-muted mb-0">Laporan Harian & Bulanan Bagi Hasil Karyawan (40%) & Pemilik (60%)</p>
             </div>
             <div>
-                <button class="btn btn-primary fw-semibold me-1" onclick="window.print()">
-                    <i class="bi bi-printer me-1"></i> Print Laporan
+                <button class="btn btn-success fw-semibold me-1" onclick="exportExcel()">
+                    <i class="bi bi-file-earmark-excel me-1"></i> Cetak Excel
                 </button>
-                <button class="btn btn-success fw-semibold me-1" onclick="kirimWALaporan()">
-                    <i class="bi bi-whatsapp me-1"></i> Kirim WA
+                <button class="btn btn-primary fw-semibold me-1" onclick="window.print()">
+                    <i class="bi bi-printer me-1"></i> Print Kertas
+                </button>
+                <button class="btn btn-outline-success fw-semibold me-1" onclick="kirimWALaporan()">
+                    <i class="bi bi-whatsapp me-1"></i> WA
                 </button>
                 <button class="btn btn-dark fw-semibold" onclick="downloadPNG()">
-                    <i class="bi bi-file-image me-1"></i> Download PNG
+                    <i class="bi bi-file-image me-1"></i> PNG
                 </button>
+            </div>
+        </div>
+
+        <div class="card custom-card p-3 mb-4 no-print">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Pilih Jenis Laporan</label>
+                    <select id="filterJenis" class="form-select" onchange="gantiFilterJenis()">
+                        <option value="semua">Semua Transaksi</option>
+                        <option value="harian">Laporan Harian</option>
+                        <option value="bulanan">Laporan Bulanan</option>
+                    </select>
+                </div>
+                <div class="col-md-3" id="boxFilterTanggal" style="display: none;">
+                    <label class="form-label fw-semibold">Pilih Tanggal</label>
+                    <input type="date" id="filterTanggal" class="form-control" onchange="muatLaporan()">
+                </div>
+                <div class="col-md-3" id="boxFilterBulan" style="display: none;">
+                    <label class="form-label fw-semibold">Pilih Bulan & Tahun</label>
+                    <input type="month" id="filterBulan" class="form-control" onchange="muatLaporan()">
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-secondary w-100 fw-semibold" onclick="resetFilter()">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Filter
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -233,13 +262,13 @@
             </div>
             <div class="col-md-3">
                 <div class="card custom-card p-3 bg-dark text-white">
-                    <span class="small">Laba Kotor (Pendapatan Total)</span>
+                    <span class="small">Laba Kotor (Pendapatan)</span>
                     <h3 class="fw-bold m-0" id="statLabaKotor">Rp 0</h3>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card custom-card p-3 bg-warning text-dark">
-                    <span class="small">Bagian Karyawan (40%)</span>
+                    <span class="small">Gaji Karyawan (40%)</span>
                     <h3 class="fw-bold m-0" id="statKaryawan">Rp 0</h3>
                 </div>
             </div>
@@ -255,11 +284,11 @@
             <div class="text-center mb-4">
                 <h3 class="fw-bold m-0">WANTO<span class="text-warning">wash</span></h3>
                 <p class="text-muted mb-1">Jl. Raya Utama No. 123 - Telp/WA: 0812-3456-7890</p>
-                <h5 class="fw-bold text-uppercase border-top border-bottom py-2 mt-2">LAPORAN LABA & BAGI HASIL KARYAWAN (60:40)</h5>
+                <h5 class="fw-bold text-uppercase border-top border-bottom py-2 mt-2" id="judulLaporanTeks">LAPORAN LABA & BAGI HASIL KARYAWAN (60:40)</h5>
             </div>
 
             <div class="table-responsive mb-4">
-                <table class="table table-striped table-bordered align-middle">
+                <table class="table table-striped table-bordered align-middle" id="tabelExcel">
                     <thead class="table-primary text-center">
                         <tr>
                             <th style="width: 50px;">No</th>
@@ -317,6 +346,36 @@
         let globalLabaBersih = 0;
         let totalCount = 0;
 
+        // Inisialisasi Tanggal Hari Ini & Bulan Ini di Input Filter
+        let today = new Date().toISOString().split('T')[0];
+        let thisMonth = new Date().toISOString().slice(0, 7);
+        document.getElementById("filterTanggal").value = today;
+        document.getElementById("filterBulan").value = thisMonth;
+
+        function gantiFilterJenis() {
+            let jenis = document.getElementById("filterJenis").value;
+            let boxTanggal = document.getElementById("boxFilterTanggal");
+            let boxBulan = document.getElementById("boxFilterBulan");
+
+            if (jenis === "harian") {
+                boxTanggal.style.display = "block";
+                boxBulan.style.display = "none";
+            } else if (jenis === "bulanan") {
+                boxTanggal.style.display = "none";
+                boxBulan.style.display = "block";
+            } else {
+                boxTanggal.style.display = "none";
+                boxBulan.style.display = "none";
+            }
+
+            muatLaporan();
+        }
+
+        function resetFilter() {
+            document.getElementById("filterJenis").value = "semua";
+            gantiFilterJenis();
+        }
+
         function muatLaporan() {
             let tbody = document.getElementById("tabelLaporanBody");
             tbody.innerHTML = "";
@@ -326,12 +385,37 @@
             globalLabaBersih = 0;
             totalCount = 0;
 
-            let transaksiLunas = transaksi.filter(t => t.pembayaranStatus === "Lunas" || t.status === "Selesai");
+            let jenis = document.getElementById("filterJenis").value;
+            let filterTgl = document.getElementById("filterTanggal").value;
+            let filterBln = document.getElementById("filterBulan").value;
 
-            if (transaksiLunas.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">Belum ada transaksi lunas untuk dilaporkan.</td></tr>`;
+            // Filter transaksi berdasarkan Lunas & Jenis Filter
+            let dataFiltered = transaksi.filter(t => {
+                let isLunas = (t.pembayaranStatus === "Lunas" || t.status === "Selesai");
+                if (!isLunas) return false;
+
+                if (jenis === "harian") {
+                    return t.tanggal === filterTgl;
+                } else if (jenis === "bulanan") {
+                    return t.tanggal && t.tanggal.startsWith(filterBln);
+                }
+                return true;
+            });
+
+            // Ubah Judul Laporan
+            let judulEl = document.getElementById("judulLaporanTeks");
+            if (jenis === "harian") {
+                judulEl.innerText = `LAPORAN HARIAN LABA & BAGI HASIL (${filterTgl})`;
+            } else if (jenis === "bulanan") {
+                judulEl.innerText = `LAPORAN BULANAN LABA & BAGI HASIL (${filterBln})`;
             } else {
-                transaksiLunas.forEach((t, idx) => {
+                judulEl.innerText = `LAPORAN KESELURUHAN LABA & BAGI HASIL KARYAWAN (60:40)`;
+            }
+
+            if (dataFiltered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">Tidak ada data transaksi lunas pada periode ini.</td></tr>`;
+            } else {
+                dataFiltered.forEach((t, idx) => {
                     totalCount++;
                     let totalBiaya = Number(t.total) || 0;
                     let gajiKaryawan = totalBiaya * 0.40; // 40%
@@ -356,21 +440,33 @@
                 });
             }
 
-            // Update Statistik Top Cards
+            // Update Statistik Ringkasan
             document.getElementById("statTotalTrans").innerText = totalCount;
             document.getElementById("statLabaKotor").innerText = "Rp " + globalLabaKotor.toLocaleString("id-ID");
             document.getElementById("statKaryawan").innerText = "Rp " + globalKaryawan.toLocaleString("id-ID");
             document.getElementById("statLabaBersih").innerText = "Rp " + globalLabaBersih.toLocaleString("id-ID");
 
-            // Update Footer Table
+            // Update Footer Tabel
             document.getElementById("footLabaKotor").innerText = "Rp " + globalLabaKotor.toLocaleString("id-ID");
             document.getElementById("footKaryawan").innerText = "Rp " + globalKaryawan.toLocaleString("id-ID");
             document.getElementById("footLabaBersih").innerText = "Rp " + globalLabaBersih.toLocaleString("id-ID");
         }
 
-        // FUNGSI KIRIM LAPORAN RINGKAS KE WHATSAPP
+        // 1. FUNGSI CETAK EXCEL (.XLSX)
+        function exportExcel() {
+            let table = document.getElementById("tabelExcel");
+            let wb = XLSX.utils.table_to_book(table, { sheet: "Laporan_WANTOwash" });
+            
+            let jenis = document.getElementById("filterJenis").value;
+            let fileName = `Laporan_Keuangan_${jenis}_WANTOwash.xlsx`;
+            
+            XLSX.writeFile(wb, fileName);
+        }
+
+        // 2. FUNGSI KIRIM LAPORAN KE WHATSAPP
         function kirimWALaporan() {
-            let pesan = `*WANTOwash - LAPORAN LABA & BAGI HASIL*
+            let jenis = document.getElementById("filterJenis").value;
+            let pesan = `*WANTOwash - LAPORAN KEUANGAN (${jenis.toUpperCase()})*
 Jl. Raya Utama No. 123 - Telp/WA: 0812-3456-7890
 --------------------------------
 
@@ -378,18 +474,18 @@ Jl. Raya Utama No. 123 - Telp/WA: 0812-3456-7890
 Total Transaksi : ${totalCount} Motor
 --------------------------------
 Laba Kotor      : Rp ${globalLabaKotor.toLocaleString("id-ID")}
-Gaji Karyawan (40%): Rp ${globalKaryawan.toLocaleString("id-ID")}
+Gaji Karyawan 40%: Rp ${globalKaryawan.toLocaleString("id-ID")}
 --------------------------------
-Laba Bersih (60%): Rp ${globalLabaBersih.toLocaleString("id-ID")}
+Laba Bersih 60% : Rp ${globalLabaBersih.toLocaleString("id-ID")}
 \`\`\`
 
-Laporan dibuat secara otomatis oleh sistem WANTOwash.`;
+Laporan otomatis diproses oleh sistem WANTOwash.`;
 
             let url = `https://api.whatsapp.com/send?text=${encodeURIComponent(pesan)}`;
             window.open(url, '_blank');
         }
 
-        // FUNGSI DOWNLOAD GAMBAR PNG LAPORAN
+        // 3. FUNGSI DOWNLOAD GAMBAR PNG
         function downloadPNG() {
             let area = document.getElementById("areaLaporan");
             html2canvas(area).then(canvas => {
