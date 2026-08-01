@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - WANTOwash</title>
+    <title>Transaksi Cuci - WANTOwash</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -72,45 +72,12 @@
             transition: all 0.3s ease;
         }
 
-        /* Metric Cards */
-        .card-stat {
-            border: none;
-            border-radius: 16px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .card-stat:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
-        }
-
-        .card-stat .icon-wrapper {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        /* Table Custom Styling */
         .custom-card {
             border: none;
             border-radius: 16px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
         }
 
-        .table th {
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.5px;
-            color: #6c757d;
-            background-color: #f8f9fa;
-        }
-
-        /* Responsive Mobile Layout */
         .mobile-header {
             display: none;
         }
@@ -181,14 +148,16 @@
         </div>
 
         <nav class="nav flex-column my-3 flex-grow-1">
-            <a href="dashboard.html" class="nav-link-custom active"><i class="bi bi-speedometer2 me-3 fs-5"></i> Dashboard</a>
+            <a href="dashboard.html" class="nav-link-custom"><i class="bi bi-speedometer2 me-3 fs-5"></i> Dashboard</a>
             <a href="pelanggan.html" class="nav-link-custom"><i class="bi bi-people me-3 fs-5"></i> Data Pelanggan</a>
             <a href="motor.html" class="nav-link-custom"><i class="bi bi-bicycle me-3 fs-5"></i> Data Motor</a>
             <a href="paket.html" class="nav-link-custom"><i class="bi bi-tags me-3 fs-5"></i> Paket Cuci</a>
-            <a href="transaksi.html" class="nav-link-custom"><i class="bi bi-cart-check me-3 fs-5"></i> Transaksi</a>
+            <a href="transaksi.html" class="nav-link-custom active"><i class="bi bi-cart-check me-3 fs-5"></i> Transaksi</a>
             <a href="pembayaran.html" class="nav-link-custom"><i class="bi bi-cash-stack me-3 fs-5"></i> Pembayaran</a>
+            <a href="nota.html" class="nav-link-custom"><i class="bi bi-printer me-3 fs-5"></i> Cetak Nota</a>
             <a href="laporan.html" class="nav-link-custom"><i class="bi bi-bar-chart me-3 fs-5"></i> Laporan</a>
             <a href="karyawan.html" class="nav-link-custom"><i class="bi bi-person-badge me-3 fs-5"></i> Karyawan</a>
+            <a href="pengaturan.html" class="nav-link-custom"><i class="bi bi-gear me-3 fs-5"></i> Pengaturan</a>
         </nav>
 
         <div class="p-3 border-top border-white-10">
@@ -201,239 +170,205 @@
     <main class="content">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h3 class="fw-bold mb-1"><i class="bi bi-speedometer2 text-primary me-2"></i>Dashboard Overview</h3>
-                <p class="text-muted mb-0">Selamat datang kembali, <b id="admin" class="text-dark">Admin</b></p>
+                <h3 class="fw-bold mb-1"><i class="bi bi-cart-check text-primary me-2"></i>Transaksi Cuci</h3>
+                <p class="text-muted mb-0">Input dan kelola transaksi pencucian motor</p>
             </div>
-            <button class="btn btn-white shadow-sm border border-0 rounded-3 px-3 py-2 fw-semibold" onclick="refreshDashboard()">
-                <i class="bi bi-arrow-clockwise text-primary me-1"></i> <span class="d-none d-md-inline">Refresh Data</span>
+            <button class="btn btn-primary fw-semibold" data-bs-toggle="modal" data-bs-target="#modalTransaksi">
+                <i class="bi bi-plus-lg me-1"></i> Transaksi Baru
             </button>
         </div>
 
-        <div class="row g-3 mb-4">
-            <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card card-stat bg-white shadow-sm p-3">
-                    <div class="d-flex align-items-center">
-                        <div class="icon-wrapper bg-primary bg-opacity-10 text-primary me-3">
-                            <i class="bi bi-people-fill"></i>
-                        </div>
-                        <div>
-                            <span class="text-muted small fw-medium">Total Pelanggan</span>
-                            <h3 id="jumlahPelanggan" class="fw-bold mb-0">0</h3>
-                        </div>
-                    </div>
+        <div class="card custom-card p-4">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <input type="text" id="cariInput" class="form-control" placeholder="Cari Kode / Plat / Pelanggan..." onkeyup="muatTransaksi()">
                 </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card card-stat bg-white shadow-sm p-3">
-                    <div class="d-flex align-items-center">
-                        <div class="icon-wrapper bg-info bg-opacity-10 text-info me-3">
-                            <i class="bi bi-bicycle"></i>
-                        </div>
-                        <div>
-                            <span class="text-muted small fw-medium">Total Motor</span>
-                            <h3 id="jumlahMotor" class="fw-bold mb-0">0</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card card-stat bg-white shadow-sm p-3">
-                    <div class="d-flex align-items-center">
-                        <div class="icon-wrapper bg-warning bg-opacity-10 text-warning me-3">
-                            <i class="bi bi-cart-check-fill"></i>
-                        </div>
-                        <div>
-                            <span class="text-muted small fw-medium">Total Transaksi</span>
-                            <h3 id="jumlahTransaksi" class="fw-bold mb-0">0</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card card-stat bg-white shadow-sm p-3">
-                    <div class="d-flex align-items-center">
-                        <div class="icon-wrapper bg-secondary bg-opacity-10 text-dark me-3">
-                            <i class="bi bi-person-badge-fill"></i>
-                        </div>
-                        <div>
-                            <span class="text-muted small fw-medium">Jumlah Karyawan</span>
-                            <h3 id="jumlahKaryawan" class="fw-bold mb-0">0</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12">
-                <div class="card card-stat bg-white shadow-sm p-3">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center">
-                            <div class="icon-wrapper bg-success bg-opacity-10 text-success me-3">
-                                <i class="bi bi-cash-stack"></i>
-                            </div>
-                            <div>
-                                <span class="text-muted small fw-medium">Total Pendapatan Terakumulasi</span>
-                                <h2 class="text-success fw-bold mb-0" id="pendapatan">Rp0</h2>
-                            </div>
-                        </div>
-                        <a href="laporan.html" class="btn btn-light btn-sm text-muted rounded-pill px-3 d-none d-sm-block">
-                            Lihat Rincian <i class="bi bi-chevron-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-12 col-xl-8">
-                <div class="card custom-card p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold m-0"><i class="bi bi-clock-history me-2 text-primary"></i>Transaksi Terbaru</h5>
-                        <a href="transaksi.html" class="btn btn-sm btn-link text-decoration-none">Semua Transaksi</a>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="border-0">No</th>
-                                    <th class="border-0">Tanggal</th>
-                                    <th class="border-0">Pelanggan</th>
-                                    <th class="border-0">Motor</th>
-                                    <th class="border-0">Paket</th>
-                                    <th class="border-0">Total</th>
-                                    <th class="border-0 text-center">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabelTransaksi"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-xl-4">
-                <div class="card custom-card p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold m-0"><i class="bi bi-fire me-2 text-danger"></i>Paket Terlaris</h5>
-                        <a href="paket.html" class="btn btn-sm btn-link text-decoration-none">Kelola Paket</a>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="border-0">Paket</th>
-                                    <th class="border-0 text-end">Jumlah Terjual</th>
-                                </tr>
-                            </thead>
-                            <tbody id="paketTerlaris"></tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 50px;">NO</th>
+                            <th>KODE TRANSAKSI</th>
+                            <th>TANGGAL</th>
+                            <th>PELANGGAN / PLAT</th>
+                            <th>PAKET LAYANAN</th>
+                            <th>TOTAL</th>
+                            <th>STATUS</th>
+                            <th class="text-center">AKSI</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelTransaksiBody">
+                        </tbody>
+                </table>
             </div>
         </div>
     </main>
 
+    <div class="modal fade" id="modalTransaksi" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-cart-plus me-2 text-primary"></i>Tambah Transaksi Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formTransaksi" onsubmit="event.preventDefault(); tambahTransaksi();">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nama Pelanggan <span class="text-danger">*</span></label>
+                            <input type="text" id="inputPelanggan" class="form-control" placeholder="Contoh: REGE" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Plat Nomor / Motor</label>
+                            <input type="text" id="inputPlat" class="form-control" placeholder="Contoh: N 1234 AB">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Paket Layanan <span class="text-danger">*</span></label>
+                            <select id="inputPaket" class="form-select" onchange="updateHarga()" required>
+                                <option value="cuci salju" data-harga="25000">Cuci Salju - Rp 25.000</option>
+                                <option value="cuci kilat" data-harga="15000">Cuci Kilat - Rp 15.000</option>
+                                <option value="cuci + semir" data-harga="30000">Cuci + Semir - Rp 30.000</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Total Biaya (Rp)</label>
+                            <input type="number" id="inputTotal" class="form-control fw-bold text-success" value="25000" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Status Pembayaran</label>
+                            <select id="inputStatus" class="form-select">
+                                <option value="Selesai">Selesai (Lunas)</option>
+                                <option value="Proses">Proses</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary fw-semibold">Simpan Transaksi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        // TOGGLE SIDEBAR MOBILE
         function toggleSidebar() {
             document.getElementById("sidebar").classList.toggle("active");
             document.getElementById("overlay").classList.toggle("active");
         }
 
-        // CEK LOGIN SIKLUS Halaman
         if (localStorage.getItem("login") !== "true") {
             location.href = "login.html";
         }
 
-        // ADMIN SETTER
-        document.getElementById("admin").innerText = localStorage.getItem("username") || "Admin";
+        // Ambil Data Transaksi dari LocalStorage
+        let dataTransaksi = JSON.parse(localStorage.getItem("transaksi")) || [];
 
-        // MENGAMBIL DATA LOCALSTORAGE
-        let pelanggan = JSON.parse(localStorage.getItem("pelanggan")) || [];
-        let motor = JSON.parse(localStorage.getItem("motor")) || [];
-        let transaksi = JSON.parse(localStorage.getItem("transaksi")) || [];
-        let karyawan = JSON.parse(localStorage.getItem("karyawan")) || [];
+        function muatTransaksi() {
+            let tbody = document.getElementById("tabelTransaksiBody");
+            let cari = document.getElementById("cariInput").value.toLowerCase();
+            tbody.innerHTML = "";
 
-        // ISI RINGKASAN DATA
-        document.getElementById("jumlahPelanggan").innerText = pelanggan.length;
-        document.getElementById("jumlahMotor").innerText = motor.length;
-        document.getElementById("jumlahTransaksi").innerText = transaksi.length;
-        document.getElementById("jumlahKaryawan").innerText = karyawan.length;
+            let dataFiltered = dataTransaksi.filter(t => {
+                let kode = (t.kode || "").toLowerCase();
+                let pelanggan = (t.pelanggan || t.nama || "").toLowerCase();
+                let plat = (t.plat || t.motor || "").toLowerCase();
+                return kode.includes(cari) || pelanggan.includes(cari) || plat.includes(cari);
+            });
 
-        // TOTAL PENDAPATAN
-        let total = 0;
-        transaksi.forEach(function (item) {
-            total += Number(item.total || 0);
-        });
-        document.getElementById("pendapatan").innerText = "Rp " + total.toLocaleString("id-ID");
+            if (dataFiltered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">Belum ada data transaksi.</td></tr>`;
+                return;
+            }
 
-        // RENDER TABEL TRANSAKSI TERBARU (5 DATA TERAKHIR)
-        let htmlTransaksi = "";
-        let terbaru = transaksi.slice(-5).reverse();
+            dataFiltered.forEach((t, idx) => {
+                let kode = t.kode || `TRX-${String(idx + 1).padStart(3, '0')}`;
+                let tanggal = t.tanggal || new Date().toLocaleDateString("id-ID");
+                let pelanggan = t.pelanggan || t.nama || "-";
+                let plat = (t.plat && t.plat !== "-") ? t.plat : (t.motor || "-");
+                let paket = t.paket || "cuci salju";
+                let total = Number(t.total) || 25000;
+                let status = t.status || t.pembayaranStatus || "Selesai";
 
-        if (terbaru.length === 0) {
-            htmlTransaksi = `
-                <tr>
-                    <td colspan="7" class="text-center py-4 text-muted">
-                        <i class="bi bi-inbox fs-2 d-block mb-1 opacity-50"></i>
-                        Belum ada transaksi recorded
-                    </td>
-                </tr>`;
-        } else {
-            terbaru.forEach(function (item, index) {
-                let badgeColor = item.status === "Selesai" ? "bg-success" : "bg-warning text-dark";
-                htmlTransaksi += `
+                let badgeStatus = status === "Selesai" || status === "Lunas"
+                    ? `<span class="badge bg-success">Selesai</span>`
+                    : `<span class="badge bg-warning text-dark">Proses</span>`;
+
+                tbody.innerHTML += `
                     <tr>
-                        <td class="fw-semibold text-muted">${index + 1}</td>
-                        <td>${item.tanggal || "-"}</td>
-                        <td class="fw-semibold">${item.pelanggan || "-"}</td>
-                        <td>${item.motor || "-"}</td>
-                        <td><span class="badge bg-light text-dark border">${item.paket || "-"}</span></td>
-                        <td class="fw-bold">Rp ${Number(item.total || 0).toLocaleString("id-ID")}</td>
-                        <td class="text-center"><span class="badge ${badgeColor} rounded-pill px-3 py-2">${item.status || "Selesai"}</span></td>
+                        <td>${idx + 1}</td>
+                        <td class="fw-semibold text-primary">${kode}</td>
+                        <td>${tanggal}</td>
+                        <td>
+                            <div class="fw-bold">${pelanggan}</div>
+                            <small class="text-muted">${plat}</small>
+                        </td>
+                        <td><span class="badge bg-light text-dark border">${paket}</span></td>
+                        <td class="fw-bold text-success">Rp ${total.toLocaleString("id-ID")}</td>
+                        <td>${badgeStatus}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-danger" onclick="hapusTransaksi(${idx})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
                     </tr>
                 `;
             });
         }
-        document.getElementById("tabelTransaksi").innerHTML = htmlTransaksi;
 
-        // RENDER PAKET TERLARIS
-        let paket = {};
-        transaksi.forEach(function (item) {
-            let nama = item.paket || "Lainnya";
-            paket[nama] = (paket[nama] || 0) + 1;
-        });
-
-        let htmlPaket = "";
-        let urutPaket = Object.entries(paket).sort((a, b) => b[1] - a[1]);
-
-        if (urutPaket.length === 0) {
-            htmlPaket = `
-                <tr>
-                    <td colspan="2" class="text-center py-4 text-muted">
-                        <i class="bi bi-pie-chart fs-2 d-block mb-1 opacity-50"></i>
-                        Belum ada data penjualan paket
-                    </td>
-                </tr>`;
-        } else {
-            urutPaket.forEach(function (item) {
-                htmlPaket += `
-                    <tr>
-                        <td class="fw-medium">${item[0]}</td>
-                        <td class="text-end fw-bold text-primary">${item[1]} Unit Motor</td>
-                    </tr>
-                `;
-            });
-        }
-        document.getElementById("paketTerlaris").innerHTML = htmlPaket;
-
-        // REFRESH DASHBOARD
-        function refreshDashboard() {
-            location.reload();
+        function updateHarga() {
+            let select = document.getElementById("inputPaket");
+            let harga = select.options[select.selectedIndex].getAttribute("data-harga");
+            document.getElementById("inputTotal").value = harga;
         }
 
-        // LOGOUT METHOD
+        function tambahTransaksi() {
+            let pelanggan = document.getElementById("inputPelanggan").value.trim();
+            let plat = document.getElementById("inputPlat").value.trim();
+            let paket = document.getElementById("inputPaket").value;
+            let total = document.getElementById("inputTotal").value;
+            let status = document.getElementById("inputStatus").value;
+
+            let now = new Date();
+            let tanggal = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+            let kode = `TRX-${Date.now().toString().slice(-4)}`;
+
+            let baru = {
+                kode: kode,
+                tanggal: tanggal,
+                pelanggan: pelanggan,
+                plat: plat || "-",
+                motor: plat || "-",
+                paket: paket,
+                total: total,
+                status: status,
+                pembayaranStatus: status === "Selesai" ? "Lunas" : "Belum Lunas"
+            };
+
+            dataTransaksi.unshift(baru);
+            localStorage.setItem("transaksi", JSON.stringify(dataTransaksi));
+
+            // Tutup Modal & Reset Form
+            let modalEl = document.getElementById('modalTransaksi');
+            let modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+            document.getElementById("formTransaksi").reset();
+
+            muatTransaksi();
+            alert("Transaksi Berhasil Ditambahkan!");
+        }
+
+        function hapusTransaksi(idx) {
+            if (confirm("Apakah Anda yakin ingin menghapus transaksi ini?")) {
+                dataTransaksi.splice(idx, 1);
+                localStorage.setItem("transaksi", JSON.stringify(dataTransaksi));
+                muatTransaksi();
+            }
+        }
+
         function logout() {
             if (confirm("Apakah Anda yakin ingin keluar dari sistem?")) {
                 localStorage.removeItem("login");
@@ -441,6 +376,10 @@
                 location.href = "login.html";
             }
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            muatTransaksi();
+        });
     </script>
 </body>
 
