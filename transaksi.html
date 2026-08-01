@@ -22,7 +22,6 @@
             color: #2c3e50;
         }
 
-        /* Sidebar Styling */
         .sidebar {
             position: fixed;
             left: 0;
@@ -65,7 +64,6 @@
             font-weight: 600;
         }
 
-        /* Main Content */
         .content {
             margin-left: var(--sidebar-width);
             padding: 30px;
@@ -87,7 +85,6 @@
             background-color: #f8f9fa;
         }
 
-        /* Mobile Layout */
         .mobile-header {
             display: none;
         }
@@ -227,8 +224,8 @@
                             <input type="text" id="kodeTransaksi" class="form-control bg-light" readonly>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Pilih Motor / Pelanggan <span class="text-danger">*</span></label>
-                            <select id="selectMotor" class="form-select" onchange="updatePelangganOtomatis()" required>
+                            <label class="form-label fw-semibold">Pilih Motor / Pelanggan</label>
+                            <select id="selectMotor" class="form-select" onchange="updatePelangganOtomatis()">
                                 <option value="">-- Pilih Kendaraan --</option>
                             </select>
                         </div>
@@ -237,8 +234,8 @@
                             <input type="text" id="namaPelanggan" class="form-control bg-light" placeholder="Otomatis terisi..." readonly>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Pilih Paket Cuci <span class="text-danger">*</span></label>
-                            <select id="selectPaket" class="form-select" onchange="updateTotalHarga()" required>
+                            <label class="form-label fw-semibold">Pilih Paket Cuci</label>
+                            <select id="selectPaket" class="form-select" onchange="updateTotalHarga()">
                                 <option value="">-- Pilih Paket Cuci --</option>
                             </select>
                         </div>
@@ -286,7 +283,7 @@
             let selectMotor = document.getElementById("selectMotor");
             selectMotor.innerHTML = '<option value="">-- Pilih Kendaraan --</option>';
             if (motor.length === 0) {
-                selectMotor.innerHTML = '<option value="">-- Data Motor Kosong! Tambah di menu Data Motor --</option>';
+                selectMotor.innerHTML += '<option value="" disabled>⚠️ Data Motor masih kosong!</option>';
             } else {
                 motor.forEach((m, idx) => {
                     selectMotor.innerHTML += `<option value="${idx}">${m.plat} - ${m.merk} (${m.pemilik})</option>`;
@@ -296,7 +293,7 @@
             let selectPaket = document.getElementById("selectPaket");
             selectPaket.innerHTML = '<option value="">-- Pilih Paket Cuci --</option>';
             if (paket.length === 0) {
-                selectPaket.innerHTML = '<option value="">-- Data Paket Kosong! Tambah di menu Paket Cuci --</option>';
+                selectPaket.innerHTML += '<option value="" disabled>⚠️ Data Paket Cuci masih kosong!</option>';
             } else {
                 paket.forEach((p, idx) => {
                     selectPaket.innerHTML += `<option value="${idx}">${p.nama} - Rp ${Number(p.harga).toLocaleString("id-ID")}</option>`;
@@ -425,7 +422,7 @@
             let paketIdx = document.getElementById("selectPaket").value;
 
             if (motorIdx === "" || paketIdx === "") {
-                alert("Harap pilih Kendaraan dan Paket Cuci terlebih dahulu!");
+                alert("Peringatan: Harap tambahkan/pilih Data Motor dan Paket Cuci terlebih dahulu!");
                 return;
             }
 
