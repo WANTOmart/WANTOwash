@@ -422,6 +422,94 @@
         function renderTabel() {
             let keyword = document.getElementById("cariPaket").value.toLowerCase();
             let html = "";
+            
             let filtered = paket.filter(p => 
                 p.nama.toLowerCase().includes(keyword) || 
-                (p
+                p.kategori.toLowerCase().includes(keyword)
+            );
+
+            if (filtered.length === 0) {
+                html = `<tr><td colspan="6" class="text-center text-muted py-4">Data tidak ditemukan</td></tr>`;
+            } else {
+                filtered.forEach((item, index) => {
+                    html += `
+                        <tr>
+                            <td class="fw-bold">${index + 1}</td>
+                            <td class="fw-semibold">${item.nama}</td>
+                            <td><span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">${item.kategori}</span></td>
+                            <td class="fw-bold text-success">Rp ${Number(item.harga).toLocaleString("id-ID")}</td>
+                            <td class="text-secondary">${item.deskripsi || '-'}</td>
+                            <td class="text-center">
+                                <button class="btn btn-action-edit me-1" onclick="editPaket(${index})">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </button>
+                                <button class="btn btn-action-delete" onclick="hapusPaket(${index})">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            document.getElementById("tabelPaket").innerHTML = html;
+            updateStats();
+        }
+
+        function bukaModalTambah() {
+            document.getElementById("modalTitle").innerHTML = `<i class="bi bi-plus-square me-2"></i>Tambah Paket Cuci`;
+            document.getElementById("editIndex").value = "";
+            document.getElementById("formPaket").reset();
+            modalPaket.show();
+        }
+
+        function editPaket(index) {
+            document.getElementById("modalTitle").innerHTML = `<i class="bi bi-pencil-square me-2"></i>Edit Paket Cuci`;
+            document.getElementById("editIndex").value = index;
+            document.getElementById("namaPaket").value = paket[index].nama;
+            document.getElementById("kategoriMotor").value = paket[index].kategori;
+            document.getElementById("hargaPaket").value = paket[index].harga;
+            document.getElementById("deskripsiPaket").value = paket[index].deskripsi;
+            modalPaket.show();
+        }
+
+        function hapusPaket(index) {
+            if (confirm("Apakah Anda yakin ingin menghapus paket ini?")) {
+                paket.splice(index, 1);
+                localStorage.setItem("paket", JSON.stringify(paket));
+                renderTabel();
+            }
+        }
+
+        document.getElementById("formPaket").addEventListener("submit", function(e) {
+            e.preventDefault();
+            let index = document.getElementById("editIndex").value;
+            let dataBaru = {
+                nama: document.getElementById("namaPaket").value,
+                kategori: document.getElementById("kategoriMotor").value,
+                harga: document.getElementById("hargaPaket").value,
+                deskripsi: document.getElementById("deskripsiPaket").value
+            };
+
+            if (index === "") {
+                paket.push(dataBaru);
+            } else {
+                paket[index] = dataBaru;
+            }
+
+            localStorage.setItem("paket", JSON.stringify(paket));
+            modalPaket.hide();
+            renderTabel();
+        });
+
+        function logout() {
+            localStorage.removeItem("login");
+            location.href = "login.html";
+        }
+
+        // Render data pertama kali halaman dimuat
+        renderTabel();
+    </script>
+</body>
+
+</html>
