@@ -171,7 +171,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h3 class="fw-bold mb-1"><i class="bi bi-person-badge text-primary me-2"></i>Kelola Karyawan & Penggajian</h3>
-                <p class="text-muted mb-0">Atur karyawan aktif dan hitung pembagian gaji 40% secara adil</p>
+                <p class="text-muted mb-0">Input NIK, upload ijazah, serta hitung bagi hasil 40% secara adil</p>
             </div>
         </div>
 
@@ -209,6 +209,12 @@
                     
                     <form id="formKaryawan" onsubmit="event.preventDefault(); simpanKaryawan();">
                         <input type="hidden" id="editIndex" value="-1">
+                        <input type="hidden" id="ijazahBase64" value="">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">NIK (No. KTP) <span class="text-danger">*</span></label>
+                            <input type="text" id="nikKaryawan" class="form-control" placeholder="Contoh: 3511012345670001" required>
+                        </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Nama Karyawan <span class="text-danger">*</span></label>
@@ -227,6 +233,15 @@
                                 <option value="Kasir">Kasir</option>
                                 <option value="Kepala Washer">Kepala Washer</option>
                             </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Upload Berkas/Foto Ijazah</label>
+                            <input type="file" id="fileIjazah" class="form-control" accept="image/*" onchange="bacaFileIjazah(this)">
+                            <div class="form-text">Format Foto (JPG/PNG).</div>
+                            <div id="previewIjazahBox" class="mt-2 text-center" style="display: none;">
+                                <img id="previewIjazahImg" src="" alt="Preview Ijazah" class="img-thumbnail" style="max-height: 120px;">
+                            </div>
                         </div>
 
                         <div class="d-grid gap-2 mt-4">
@@ -255,9 +270,10 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>No</th>
+                                    <th>NIK</th>
                                     <th>Nama Karyawan</th>
-                                    <th>Jabatan</th>
-                                    <th>No. HP</th>
+                                    <th>Jabatan / HP</th>
+                                    <th class="text-center">Ijazah</th>
                                     <th class="text-end">Estimasi Gaji (Rp)</th>
                                     <th class="text-center">Aksi</th>
                                 </tr>
@@ -271,6 +287,20 @@
         </div>
     </main>
 
+    <div class="modal fade" id="modalIjazah" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalIjazahTitle">Foto Ijazah Karyawan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="imgModalIjazah" src="" class="img-fluid rounded border" alt="Gambar Ijazah">
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -283,7 +313,6 @@
             location.href = "login.html";
         }
 
-        // Ambil Data Karyawan dan Transaksi
         let dataKaryawan = JSON.parse(localStorage.getItem("dataKaryawan")) || JSON.parse(localStorage.getItem("karyawan")) || [];
         let transaksi = JSON.parse(localStorage.getItem("transaksi")) || [];
 
@@ -306,24 +335,32 @@
             let jumlahKaryawan = dataKaryawan.length;
             let gajiPerKaryawan = jumlahKaryawan > 0 ? (totalGaji40 / jumlahKaryawan) : 0;
 
-            // Update Statistik Top Cards
+            // Update Statistik
             document.getElementById("statTotalKaryawan").innerText = `${jumlahKaryawan} Orang`;
             document.getElementById("statTotalOmset").innerText = "Rp " + omsetLunas.toLocaleString("id-ID");
             document.getElementById("statGajiTotal").innerText = "Rp " + totalGaji40.toLocaleString("id-ID");
             document.getElementById("statGajiPerOrang").innerText = "Rp " + Math.floor(gajiPerKaryawan).toLocaleString("id-ID");
 
             if (jumlahKaryawan === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Belum ada data karyawan. Silakan isi form di sebelah kiri.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4">Belum ada data karyawan. Silakan isi form di sebelah kiri.</td></tr>`;
             } else {
                 dataKaryawan.forEach((k, idx) => {
+                    let tombolIjazah = k.ijazah 
+                        ? `<button class="btn btn-sm btn-outline-info" onclick="lihatIjazah(${idx})"><i class="bi bi-file-image"></i> Lihat</button>`
+                        : `<span class="badge bg-secondary">Tidak Ada</span>`;
+
                     tbody.innerHTML += `
                         <tr>
                             <td>${idx + 1}</td>
+                            <td class="fw-semibold text-nowrap">${k.nik || '-'}</td>
                             <td class="fw-bold">${k.nama}</td>
-                            <td><span class="badge bg-info text-dark">${k.jabatan || 'Tukang Cuci'}</span></td>
-                            <td>${k.hp || '-'}</td>
+                            <td>
+                                <div><span class="badge bg-info text-dark">${k.jabatan || 'Tukang Cuci'}</span></div>
+                                <small class="text-muted">${k.hp || '-'}</small>
+                            </td>
+                            <td class="text-center">${tombolIjazah}</td>
                             <td class="text-end fw-bold text-success">Rp ${Math.floor(gajiPerKaryawan).toLocaleString("id-ID")}</td>
-                            <td class="text-center">
+                            <td class="text-center text-nowrap">
                                 <button type="button" class="btn btn-sm btn-warning text-white me-1" onclick="editKaryawan(${idx})"><i class="bi bi-pencil-square"></i></button>
                                 <button type="button" class="btn btn-sm btn-danger" onclick="hapusKaryawan(${idx})"><i class="bi bi-trash"></i></button>
                             </td>
@@ -333,24 +370,38 @@
             }
         }
 
+        // FUNGSI MEMBACA FILE GAMBAR IJAZAH
+        function bacaFileIjazah(input) {
+            if (input.files && input.files[0]) {
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById("ijazahBase64").value = e.target.result;
+                    document.getElementById("previewIjazahImg").src = e.target.result;
+                    document.getElementById("previewIjazahBox").style.display = "block";
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
         function simpanKaryawan() {
+            let nik = document.getElementById("nikKaryawan").value.trim();
             let nama = document.getElementById("namaKaryawan").value.trim();
             let hp = document.getElementById("hpKaryawan").value.trim();
             let jabatan = document.getElementById("jabatanKaryawan").value;
+            let ijazah = document.getElementById("ijazahBase64").value;
             let editIdx = document.getElementById("editIndex").value;
 
-            if (nama === "") {
-                alert("Nama Karyawan wajib diisi!");
+            if (nik === "" || nama === "") {
+                alert("NIK dan Nama Karyawan wajib diisi!");
                 return;
             }
 
             if (editIdx == "-1") {
-                dataKaryawan.push({ nama: nama, hp: hp, jabatan: jabatan });
+                dataKaryawan.push({ nik: nik, nama: nama, hp: hp, jabatan: jabatan, ijazah: ijazah });
             } else {
-                dataKaryawan[editIdx] = { nama: nama, hp: hp, jabatan: jabatan };
+                dataKaryawan[editIdx] = { nik: nik, nama: nama, hp: hp, jabatan: jabatan, ijazah: ijazah };
             }
 
-            // Simpan ke LocalStorage menggunakan dua kunci agar selalu tersinkron
             localStorage.setItem("dataKaryawan", JSON.stringify(dataKaryawan));
             localStorage.setItem("karyawan", JSON.stringify(dataKaryawan));
 
@@ -361,10 +412,19 @@
 
         function editKaryawan(idx) {
             let k = dataKaryawan[idx];
+            document.getElementById("nikKaryawan").value = k.nik || "";
             document.getElementById("namaKaryawan").value = k.nama;
             document.getElementById("hpKaryawan").value = k.hp || "";
             document.getElementById("jabatanKaryawan").value = k.jabatan || "Tukang Cuci";
+            document.getElementById("ijazahBase64").value = k.ijazah || "";
             document.getElementById("editIndex").value = idx;
+
+            if (k.ijazah) {
+                document.getElementById("previewIjazahImg").src = k.ijazah;
+                document.getElementById("previewIjazahBox").style.display = "block";
+            } else {
+                document.getElementById("previewIjazahBox").style.display = "none";
+            }
 
             document.getElementById("formTitle").innerHTML = '<i class="bi bi-pencil-square me-2 text-warning"></i>Edit Data Karyawan';
             document.getElementById("btnSubmit").className = "btn btn-warning text-white fw-semibold";
@@ -375,6 +435,8 @@
         function resetForm() {
             document.getElementById("formKaryawan").reset();
             document.getElementById("editIndex").value = "-1";
+            document.getElementById("ijazahBase64").value = "";
+            document.getElementById("previewIjazahBox").style.display = "none";
             document.getElementById("formTitle").innerHTML = '<i class="bi bi-person-plus me-2 text-primary"></i>Tambah Karyawan';
             document.getElementById("btnSubmit").className = "btn btn-primary fw-semibold";
             document.getElementById("btnSubmit").innerHTML = '<i class="bi bi-save me-1"></i> Simpan Data Karyawan';
@@ -390,6 +452,14 @@
             }
         }
 
+        function lihatIjazah(idx) {
+            let k = dataKaryawan[idx];
+            document.getElementById("modalIjazahTitle").innerText = `Foto Ijazah - ${k.nama} (${k.nik || '-'})`;
+            document.getElementById("imgModalIjazah").src = k.ijazah;
+            let modal = new bootstrap.Modal(document.getElementById("modalIjazah"));
+            modal.show();
+        }
+
         function kirimRincianGajiWA() {
             let omsetLunas = hitungTotalOmsetLunas();
             let totalGaji40 = omsetLunas * 0.40;
@@ -403,7 +473,7 @@
 
             let listKaryawan = "";
             dataKaryawan.forEach((k, i) => {
-                listKaryawan += `${i + 1}. ${k.nama} (${k.jabatan || 'Tukang Cuci'}) -> Rp ${gajiPerKaryawan.toLocaleString("id-ID")}\n`;
+                listKaryawan += `${i + 1}. [NIK: ${k.nik || '-'}] ${k.nama} (${k.jabatan || 'Tukang Cuci'}) -> Rp ${gajiPerKaryawan.toLocaleString("id-ID")}\n`;
             });
 
             let pesan = `*WANTOwash - RINCIAN PENGAJIAN KARYAWAN*
