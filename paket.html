@@ -87,6 +87,11 @@
             background-color: #f8f9fa;
         }
 
+        .btn-price-preset {
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
         /* Responsive Mobile Layout */
         .mobile-header {
             display: none;
@@ -180,8 +185,8 @@
     <main class="content">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h3 class="fw-bold mb-1"><i class="bi bi-tags text-primary me-2"></i>Paket Cuci</h3>
-                <p class="text-muted mb-0">Kelola jenis daftar paket dan tarif cuci motor</p>
+                <h3 class="fw-bold mb-1"><i class="bi bi-tags text-primary me-2"></i>Paket Cuci Motor</h3>
+                <p class="text-muted mb-0">Kelola tarif paket cuci kendaraan WANTOwash</p>
             </div>
             <button class="btn btn-primary shadow-sm rounded-3 px-3 py-2 fw-semibold" onclick="bukaModalTambah()">
                 <i class="bi bi-plus-lg me-1"></i> Tambah Paket
@@ -190,7 +195,7 @@
 
         <div class="card custom-card p-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <input type="text" id="cariPaket" class="form-control w-auto" placeholder="Cari paket..." onkeyup="renderTabel()">
+                <input type="text" id="cariPaket" class="form-control w-auto" placeholder="Cari nama / kategori..." onkeyup="renderTabel()">
             </div>
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
@@ -198,6 +203,7 @@
                         <tr>
                             <th class="border-0">No</th>
                             <th class="border-0">Nama Paket</th>
+                            <th class="border-0">Kategori Motor</th>
                             <th class="border-0">Harga / Tarif</th>
                             <th class="border-0">Deskripsi / Layanan</th>
                             <th class="border-0 text-center">Aksi</th>
@@ -221,11 +227,25 @@
                         <input type="hidden" id="editIndex">
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Nama Paket</label>
-                            <input type="text" id="namaPaket" class="form-control" placeholder="Contoh: Cuci Salju + Semir Ban" required>
+                            <input type="text" id="namaPaket" class="form-control" placeholder="Contoh: Cuci Matic Besar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Kategori Motor</label>
+                            <select id="kategoriMotor" class="form-select" required>
+                                <option value="Matic Biasa">Matic Biasa (Beat, Mio, Vario, dll)</option>
+                                <option value="Matic Besar">Matic Besar (N-MAX, PCX, ADV, Aerox)</option>
+                                <option value="Motor Laki Biasa">Motor Laki Biasa (Bebek, Supra, dll)</option>
+                                <option value="Motor Sport">Motor Sport (CBR, R15, Ninja, Vixion)</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Harga (Rp)</label>
-                            <input type="number" id="hargaPaket" class="form-control" placeholder="Contoh: 15000" min="0" required>
+                            <div class="d-flex gap-2 mb-2">
+                                <button type="button" class="btn btn-outline-primary flex-fill btn-price-preset" onclick="pilihHarga(20000)">Rp 20.000</button>
+                                <button type="button" class="btn btn-outline-primary flex-fill btn-price-preset" onclick="pilihHarga(25000)">Rp 25.000</button>
+                                <button type="button" class="btn btn-outline-primary flex-fill btn-price-preset" onclick="pilihHarga(30000)">Rp 30.000</button>
+                            </div>
+                            <input type="number" id="hargaPaket" class="form-control" placeholder="Atau ketik harga nominal manual..." min="0" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Deskripsi Layanan</label>
@@ -255,14 +275,22 @@
             location.href = "login.html";
         }
 
-        // AMBIL DATA PAKET ATAU DEFAULT AWAL
-        let paket = JSON.parse(localStorage.getItem("paket")) || [
-            { nama: "Cuci Reguler", harga: 15000, deskripsi: "Cuci bodi luar + semir ban" },
-            { nama: "Cuci Salju (Snow Wash)", harga: 20000, deskripsi: "Cuci bodi busa salju + kolong motor + semir ban" },
-            { nama: "Cuci + Wax Pengkilap", harga: 30000, deskripsi: "Cuci salju + coating wax pengkilap bodi" }
+        // FUNGSI PILIH HARGA CEPAT
+        function pilihHarga(nominal) {
+            document.getElementById("hargaPaket").value = nominal;
+        }
+
+        // PAKET DEFAULT BARU SESUAI PILIHAN HARGA (20.000, 25.000, 30.000)
+        let defaultPaket = [
+            { nama: "Cuci Matic Biasa / Laki", kategori: "Matic Biasa", harga: 20000, deskripsi: "Cuci salju + semir ban untuk Matic Biasa & Motor Bebek" },
+            { nama: "Cuci Matic Besar (N-MAX / PCX / ADV)", kategori: "Matic Besar", harga: 25000, deskripsi: "Cuci salju bodi & kolong + semir ban untuk Matic Besar" },
+            { nama: "Cuci Motor Sport / Detailing", kategori: "Motor Sport", harga: 30000, deskripsi: "Cuci salju detail bodi, mesin & velg + pengkilap untuk Motor Sport" }
         ];
 
-        // SIMPAN DEFAULT JIKA BELUM ADA DATA SAMA SEKALI
+        // MENGAMBIL DATA ATAU MENGGUNAKAN DEFAULT
+        let paket = JSON.parse(localStorage.getItem("paket")) || defaultPaket;
+
+        // SIMPAN KE LOCALSTORAGE JIKA BELUM TERSEDIA
         if (!localStorage.getItem("paket")) {
             localStorage.setItem("paket", JSON.stringify(paket));
         }
@@ -275,23 +303,30 @@
             let html = "";
             let filtered = paket.filter(p => 
                 p.nama.toLowerCase().includes(keyword) || 
+                (p.kategori && p.kategori.toLowerCase().includes(keyword)) ||
                 p.deskripsi.toLowerCase().includes(keyword)
             );
 
             if (filtered.length === 0) {
                 html = `
                     <tr>
-                        <td colspan="5" class="text-center py-4 text-muted">
+                        <td colspan="6" class="text-center py-4 text-muted">
                             <i class="bi bi-inbox fs-2 d-block mb-1 opacity-50"></i>
                             Tidak ada data paket cuci
                         </td>
                     </tr>`;
             } else {
                 filtered.forEach((item, index) => {
+                    let badgeClass = "bg-primary";
+                    if(item.kategori === "Matic Besar") badgeClass = "bg-warning text-dark";
+                    if(item.kategori === "Motor Sport") badgeClass = "bg-danger";
+                    if(item.kategori === "Motor Laki Biasa") badgeClass = "bg-secondary";
+
                     html += `
                         <tr>
                             <td class="fw-semibold text-muted">${index + 1}</td>
                             <td class="fw-bold">${item.nama}</td>
+                            <td><span class="badge ${badgeClass}">${item.kategori || "Matic Biasa"}</span></td>
                             <td class="fw-bold text-success">Rp ${Number(item.harga).toLocaleString("id-ID")}</td>
                             <td>${item.deskripsi || "-"}</td>
                             <td class="text-center">
@@ -321,6 +356,7 @@
             document.getElementById("modalTitle").innerText = "Edit Paket Cuci";
             document.getElementById("editIndex").value = index;
             document.getElementById("namaPaket").value = paket[index].nama;
+            document.getElementById("kategoriMotor").value = paket[index].kategori || "Matic Biasa";
             document.getElementById("hargaPaket").value = paket[index].harga;
             document.getElementById("deskripsiPaket").value = paket[index].deskripsi || "";
             modalPaket.show();
@@ -332,6 +368,7 @@
             let index = document.getElementById("editIndex").value;
             let dataBaru = {
                 nama: document.getElementById("namaPaket").value,
+                kategori: document.getElementById("kategoriMotor").value,
                 harga: Number(document.getElementById("hargaPaket").value),
                 deskripsi: document.getElementById("deskripsiPaket").value
             };
