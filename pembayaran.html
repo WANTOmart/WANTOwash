@@ -78,7 +78,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
         }
 
-        /* DESAIN DESK NOTA KERTAS & WATERMARK */
+        /* DESAIN NOTA KERTAS & WATERMARK */
         .nota-box {
             position: relative;
             background: #ffffff;
@@ -104,7 +104,7 @@
             background-repeat: no-repeat;
             background-position: center;
             background-size: contain;
-            opacity: 0.12; /* Tingkat Transparansi Logo */
+            opacity: 0.12;
             pointer-events: none;
             z-index: 1;
         }
@@ -153,7 +153,7 @@
             }
 
             .nota-box::before {
-                opacity: 0.15 !important; /* Logo tetap transparan saat diprint */
+                opacity: 0.15 !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
@@ -299,9 +299,10 @@
 
             let adaLunas = false;
             transaksi.forEach((t, idx) => {
-                if (t.pembayaranStatus === "Lunas") {
+                // Mendukung status "Lunas" atau transaksi yang sudah memiliki pembayaran
+                if (t.pembayaranStatus === "Lunas" || t.status === "Selesai") {
                     adaLunas = true;
-                    select.innerHTML += `<option value="${idx}">${t.kode} - ${t.pelanggan} (${t.plat})</option>`;
+                    select.innerHTML += `<option value="${idx}">${t.kode || 'TRX'} - ${t.pelanggan || 'Pelanggan'} (${t.plat || '-'})</option>`;
                 }
             });
 
@@ -322,22 +323,22 @@
             let data = transaksi[idx];
             let html = `
                 <div class="d-flex justify-content-between small text-start mb-1">
-                    <span>No. Nota: <strong>${data.kode}</strong></span>
-                    <span>Tgl: ${data.tanggal}</span>
+                    <span>No. Nota: <strong>${data.kode || '-'}</strong></span>
+                    <span>Tgl: ${data.tanggal || '-'}</span>
                 </div>
                 <div class="d-flex justify-content-between small text-start mb-2">
-                    <span>Pelanggan: <strong>${data.pelanggan}</strong></span>
-                    <span>Plat: <strong>${data.plat}</strong></span>
+                    <span>Pelanggan: <strong>${data.pelanggan || '-'}</strong></span>
+                    <span>Plat: <strong>${data.plat || '-'}</strong></span>
                 </div>
                 <hr style="border-top: 1px dashed #ccc;" class="my-2">
                 <div class="d-flex justify-content-between text-start fw-bold small mb-1">
-                    <span>${data.paket}</span>
-                    <span>Rp ${Number(data.total).toLocaleString("id-ID")}</span>
+                    <span>${data.paket || 'Cuci Motor'}</span>
+                    <span>Rp ${Number(data.total || 0).toLocaleString("id-ID")}</span>
                 </div>
                 <hr style="border-top: 1px dashed #ccc;" class="my-2">
                 <div class="d-flex justify-content-between small text-start mb-1">
                     <span>Total Tagihan:</span>
-                    <span class="fw-bold">Rp ${Number(data.total).toLocaleString("id-ID")}</span>
+                    <span class="fw-bold">Rp ${Number(data.total || 0).toLocaleString("id-ID")}</span>
                 </div>
                 <div class="d-flex justify-content-between small text-start mb-1">
                     <span>Metode Bayar:</span>
@@ -345,7 +346,7 @@
                 </div>
                 <div class="d-flex justify-content-between small text-start mb-1">
                     <span>Bayar:</span>
-                    <span>Rp ${Number(data.jumlahBayar || data.total).toLocaleString("id-ID")}</span>
+                    <span>Rp ${Number(data.jumlahBayar || data.total || 0).toLocaleString("id-ID")}</span>
                 </div>
                 <div class="d-flex justify-content-between small text-start mb-2">
                     <span>Kembali:</span>
@@ -357,14 +358,13 @@
             container.innerHTML = html;
         }
 
-        // FUNGSI CETAK NOTA LANGSUNG
         function prosesCetak() {
             let idx = document.getElementById("selectNota").value;
             if (idx === "") {
                 alert("Pilih transaksi lunas yang ingin dicetak terlebih dahulu!");
                 return;
             }
-            window.print(); // Memanggil perintah print bawaan browser/perangkat
+            window.print();
         }
 
         function logout() {
@@ -375,7 +375,10 @@
             }
         }
 
-        muatOptionNota();
+        // Panggil otomatis saat halaman dimuat
+        document.addEventListener("DOMContentLoaded", function () {
+            muatOptionNota();
+        });
     </script>
 </body>
 
