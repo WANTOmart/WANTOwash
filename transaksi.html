@@ -87,7 +87,7 @@
             background-color: #f8f9fa;
         }
 
-        /* Responsive Mobile Layout */
+        /* Mobile Layout */
         .mobile-header {
             display: none;
         }
@@ -227,7 +227,7 @@
                             <input type="text" id="kodeTransaksi" class="form-control bg-light" readonly>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Pilih Motor / Pelanggan</label>
+                            <label class="form-label fw-semibold">Pilih Motor / Pelanggan <span class="text-danger">*</span></label>
                             <select id="selectMotor" class="form-select" onchange="updatePelangganOtomatis()" required>
                                 <option value="">-- Pilih Kendaraan --</option>
                             </select>
@@ -237,14 +237,14 @@
                             <input type="text" id="namaPelanggan" class="form-control bg-light" placeholder="Otomatis terisi..." readonly>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Pilih Paket Cuci</label>
+                            <label class="form-label fw-semibold">Pilih Paket Cuci <span class="text-danger">*</span></label>
                             <select id="selectPaket" class="form-select" onchange="updateTotalHarga()" required>
                                 <option value="">-- Pilih Paket Cuci --</option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Total Biaya (Rp)</label>
-                            <input type="number" id="totalBiaya" class="form-control fw-bold text-success fs-5" readonly>
+                            <input type="number" id="totalBiaya" class="form-control fw-bold text-success fs-5 bg-light" readonly>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Status Pencucian</label>
@@ -285,20 +285,28 @@
         function muatDropdownData() {
             let selectMotor = document.getElementById("selectMotor");
             selectMotor.innerHTML = '<option value="">-- Pilih Kendaraan --</option>';
-            motor.forEach((m, idx) => {
-                selectMotor.innerHTML += `<option value="${idx}">${m.plat} - ${m.merk} (${m.pemilik})</option>`;
-            });
+            if (motor.length === 0) {
+                selectMotor.innerHTML = '<option value="">-- Data Motor Kosong! Tambah di menu Data Motor --</option>';
+            } else {
+                motor.forEach((m, idx) => {
+                    selectMotor.innerHTML += `<option value="${idx}">${m.plat} - ${m.merk} (${m.pemilik})</option>`;
+                });
+            }
 
             let selectPaket = document.getElementById("selectPaket");
             selectPaket.innerHTML = '<option value="">-- Pilih Paket Cuci --</option>';
-            paket.forEach((p, idx) => {
-                selectPaket.innerHTML += `<option value="${idx}">${p.nama} - Rp ${Number(p.harga).toLocaleString("id-ID")}</option>`;
-            });
+            if (paket.length === 0) {
+                selectPaket.innerHTML = '<option value="">-- Data Paket Kosong! Tambah di menu Paket Cuci --</option>';
+            } else {
+                paket.forEach((p, idx) => {
+                    selectPaket.innerHTML += `<option value="${idx}">${p.nama} - Rp ${Number(p.harga).toLocaleString("id-ID")}</option>`;
+                });
+            }
         }
 
         function updatePelangganOtomatis() {
             let idx = document.getElementById("selectMotor").value;
-            if (idx !== "") {
+            if (idx !== "" && motor[idx]) {
                 document.getElementById("namaPelanggan").value = motor[idx].pemilik;
             } else {
                 document.getElementById("namaPelanggan").value = "";
@@ -307,7 +315,7 @@
 
         function updateTotalHarga() {
             let idx = document.getElementById("selectPaket").value;
-            if (idx !== "") {
+            if (idx !== "" && paket[idx]) {
                 document.getElementById("totalBiaya").value = paket[idx].harga;
             } else {
                 document.getElementById("totalBiaya").value = 0;
@@ -318,9 +326,9 @@
             let keyword = document.getElementById("cariTransaksi").value.toLowerCase();
             let html = "";
             let filtered = transaksi.filter(t => 
-                t.kode.toLowerCase().includes(keyword) || 
-                t.plat.toLowerCase().includes(keyword) ||
-                t.pelanggan.toLowerCase().includes(keyword)
+                (t.kode && t.kode.toLowerCase().includes(keyword)) || 
+                (t.plat && t.plat.toLowerCase().includes(keyword)) ||
+                (t.pelanggan && t.pelanggan.toLowerCase().includes(keyword))
             );
 
             if (filtered.length === 0) {
@@ -328,7 +336,7 @@
                     <tr>
                         <td colspan="8" class="text-center py-4 text-muted">
                             <i class="bi bi-inbox fs-2 d-block mb-1 opacity-50"></i>
-                            Tidak ada transaksi
+                            Tidak ada data transaksi
                         </td>
                     </tr>`;
             } else {
@@ -340,15 +348,15 @@
                     html += `
                         <tr>
                             <td class="fw-semibold text-muted">${index + 1}</td>
-                            <td class="fw-bold font-monospace">${item.kode}</td>
-                            <td>${item.tanggal}</td>
+                            <td class="fw-bold font-monospace">${item.kode || '-'}</td>
+                            <td>${item.tanggal || '-'}</td>
                             <td>
-                                <div><strong>${item.pelanggan}</strong></div>
-                                <small class="text-muted">${item.plat}</small>
+                                <div><strong>${item.pelanggan || '-'}</strong></div>
+                                <small class="text-muted">${item.plat || '-'}</small>
                             </td>
-                            <td>${item.paket}</td>
-                            <td class="fw-bold text-success">Rp ${Number(item.total).toLocaleString("id-ID")}</td>
-                            <td><span class="badge ${badgeStatus}">${item.status}</span></td>
+                            <td>${item.paket || '-'}</td>
+                            <td class="fw-bold text-success">Rp ${Number(item.total || 0).toLocaleString("id-ID")}</td>
+                            <td><span class="badge ${badgeStatus}">${item.status || 'Antrean'}</span></td>
                             <td class="text-center">
                                 <button class="btn btn-sm btn-outline-warning me-1" onclick="bukaModalEdit(${index})">
                                     <i class="bi bi-pencil"></i>
@@ -370,9 +378,12 @@
             document.getElementById("formTransaksi").reset();
             
             const now = new Date();
-            const kode = "TRX-" + now.getFullYear() + (now.getMonth()+1).toString().padStart(2, '0') + now.getDate().toString().padStart(2, '0') + "-" + Math.floor(1000 + Math.random() * 9000);
+            const kode = "TRX-" + now.getFullYear() + 
+                         (now.getMonth()+1).toString().padStart(2, '0') + 
+                         now.getDate().toString().padStart(2, '0') + "-" + 
+                         Math.floor(1000 + Math.random() * 9000);
+                         
             document.getElementById("kodeTransaksi").value = kode;
-            
             modalTransaksi.show();
         }
 
@@ -387,23 +398,49 @@
             document.getElementById("totalBiaya").value = data.total;
             document.getElementById("statusProses").value = data.status;
 
+            let selectMotor = document.getElementById("selectMotor");
+            for (let i = 0; i < selectMotor.options.length; i++) {
+                if (selectMotor.options[i].text.includes(data.plat)) {
+                    selectMotor.selectedIndex = i;
+                    break;
+                }
+            }
+
+            let selectPaket = document.getElementById("selectPaket");
+            for (let i = 0; i < selectPaket.options.length; i++) {
+                if (selectPaket.options[i].text.includes(data.paket)) {
+                    selectPaket.selectedIndex = i;
+                    break;
+                }
+            }
+
             modalTransaksi.show();
         }
 
         document.getElementById("formTransaksi").addEventListener("submit", function(e) {
             e.preventDefault();
+            
             let index = document.getElementById("editIndex").value;
             let motorIdx = document.getElementById("selectMotor").value;
             let paketIdx = document.getElementById("selectPaket").value;
 
+            if (motorIdx === "" || paketIdx === "") {
+                alert("Harap pilih Kendaraan dan Paket Cuci terlebih dahulu!");
+                return;
+            }
+
             let dataBaru = {
                 kode: document.getElementById("kodeTransaksi").value,
-                tanggal: new Date().toLocaleDateString("id-ID"),
-                plat: motorIdx !== "" ? motor[motorIdx].plat : (transaksi[index] ? transaksi[index].plat : "-"),
+                tanggal: index !== "" && transaksi[index] ? transaksi[index].tanggal : new Date().toLocaleDateString("id-ID"),
+                plat: motor[motorIdx] ? motor[motorIdx].plat : "-",
                 pelanggan: document.getElementById("namaPelanggan").value,
-                paket: paketIdx !== "" ? paket[paketIdx].nama : (transaksi[index] ? transaksi[index].paket : "-"),
+                paket: paket[paketIdx] ? paket[paketIdx].nama : "-",
                 total: Number(document.getElementById("totalBiaya").value),
-                status: document.getElementById("statusProses").value
+                status: document.getElementById("statusProses").value,
+                pembayaranStatus: index !== "" && transaksi[index] ? (transaksi[index].pembayaranStatus || "Belum Bayar") : "Belum Bayar",
+                metodeBayar: index !== "" && transaksi[index] ? (transaksi[index].metodeBayar || "-") : "-",
+                jumlahBayar: index !== "" && transaksi[index] ? (transaksi[index].jumlahBayar || 0) : 0,
+                kembalian: index !== "" && transaksi[index] ? (transaksi[index].kembalian || 0) : 0
             };
 
             if (index === "") {
