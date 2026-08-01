@@ -348,7 +348,7 @@
                             <select id="kategoriMotor" class="form-select rounded-3" required>
                                 <option value="Matic Biasa">Matic Biasa (Beat, Mio, Vario, dll)</option>
                                 <option value="Matic Besar">Matic Besar (N-MAX, PCX, ADV, Aerox)</option>
-                                <option value="Motor Laki Biasa">Motor Laki Biasa (Bebek, Supra, dll)</option>
+                                <option value="Motor Biasa">Motor Laki Biasa (Bebek, Supra, dll)</option>
                                 <option value="Motor Sport">Motor Sport (CBR, R15, Ninja, Vixion)</option>
                             </select>
                         </div>
@@ -392,9 +392,10 @@
         }
 
         let defaultPaket = [
-            { nama: "Cuci Salju Reguler", kategori: "Matic Biasa", harga: 20000, deskripsi: "Cuci salju bodi + semir ban berkilau" },
-            { nama: "Cuci Maxi Express", kategori: "Matic Besar", harga: 25000, deskripsi: "Cuci salju bodi & kolong + semir ban ekstra" },
-            { nama: "Cuci Detail & Wax Sport", kategori: "Motor Sport", harga: 30000, deskripsi: "Cuci salju detail mesin, bodi, velg + proteksi wax bodi" }
+            { nama: "Cuci  (S)", kategori: "Matic Biasa", (Beat, Mio, Vario, dll)", harga: 20000, deskripsi: "Cuci Bersih " },
+            { nama: "Cuci  (S)", kategori: "motor Biasa", (Laki, bebek, dll)", harga: 20000, deskripsi: "Cuci Bersih " },
+            { nama: "Cuci (L)", kategori: "Matic Besar" ,(N-MAX, PCX, ADV, Aerox)", harga: 25000, deskripsi: "Cuci Besih" },
+            { nama: "Cuci (XL)", kategori: "Motor Sport",(CBR, R15, Ninja, Vixion)", harga: 30000, deskripsi: "Cuci Besih" }
         ];
 
         let paket = JSON.parse(localStorage.getItem("paket")) || defaultPaket;
