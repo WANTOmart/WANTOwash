@@ -8,20 +8,21 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
         :root {
-            --primary-blue: #0d6efd;
+            --primary-grad: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            --sidebar-grad: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%);
             --sidebar-width: 260px;
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f4f6f9;
-            color: #2c3e50;
+            background-color: #f1f5f9;
+            color: #1e293b;
         }
 
         /* Sidebar Styling */
@@ -31,39 +32,42 @@
             top: 0;
             width: var(--sidebar-width);
             height: 100vh;
-            background: linear-gradient(180deg, #0d6efd 0%, #0a58ca 100%);
+            background: var(--sidebar-grad);
             color: white;
             overflow-y: auto;
             z-index: 1000;
             transition: all 0.3s ease;
-            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar .brand-container {
-            padding: 20px 15px;
-            background: rgba(0, 0, 0, 0.1);
+            padding: 25px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .sidebar .nav-link-custom {
             display: flex;
             align-items: center;
             padding: 12px 20px;
-            color: rgba(255, 255, 255, 0.85);
+            color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
             font-weight: 500;
             border-left: 4px solid transparent;
             transition: all 0.2s ease;
+            margin: 4px 10px;
+            border-radius: 8px;
         }
 
         .sidebar .nav-link-custom:hover {
             color: #ffffff;
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .sidebar .nav-link-custom.active {
             color: #ffffff;
-            background: rgba(255, 255, 255, 0.2);
-            border-left-color: #ffd54f;
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: #f59e0b;
             font-weight: 600;
         }
 
@@ -77,17 +81,71 @@
         .custom-card {
             border: none;
             border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            background: #ffffff;
+        }
+
+        /* Gradient Cards untuk Statistik */
+        .card-stat-1 {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+        .card-stat-2 {
+            background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.3);
+        }
+        .card-stat-3 {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+        }
+        .card-stat-4 {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
         }
 
         .laporan-box {
             position: relative;
             background: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 25px;
+            border-radius: 16px;
+            padding: 30px;
             margin: auto;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        }
+
+        /* Design Tabel Custom */
+        .table-custom {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+
+        .table-custom thead th {
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            padding: 14px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .table-custom tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .table-custom tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .table-custom td {
+            padding: 14px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.95rem;
         }
 
         /* Mobile Header */
@@ -102,8 +160,8 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(2px);
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
             z-index: 998;
         }
 
@@ -150,7 +208,7 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                background: #0d6efd;
+                background: var(--sidebar-grad);
                 color: white;
                 padding: 12px 20px;
                 position: sticky;
@@ -180,7 +238,7 @@
     <aside class="sidebar d-flex flex-column no-print" id="sidebar">
         <div class="brand-container text-center">
             <img src="img/logo.jpeg" alt="Logo WANTOwash" class="shadow-sm mb-2"
-                style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid white;"
+                style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(255, 255, 255, 0.3);"
                 onerror="this.onerror=null; this.src='https://via.placeholder.com/70?text=Wash';">
             <h4 class="m-0 fw-bold">WANTO<span class="text-warning">wash</span></h4>
         </div>
@@ -204,23 +262,23 @@
     </aside>
 
     <main class="content">
-        <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 no-print">
             <div>
-                <h3 class="fw-bold mb-1"><i class="bi bi-bar-chart text-primary me-2"></i>Laporan Keuangan & Bagi Hasil</h3>
-                <p class="text-muted mb-0">Laporan Harian & Bulanan Bagi Hasil Karyawan (40%) & Pemilik (60%)</p>
+                <h3 class="fw-bold mb-1" style="color: #0f172a;"><i class="bi bi-bar-chart-line-fill text-primary me-2"></i>Laporan Keuangan</h3>
+                <p class="text-muted mb-0">Pembagian Hasil Karyawan (40%) & Pemilik (60%)</p>
             </div>
-            <div>
-                <button class="btn btn-success fw-semibold me-1" onclick="exportExcel()">
-                    <i class="bi bi-file-earmark-excel me-1"></i> Cetak Excel
+            <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-success fw-semibold shadow-sm rounded-3" onclick="exportExcel()">
+                    <i class="bi bi-file-earmark-excel me-1"></i> Excel
                 </button>
-                <button class="btn btn-primary fw-semibold me-1" onclick="window.print()">
-                    <i class="bi bi-printer me-1"></i> Print Kertas
+                <button class="btn btn-primary fw-semibold shadow-sm rounded-3" onclick="window.print()">
+                    <i class="bi bi-printer me-1"></i> Cetak
                 </button>
-                <button class="btn btn-outline-success fw-semibold me-1" onclick="kirimWALaporan()">
+                <button class="btn btn-emerald text-white fw-semibold shadow-sm rounded-3" style="background-color: #25D366;" onclick="kirimWALaporan()">
                     <i class="bi bi-whatsapp me-1"></i> WA
                 </button>
-                <button class="btn btn-dark fw-semibold" onclick="downloadPNG()">
-                    <i class="bi bi-file-image me-1"></i> PNG
+                <button class="btn btn-dark fw-semibold shadow-sm rounded-3" onclick="downloadPNG()">
+                    <i class="bi bi-image me-1"></i> PNG
                 </button>
             </div>
         </div>
@@ -228,23 +286,23 @@
         <div class="card custom-card p-3 mb-4 no-print">
             <div class="row g-3 align-items-end">
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold">Pilih Jenis Laporan</label>
-                    <select id="filterJenis" class="form-select" onchange="gantiFilterJenis()">
+                    <label class="form-label fw-semibold text-secondary small">JENIS LAPORAN</label>
+                    <select id="filterJenis" class="form-select border-0 bg-light fw-medium" onchange="gantiFilterJenis()">
                         <option value="semua">Semua Transaksi</option>
                         <option value="harian">Laporan Harian</option>
                         <option value="bulanan">Laporan Bulanan</option>
                     </select>
                 </div>
                 <div class="col-md-3" id="boxFilterTanggal" style="display: none;">
-                    <label class="form-label fw-semibold">Pilih Tanggal</label>
-                    <input type="date" id="filterTanggal" class="form-control" onchange="muatLaporan()">
+                    <label class="form-label fw-semibold text-secondary small">PILIH TANGGAL</label>
+                    <input type="date" id="filterTanggal" class="form-control border-0 bg-light fw-medium" onchange="muatLaporan()">
                 </div>
                 <div class="col-md-3" id="boxFilterBulan" style="display: none;">
-                    <label class="form-label fw-semibold">Pilih Bulan & Tahun</label>
-                    <input type="month" id="filterBulan" class="form-control" onchange="muatLaporan()">
+                    <label class="form-label fw-semibold text-secondary small">PILIH BULAN & TAHUN</label>
+                    <input type="month" id="filterBulan" class="form-control border-0 bg-light fw-medium" onchange="muatLaporan()">
                 </div>
-                <div class="col-md-3">
-                    <button class="btn btn-secondary w-100 fw-semibold" onclick="resetFilter()">
+                <div class="col-md-3 ms-auto">
+                    <button class="btn btn-light text-secondary w-100 fw-semibold" onclick="resetFilter()">
                         <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Filter
                     </button>
                 </div>
@@ -253,73 +311,87 @@
 
         <div class="row g-3 mb-4 no-print">
             <div class="col-md-3">
-                <div class="card custom-card p-3 bg-primary text-white">
-                    <span class="small">Total Transaksi Selesai</span>
-                    <h3 class="fw-bold m-0" id="statTotalTrans">0</h3>
+                <div class="card custom-card p-3 card-stat-1">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="small fw-semibold opacity-75">Selesai Transaksi</span>
+                        <i class="bi bi-check-circle fs-4"></i>
+                    </div>
+                    <h2 class="fw-bold m-0" id="statTotalTrans">0</h2>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card custom-card p-3 bg-dark text-white">
-                    <span class="small">Laba Kotor (Pendapatan)</span>
-                    <h3 class="fw-bold m-0" id="statLabaKotor">Rp 0</h3>
+                <div class="card custom-card p-3 card-stat-2">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="small fw-semibold opacity-75">Laba Kotor</span>
+                        <i class="bi bi-wallet2 fs-4"></i>
+                    </div>
+                    <h2 class="fw-bold m-0" id="statLabaKotor">Rp 0</h2>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card custom-card p-3 bg-warning text-dark">
-                    <span class="small">Gaji Karyawan (40%)</span>
-                    <h3 class="fw-bold m-0" id="statKaryawan">Rp 0</h3>
+                <div class="card custom-card p-3 card-stat-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="small fw-semibold opacity-75">Gaji Karyawan (40%)</span>
+                        <i class="bi bi-people fs-4"></i>
+                    </div>
+                    <h2 class="fw-bold m-0" id="statKaryawan">Rp 0</h2>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card custom-card p-3 bg-success text-white">
-                    <span class="small">Laba Bersih Pemilik (60%)</span>
-                    <h3 class="fw-bold m-0" id="statLabaBersih">Rp 0</h3>
+                <div class="card custom-card p-3 card-stat-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="small fw-semibold opacity-75">Laba Bersih (60%)</span>
+                        <i class="bi bi-graph-up-arrow fs-4"></i>
+                    </div>
+                    <h2 class="fw-bold m-0" id="statLabaBersih">Rp 0</h2>
                 </div>
             </div>
         </div>
 
         <div class="laporan-box" id="areaLaporan">
-            <div class="text-center mb-4">
-                <h3 class="fw-bold m-0">WANTO<span class="text-warning">wash</span></h3>
-                <p class="text-muted mb-1">Jl. Raya Utama No. 123 - Telp/WA: 0812-3456-7890</p>
-                <h5 class="fw-bold text-uppercase border-top border-bottom py-2 mt-2" id="judulLaporanTeks">LAPORAN LABA & BAGI HASIL KARYAWAN (60:40)</h5>
+            <div class="text-center mb-4 pb-3 border-bottom">
+                <h2 class="fw-extrabold m-0" style="letter-spacing: -0.5px;">WANTO<span class="text-warning">wash</span></h2>
+                <p class="text-muted small mb-2">Jl. Raya Utama No. 123 - Telp/WA: 0812-3456-7890</p>
+                <div class="d-inline-block bg-light px-3 py-1 rounded-pill">
+                    <span class="fw-bold text-uppercase small" id="judulLaporanTeks">LAPORAN LABA & BAGI HASIL KARYAWAN (60:40)</span>
+                </div>
             </div>
 
             <div class="table-responsive mb-4">
-                <table class="table table-striped table-bordered align-middle" id="tabelExcel">
-                    <thead class="table-primary text-center">
+                <table class="table table-custom align-middle" id="tabelExcel">
+                    <thead>
                         <tr>
-                            <th style="width: 50px;">No</th>
+                            <th style="width: 50px;" class="text-center">No</th>
                             <th>Kode</th>
                             <th>Tanggal</th>
                             <th>Pelanggan / Motor</th>
                             <th>Paket Layanan</th>
-                            <th>Laba Kotor (Rp)</th>
-                            <th>Gaji Karyawan 40% (Rp)</th>
-                            <th>Laba Bersih 60% (Rp)</th>
+                            <th class="text-end">Laba Kotor</th>
+                            <th class="text-end">Gaji (40%)</th>
+                            <th class="text-end">Bersih (60%)</th>
                         </tr>
                     </thead>
                     <tbody id="tabelLaporanBody">
-                        </tbody>
-                    <tfoot class="table-dark fw-bold">
-                        <tr>
-                            <td colspan="5" class="text-end">TOTAL KESELURUHAN:</td>
-                            <td class="text-end" id="footLabaKotor">Rp 0</td>
-                            <td class="text-end text-warning" id="footKaryawan">Rp 0</td>
-                            <td class="text-end text-success" id="footLabaBersih">Rp 0</td>
+                    </tbody>
+                    <tfoot>
+                        <tr class="fw-bold bg-dark text-white">
+                            <td colspan="5" class="text-end py-3">TOTAL KESELURUHAN:</td>
+                            <td class="text-end py-3" id="footLabaKotor">Rp 0</td>
+                            <td class="text-end py-3 text-warning" id="footKaryawan">Rp 0</td>
+                            <td class="text-end py-3 text-success" id="footLabaBersih">Rp 0</td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
 
-            <div class="row mt-4 pt-3 border-top">
+            <div class="row mt-5 pt-3">
                 <div class="col-6 text-center">
-                    <p class="mb-5 fw-semibold">Penanggung Jawab / Kasir</p>
-                    <p class="fw-bold mb-0">( .................................... )</p>
+                    <p class="mb-5 text-muted small fw-semibold">Penanggung Jawab / Kasir</p>
+                    <p class="fw-bold mb-0 text-dark">( .................................... )</p>
                 </div>
                 <div class="col-6 text-center">
-                    <p class="mb-5 fw-semibold">Pemilik WANTOwash</p>
-                    <p class="fw-bold mb-0">( WANTO )</p>
+                    <p class="mb-5 text-muted small fw-semibold">Pemilik WANTOwash</p>
+                    <p class="fw-bold mb-0 text-dark">( WANTO )</p>
                 </div>
             </div>
         </div>
@@ -344,7 +416,6 @@
         let globalLabaBersih = 0;
         let totalCount = 0;
 
-        // Inisialisasi Tanggal Hari Ini & Bulan Ini di Input Filter
         let today = new Date().toISOString().split('T')[0];
         let thisMonth = new Date().toISOString().slice(0, 7);
         document.getElementById("filterTanggal").value = today;
@@ -387,7 +458,6 @@
             let filterTgl = document.getElementById("filterTanggal").value;
             let filterBln = document.getElementById("filterBulan").value;
 
-            // Filter transaksi berdasarkan Lunas & Jenis Filter
             let dataFiltered = transaksi.filter(t => {
                 let isLunas = (t.pembayaranStatus === "Lunas" || t.status === "Selesai");
                 if (!isLunas) return false;
@@ -400,7 +470,6 @@
                 return true;
             });
 
-            // Ubah Judul Laporan
             let judulEl = document.getElementById("judulLaporanTeks");
             if (jenis === "harian") {
                 judulEl.innerText = `LAPORAN HARIAN LABA & BAGI HASIL (${filterTgl})`;
@@ -416,96 +485,5 @@
                 dataFiltered.forEach((t, idx) => {
                     totalCount++;
                     let totalBiaya = Number(t.total) || 0;
-                    let gajiKaryawan = totalBiaya * 0.40; // 40%
-                    let labaBersih = totalBiaya * 0.60;   // 60%
-
-                    globalLabaKotor += totalBiaya;
-                    globalKaryawan += gajiKaryawan;
-                    globalLabaBersih += labaBersih;
-
-                    tbody.innerHTML += `
-                        <tr>
-                            <td class="text-center">${idx + 1}</td>
-                            <td class="fw-semibold">${t.kode || '-'}</td>
-                            <td>${t.tanggal || '-'}</td>
-                            <td>${t.pelanggan || '-'} (${t.plat || '-'})</td>
-                            <td>${t.paket || 'Cuci Motor'}</td>
-                            <td class="text-end fw-semibold">Rp ${totalBiaya.toLocaleString("id-ID")}</td>
-                            <td class="text-end text-danger">Rp ${gajiKaryawan.toLocaleString("id-ID")}</td>
-                            <td class="text-end text-success fw-bold">Rp ${labaBersih.toLocaleString("id-ID")}</td>
-                        </tr>
-                    `;
-                });
-            }
-
-            // Update Statistik Ringkasan
-            document.getElementById("statTotalTrans").innerText = totalCount;
-            document.getElementById("statLabaKotor").innerText = "Rp " + globalLabaKotor.toLocaleString("id-ID");
-            document.getElementById("statKaryawan").innerText = "Rp " + globalKaryawan.toLocaleString("id-ID");
-            document.getElementById("statLabaBersih").innerText = "Rp " + globalLabaBersih.toLocaleString("id-ID");
-
-            // Update Footer Tabel
-            document.getElementById("footLabaKotor").innerText = "Rp " + globalLabaKotor.toLocaleString("id-ID");
-            document.getElementById("footKaryawan").innerText = "Rp " + globalKaryawan.toLocaleString("id-ID");
-            document.getElementById("footLabaBersih").innerText = "Rp " + globalLabaBersih.toLocaleString("id-ID");
-        }
-
-        // 1. FUNGSI CETAK EXCEL (.XLSX)
-        function exportExcel() {
-            let table = document.getElementById("tabelExcel");
-            let wb = XLSX.utils.table_to_book(table, { sheet: "Laporan_WANTOwash" });
-            
-            let jenis = document.getElementById("filterJenis").value;
-            let fileName = `Laporan_Keuangan_${jenis}_WANTOwash.xlsx`;
-            
-            XLSX.writeFile(wb, fileName);
-        }
-
-        // 2. FUNGSI KIRIM LAPORAN KE WHATSAPP
-        function kirimWALaporan() {
-            let jenis = document.getElementById("filterJenis").value;
-            let pesan = `*WANTOwash - LAPORAN KEUANGAN (${jenis.toUpperCase()})*
-Jl. Raya Utama No. 123 - Telp/WA: 0812-3456-7890
---------------------------------
-
-\`\`\`
-Total Transaksi : ${totalCount} Motor
---------------------------------
-Laba Kotor      : Rp ${globalLabaKotor.toLocaleString("id-ID")}
-Gaji Karyawan 40%: Rp ${globalKaryawan.toLocaleString("id-ID")}
---------------------------------
-Laba Bersih 60% : Rp ${globalLabaBersih.toLocaleString("id-ID")}
-\`\`\`
-
-Laporan otomatis diproses oleh sistem WANTOwash.`;
-
-            let url = `https://api.whatsapp.com/send?text=${encodeURIComponent(pesan)}`;
-            window.open(url, '_blank');
-        }
-
-        // 3. FUNGSI DOWNLOAD GAMBAR PNG
-        function downloadPNG() {
-            let area = document.getElementById("areaLaporan");
-            html2canvas(area).then(canvas => {
-                let link = document.createElement('a');
-                link.download = `Laporan-Keuangan-WANTOwash.png`;
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-            });
-        }
-
-        function logout() {
-            if (confirm("Apakah Anda yakin ingin keluar dari sistem?")) {
-                localStorage.removeItem("login");
-                localStorage.removeItem("username");
-                location.href = "login.html";
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            muatLaporan();
-        });
-    </script>
-</body>
-
-</html>
+                    let gajiKaryawan = totalBiaya * 0.40;
+                    let labaBersih = totalBiaya * 0.60;
