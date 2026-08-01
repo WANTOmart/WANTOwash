@@ -1,297 +1,265 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaksi Cuci - WANTO Wash</title>
+    <title>Transaksi - WANTOwash</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- RESET & GLOBAL STYLES --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            -webkit-tap-highlight-color: transparent;
+        :root {
+            --primary-blue: #0d6efd;
+            --sidebar-width: 260px;
         }
 
         body {
-            background: #f4f6f9;
-            color: #333;
-            min-height: 100vh;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f4f6f9;
+            color: #2c3e50;
         }
 
-        /* --- MOBILE TOP NAVBAR --- */
-        .mobile-navbar {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 60px;
-            background: #111827;
-            color: white;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            z-index: 1001;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-
-        .mobile-navbar .brand-name {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ff3b3b;
-        }
-
-        .mobile-navbar .brand-name span {
-            color: #2196f3;
-        }
-
-        /* --- SIDEBAR NAVIGASI --- */
+        /* Sidebar Styling */
         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
-            width: 250px;
-            height: 100%;
-            background: #111827;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #0d6efd 0%, #0a58ca 100%);
             color: white;
-            z-index: 1000;
-            transition: transform 0.3s ease;
             overflow-y: auto;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
         }
 
-        .logo {
+        .sidebar .brand-container {
             padding: 20px 15px;
-            text-align: center;
-            border-bottom: 1px solid #1f2937;
+            background: rgba(0, 0, 0, 0.1);
         }
 
-        .logo h2 {
-            color: #ff3b3b;
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 0;
-        }
-
-        .logo span {
-            color: #2196f3;
-        }
-
-        .logo small {
-            color: #9ca3af;
-            font-size: 12px;
-            display: block;
-            margin-top: 2px;
-        }
-
-        .menu {
-            list-style: none;
-            padding: 0;
-            margin-top: 10px;
-        }
-
-        .menu li {
-            border-bottom: 1px solid #1f2937;
-        }
-
-        .menu li a {
+        .sidebar .nav-link-custom {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 14px 20px;
-            color: #d1d5db;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.85);
             text-decoration: none;
-            font-size: 15px;
-            transition: background 0.2s, color 0.2s;
+            font-weight: 500;
+            border-left: 4px solid transparent;
+            transition: all 0.2s ease;
         }
 
-        .menu li a i {
-            width: 20px;
-            text-align: center;
-            font-size: 16px;
+        .sidebar .nav-link-custom:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.12);
         }
 
-        .menu li a:hover, .menu li a.active {
-            background: #dc3545;
-            color: white;
-        }
-
-        /* --- CONTENT AREA --- */
-        .content {
-            margin-left: 250px;
-            padding: 25px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .form-card, .table-card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.04);
-            background: white;
-        }
-
-        .table thead {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .table th {
-            padding: 12px 15px;
-            font-size: 14px;
+        .sidebar .nav-link-custom.active {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.2);
+            border-left-color: #ffd54f;
             font-weight: 600;
         }
 
-        .table td {
-            padding: 12px 15px;
-            font-size: 14px;
-            vertical-align: middle;
+        /* Main Content */
+        .content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            transition: all 0.3s ease;
         }
 
-        /* --- RESPONSIVE MEDIA QUERIES --- */
-        @media (max-width: 768px) {
-            .mobile-navbar {
-                display: flex;
+        .custom-card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .table th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            background-color: #f8f9fa;
+        }
+
+        /* Responsive Mobile Layout */
+        .mobile-header {
+            display: none;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 998;
+        }
+
+        @media (max-width: 991.98px) {
+            .sidebar {
+                left: calc(-1 * var(--sidebar-width));
             }
 
-            .sidebar {
-                transform: translateX(-100%);
+            .sidebar.active {
+                left: 0;
             }
 
             .content {
                 margin-left: 0;
-                padding: 75px 15px 20px 15px;
+                padding: 20px 15px;
+            }
+
+            .mobile-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #0d6efd;
+                color: white;
+                padding: 12px 20px;
+                position: sticky;
+                top: 0;
+                z-index: 999;
+            }
+
+            .overlay.active {
+                display: block;
             }
         }
     </style>
 </head>
+
 <body>
 
-    <div class="mobile-navbar">
-        <button class="btn btn-dark text-white border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
-            <i class="bi bi-list fs-4"></i>
+    <div class="mobile-header shadow-sm">
+        <button class="btn text-white p-0 border-0" onclick="toggleSidebar()">
+            <i class="bi bi-list fs-1"></i>
         </button>
-        <div class="brand-name">WANTO <span>Wash</span></div>
-        <div style="width: 30px;"></div>
+        <h4 class="m-0 fw-bold">WANTO<span class="text-warning">wash</span></h4>
+        <div style="width: 32px;"></div>
     </div>
 
-    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileSidebar" style="width: 250px;">
-        <div class="offcanvas-header border-bottom border-secondary">
-            <h5 class="offcanvas-title text-danger fw-bold">WANTO <span class="text-primary">Wash</span></h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body p-0">
-            <ul class="menu">
-                <li><a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-                <li><a href="pelanggan.html"><i class="bi bi-people"></i> Data Pelanggan</a></li>
-                <li><a href="motor.html"><i class="bi bi-bicycle"></i> Data Motor</a></li>
-                <li><a href="paket.html"><i class="bi bi-tags"></i> Paket Cuci</a></li>
-                <li><a class="active" href="transaksi.html"><i class="bi bi-cart-check"></i> Transaksi</a></li>
-                <li><a href="pembayaran.html"><i class="bi bi-cash-stack"></i> Pembayaran</a></li>
-                <li><a href="nota.html"><i class="bi bi-printer"></i> Nota</a></li>
-                <li><a href="laporan.html"><i class="bi bi-bar-chart"></i> Laporan</a></li>
-                <li><a href="karyawan.html"><i class="bi bi-person-badge"></i> Karyawan</a></li>
-                <li><a href="pengaturan.html"><i class="bi bi-gear"></i> Pengaturan</a></li>
-                <li><a href="login.html"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
-            </ul>
-        </div>
-    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-    <div class="sidebar d-none d-md-block">
-        <div class="logo">
-            <h2>WANTO <span>Wash</span></h2>
-            <small>Sistem Kasir Cuci Motor</small>
+    <aside class="sidebar d-flex flex-column" id="sidebar">
+        <div class="brand-container text-center">
+            <img src="img/logo.jpeg" alt="Logo WANTOwash" class="shadow-sm mb-2"
+                style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid white;"
+                onerror="this.onerror=null; this.src='https://via.placeholder.com/70?text=Wash';">
+            <h4 class="m-0 fw-bold">WANTO<span class="text-warning">wash</span></h4>
         </div>
 
-        <ul class="menu">
-            <li><a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-            <li><a href="pelanggan.html"><i class="bi bi-people"></i> Data Pelanggan</a></li>
-            <li><a href="motor.html"><i class="bi bi-bicycle"></i> Data Motor</a></li>
-            <li><a href="paket.html"><i class="bi bi-tags"></i> Paket Cuci</a></li>
-            <li><a class="active" href="transaksi.html"><i class="bi bi-cart-check"></i> Transaksi</a></li>
-            <li><a href="pembayaran.html"><i class="bi bi-cash-stack"></i> Pembayaran</a></li>
-            <li><a href="nota.html"><i class="bi bi-printer"></i> Nota</a></li>
-            <li><a href="laporan.html"><i class="bi bi-bar-chart"></i> Laporan</a></li>
-            <li><a href="karyawan.html"><i class="bi bi-person-badge"></i> Karyawan</a></li>
-            <li><a href="pengaturan.html"><i class="bi bi-gear"></i> Pengaturan</a></li>
-            <li><a href="login.html"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
-        </ul>
-    </div>
+        <nav class="nav flex-column my-3 flex-grow-1">
+            <a href="dashboard.html" class="nav-link-custom"><i class="bi bi-speedometer2 me-3 fs-5"></i> Dashboard</a>
+            <a href="pelanggan.html" class="nav-link-custom"><i class="bi bi-people me-3 fs-5"></i> Data Pelanggan</a>
+            <a href="motor.html" class="nav-link-custom"><i class="bi bi-bicycle me-3 fs-5"></i> Data Motor</a>
+            <a href="paket.html" class="nav-link-custom"><i class="bi bi-tags me-3 fs-5"></i> Paket Cuci</a>
+            <a href="transaksi.html" class="nav-link-custom active"><i class="bi bi-cart-check me-3 fs-5"></i> Transaksi</a>
+            <a href="pembayaran.html" class="nav-link-custom"><i class="bi bi-cash-stack me-3 fs-5"></i> Pembayaran</a>
+            <a href="nota.html" class="nav-link-custom"><i class="bi bi-printer me-3 fs-5"></i> Cetak Nota</a>
+            <a href="laporan.html" class="nav-link-custom"><i class="bi bi-bar-chart me-3 fs-5"></i> Laporan</a>
+            <a href="karyawan.html" class="nav-link-custom"><i class="bi bi-person-badge me-3 fs-5"></i> Karyawan</a>
+            <a href="pengaturan.html" class="nav-link-custom"><i class="bi bi-gear me-3 fs-5"></i> Pengaturan</a>
+        </nav>
 
-    <div class="content">
-        <h2 class="mb-4"><i class="bi bi-cart-check text-danger"></i> Transaksi Cuci Motor</h2>
+        <div class="p-3 border-top border-white-10">
+            <a href="#" onclick="logout()" class="nav-link-custom text-danger bg-white bg-opacity-10 rounded-3">
+                <i class="bi bi-box-arrow-right me-3 fs-5"></i> Logout
+            </a>
+        </div>
+    </aside>
 
-        <div class="card form-card p-4 mb-4">
-            <h5 class="fw-bold mb-3"><i class="bi bi-plus-circle-fill text-danger me-2"></i>Tambah Transaksi Baru</h5>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Nama Pelanggan</label>
-                    <select id="pelanggan" class="form-select">
-                        <option value="">-- Pilih Pelanggan --</option>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Motor</label>
-                    <select id="motor" class="form-select">
-                        <option value="">-- Pilih Motor --</option>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Paket Cuci</label>
-                    <select id="paket" class="form-select">
-                        <option value="">-- Pilih Paket --</option>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Harga Paket</label>
-                    <input type="text" id="harga" class="form-control bg-light" readonly placeholder="Rp 0">
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Tanggal Transaksi</label>
-                    <input type="date" id="tanggal" class="form-control">
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Total Bayar</label>
-                    <input type="text" id="total" class="form-control bg-light fw-bold text-success fs-5" readonly placeholder="Rp 0">
-                </div>
+    <main class="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold mb-1"><i class="bi bi-cart-check text-primary me-2"></i>Transaksi Cuci</h3>
+                <p class="text-muted mb-0">Input dan kelola transaksi pencucian motor</p>
             </div>
-
-            <div class="mt-4">
-                <button class="btn btn-danger w-100 py-2 fw-semibold" onclick="simpanTransaksi()">
-                    <i class="bi bi-save me-1"></i> Simpan Transaksi
-                </button>
-            </div>
+            <button class="btn btn-primary shadow-sm rounded-3 px-3 py-2 fw-semibold" onclick="bukaModalTambah()">
+                <i class="bi bi-plus-lg me-1"></i> Transaksi Baru
+            </button>
         </div>
 
-        <div class="card table-card p-3">
-            <h5 class="fw-bold mb-3">Data Riwayat Transaksi</h5>
+        <div class="card custom-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <input type="text" id="cariTransaksi" class="form-control w-auto" placeholder="Cari Kode / Plat / Pelanggan..." onkeyup="renderTabel()">
+            </div>
             <div class="table-responsive">
-                <table class="table table-hover table-bordered mb-0">
+                <table class="table table-hover align-middle mb-0">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>No Transaksi</th>
-                            <th>Tanggal</th>
-                            <th>Pelanggan</th>
-                            <th>Motor</th>
-                            <th>Paket</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                            <th class="text-center">Aksi</th>
+                            <th class="border-0">No</th>
+                            <th class="border-0">Kode Transaksi</th>
+                            <th class="border-0">Tanggal</th>
+                            <th class="border-0">Pelanggan / Plat</th>
+                            <th class="border-0">Paket Layanan</th>
+                            <th class="border-0">Total</th>
+                            <th class="border-0">Status</th>
+                            <th class="border-0 text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="tabelTransaksi">
-                        </tbody>
+                    <tbody id="tabelTransaksi"></tbody>
                 </table>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal fade" id="modalTransaksi" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold" id="modalTitle">Tambah Transaksi Baru</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formTransaksi">
+                        <input type="hidden" id="editIndex">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Kode Transaksi</label>
+                            <input type="text" id="kodeTransaksi" class="form-control bg-light" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Pilih Motor / Pelanggan</label>
+                            <select id="selectMotor" class="form-select" onchange="updatePelangganOtomatis()" required>
+                                <option value="">-- Pilih Kendaraan --</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nama Pelanggan</label>
+                            <input type="text" id="namaPelanggan" class="form-control bg-light" placeholder="Otomatis terisi..." readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Pilih Paket Cuci</label>
+                            <select id="selectPaket" class="form-select" onchange="updateTotalHarga()" required>
+                                <option value="">-- Pilih Paket Cuci --</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Total Biaya (Rp)</label>
+                            <input type="number" id="totalBiaya" class="form-control fw-bold text-success fs-5" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Status Pencucian</label>
+                            <select id="statusProses" class="form-select">
+                                <option value="Antrean">Antrean</option>
+                                <option value="Proses Cuci">Proses Cuci</option>
+                                <option value="Selesai">Selesai</option>
+                            </select>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary px-4">Simpan Transaksi</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -299,156 +267,174 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Cek Login
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("active");
+            document.getElementById("overlay").classList.toggle("active");
+        }
+
         if (localStorage.getItem("login") !== "true") {
             location.href = "login.html";
         }
 
-        // Set Default Tanggal Hari Ini
-        document.getElementById("tanggal").value = new Date().toISOString().split("T")[0];
-
-        // Load Data LocalStorage
-        let pelanggan = JSON.parse(localStorage.getItem("pelanggan")) || [];
+        let transaksi = JSON.parse(localStorage.getItem("transaksi")) || [];
         let motor = JSON.parse(localStorage.getItem("motor")) || [];
         let paket = JSON.parse(localStorage.getItem("paket")) || [];
-        let transaksi = JSON.parse(localStorage.getItem("transaksi")) || [];
 
-        // Populate Pelanggan
-        let pilihPelanggan = document.getElementById("pelanggan");
-        pelanggan.forEach(function(item) {
-            let option = document.createElement("option");
-            option.value = item.nama;
-            option.text = item.nama;
-            pilihPelanggan.appendChild(option);
-        });
+        const modalTransaksi = new bootstrap.Modal(document.getElementById('modalTransaksi'));
 
-        // Filter Motor berdasarkan Pelanggan yang dipilih
-        pilihPelanggan.onchange = function() {
-            let selectMotor = document.getElementById("motor");
-            selectMotor.innerHTML = "<option value=''>-- Pilih Motor --</option>";
-
-            motor.forEach(function(item) {
-                if (item.pemilik === pilihPelanggan.value) {
-                    let option = document.createElement("option");
-                    let infoMotor = `${item.merk} ${item.tipe} (${item.plat})`;
-                    option.value = infoMotor;
-                    option.text = infoMotor;
-                    selectMotor.appendChild(option);
-                }
+        function muatDropdownData() {
+            let selectMotor = document.getElementById("selectMotor");
+            selectMotor.innerHTML = '<option value="">-- Pilih Kendaraan --</option>';
+            motor.forEach((m, idx) => {
+                selectMotor.innerHTML += `<option value="${idx}">${m.plat} - ${m.merk} (${m.pemilik})</option>`;
             });
-        };
 
-        // Populate Paket Cuci
-        let pilihPaket = document.getElementById("paket");
-        paket.forEach(function(item) {
-            let option = document.createElement("option");
-            option.value = item.nama;
-            option.text = item.nama;
-            option.dataset.harga = item.harga;
-            pilihPaket.appendChild(option);
-        });
+            let selectPaket = document.getElementById("selectPaket");
+            selectPaket.innerHTML = '<option value="">-- Pilih Paket Cuci --</option>';
+            paket.forEach((p, idx) => {
+                selectPaket.innerHTML += `<option value="${idx}">${p.nama} - Rp ${Number(p.harga).toLocaleString("id-ID")}</option>`;
+            });
+        }
 
-        // Saat Paket Dipilih
-        pilihPaket.onchange = function() {
-            let harga = this.options[this.selectedIndex].dataset.harga || 0;
-            let formatted = "Rp " + Number(harga).toLocaleString("id-ID");
-            document.getElementById("harga").value = formatted;
-            document.getElementById("total").value = formatted;
-        };
-
-        // Tampilkan Data Transaksi ke Tabel
-        tampil();
-
-        function tampil() {
-            let html = "";
-            if (transaksi.length === 0) {
-                html = `<tr><td colspan="9" class="text-center text-muted py-3">Belum ada transaksi tersimpan</td></tr>`;
+        function updatePelangganOtomatis() {
+            let idx = document.getElementById("selectMotor").value;
+            if (idx !== "") {
+                document.getElementById("namaPelanggan").value = motor[idx].pemilik;
             } else {
-                transaksi.forEach(function(item, index) {
-                    let badgeClass = item.status === "Sudah Dibayar" ? "bg-success" : "bg-warning text-dark";
-                    html += `
+                document.getElementById("namaPelanggan").value = "";
+            }
+        }
+
+        function updateTotalHarga() {
+            let idx = document.getElementById("selectPaket").value;
+            if (idx !== "") {
+                document.getElementById("totalBiaya").value = paket[idx].harga;
+            } else {
+                document.getElementById("totalBiaya").value = 0;
+            }
+        }
+
+        function renderTabel() {
+            let keyword = document.getElementById("cariTransaksi").value.toLowerCase();
+            let html = "";
+            let filtered = transaksi.filter(t => 
+                t.kode.toLowerCase().includes(keyword) || 
+                t.plat.toLowerCase().includes(keyword) ||
+                t.pelanggan.toLowerCase().includes(keyword)
+            );
+
+            if (filtered.length === 0) {
+                html = `
                     <tr>
-                        <td>${index + 1}</td>
-                        <td class="fw-bold">${item.nomor}</td>
-                        <td>${item.tanggal}</td>
-                        <td class="fw-semibold">${item.pelanggan}</td>
-                        <td>${item.motor}</td>
-                        <td>${item.paket}</td>
-                        <td class="fw-semibold">Rp ${Number(item.total).toLocaleString("id-ID")}</td>
-                        <td><span class="badge ${badgeClass}">${item.status}</span></td>
-                        <td class="text-center">
-                            <button class="btn btn-danger btn-sm" onclick="hapusTransaksi(${index})" title="Hapus">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-2 d-block mb-1 opacity-50"></i>
+                            Tidak ada transaksi
                         </td>
                     </tr>`;
+            } else {
+                filtered.forEach((item, index) => {
+                    let badgeStatus = 'bg-secondary';
+                    if (item.status === 'Proses Cuci') badgeStatus = 'bg-warning text-dark';
+                    if (item.status === 'Selesai') badgeStatus = 'bg-success';
+
+                    html += `
+                        <tr>
+                            <td class="fw-semibold text-muted">${index + 1}</td>
+                            <td class="fw-bold font-monospace">${item.kode}</td>
+                            <td>${item.tanggal}</td>
+                            <td>
+                                <div><strong>${item.pelanggan}</strong></div>
+                                <small class="text-muted">${item.plat}</small>
+                            </td>
+                            <td>${item.paket}</td>
+                            <td class="fw-bold text-success">Rp ${Number(item.total).toLocaleString("id-ID")}</td>
+                            <td><span class="badge ${badgeStatus}">${item.status}</span></td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-outline-warning me-1" onclick="bukaModalEdit(${index})">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="hapusTransaksi(${index})">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>`;
                 });
             }
             document.getElementById("tabelTransaksi").innerHTML = html;
         }
 
-        // Simpan Transaksi Baru
-        function simpanTransaksi() {
-            let valPelanggan = document.getElementById("pelanggan").value;
-            let valMotor = document.getElementById("motor").value;
-            let valPaket = document.getElementById("paket").value;
-            let valTanggal = document.getElementById("tanggal").value;
-            let valHargaRaw = document.getElementById("harga").value
-                .replace("Rp ", "")
-                .replace(/\./g, "")
-                .replace(/,/g, "");
+        function bukaModalTambah() {
+            muatDropdownData();
+            document.getElementById("modalTitle").innerText = "Tambah Transaksi Baru";
+            document.getElementById("editIndex").value = "";
+            document.getElementById("formTransaksi").reset();
+            
+            const now = new Date();
+            const kode = "TRX-" + now.getFullYear() + (now.getMonth()+1).toString().padStart(2, '0') + now.getDate().toString().padStart(2, '0') + "-" + Math.floor(1000 + Math.random() * 9000);
+            document.getElementById("kodeTransaksi").value = kode;
+            
+            modalTransaksi.show();
+        }
 
-            if (valPelanggan === "") {
-                alert("Pilih pelanggan terlebih dahulu.");
-                return;
-            }
-            if (valMotor === "") {
-                alert("Pilih motor terlebih dahulu.");
-                return;
-            }
-            if (valPaket === "") {
-                alert("Pilih paket cuci terlebih dahulu.");
-                return;
-            }
+        function bukaModalEdit(index) {
+            muatDropdownData();
+            document.getElementById("modalTitle").innerText = "Edit Transaksi";
+            document.getElementById("editIndex").value = index;
+            
+            let data = transaksi[index];
+            document.getElementById("kodeTransaksi").value = data.kode;
+            document.getElementById("namaPelanggan").value = data.pelanggan;
+            document.getElementById("totalBiaya").value = data.total;
+            document.getElementById("statusProses").value = data.status;
 
-            let nomorTRX = "TRX" + String(transaksi.length + 1).padStart(5, "0");
+            modalTransaksi.show();
+        }
+
+        document.getElementById("formTransaksi").addEventListener("submit", function(e) {
+            e.preventDefault();
+            let index = document.getElementById("editIndex").value;
+            let motorIdx = document.getElementById("selectMotor").value;
+            let paketIdx = document.getElementById("selectPaket").value;
 
             let dataBaru = {
-                nomor: nomorTRX,
-                tanggal: valTanggal,
-                pelanggan: valPelanggan,
-                motor: valMotor,
-                paket: valPaket,
-                total: Number(valHargaRaw),
-                status: "Belum Dibayar"
+                kode: document.getElementById("kodeTransaksi").value,
+                tanggal: new Date().toLocaleDateString("id-ID"),
+                plat: motorIdx !== "" ? motor[motorIdx].plat : (transaksi[index] ? transaksi[index].plat : "-"),
+                pelanggan: document.getElementById("namaPelanggan").value,
+                paket: paketIdx !== "" ? paket[paketIdx].nama : (transaksi[index] ? transaksi[index].paket : "-"),
+                total: Number(document.getElementById("totalBiaya").value),
+                status: document.getElementById("statusProses").value
             };
 
-            transaksi.push(dataBaru);
+            if (index === "") {
+                transaksi.push(dataBaru);
+            } else {
+                transaksi[index] = dataBaru;
+            }
 
-            // Simpan ke LocalStorage
             localStorage.setItem("transaksi", JSON.stringify(transaksi));
-            localStorage.setItem("transaksiTerakhir", JSON.stringify(dataBaru));
+            modalTransaksi.hide();
+            renderTabel();
+        });
 
-            alert("Transaksi berhasil disimpan.");
-
-            // Reset Form Input
-            document.getElementById("pelanggan").selectedIndex = 0;
-            document.getElementById("motor").innerHTML = "<option value=''>-- Pilih Motor --</option>";
-            document.getElementById("paket").selectedIndex = 0;
-            document.getElementById("harga").value = "";
-            document.getElementById("total").value = "";
-
-            tampil();
-        }
-
-        // Hapus Transaksi
         function hapusTransaksi(index) {
-            if (confirm("Apakah Anda yakin ingin menghapus data transaksi ini?")) {
+            if (confirm("Apakah Anda yakin ingin menghapus transaksi ini?")) {
                 transaksi.splice(index, 1);
                 localStorage.setItem("transaksi", JSON.stringify(transaksi));
-                tampil();
+                renderTabel();
             }
         }
+
+        function logout() {
+            if (confirm("Apakah Anda yakin ingin keluar dari sistem?")) {
+                localStorage.removeItem("login");
+                localStorage.removeItem("username");
+                location.href = "login.html";
+            }
+        }
+
+        renderTabel();
     </script>
 </body>
+
 </html>
