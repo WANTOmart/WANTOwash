@@ -8,379 +8,133 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary-blue: #0d6efd;
+            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            --sidebar-gradient: linear-gradient(180deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+            --accent-color: #f59e0b;
             --sidebar-width: 260px;
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f4f6f9;
-            color: #2c3e50;
+            background-color: #f1f5f9;
+            color: #1e293b;
         }
 
-        /* Sidebar Styling */
+        /* --- Sidebar Styling --- */
         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
             width: var(--sidebar-width);
             height: 100vh;
-            background: linear-gradient(180deg, #0d6efd 0%, #0a58ca 100%);
+            background: var(--sidebar-gradient);
             color: white;
             overflow-y: auto;
             z-index: 1000;
-            transition: all 0.3s ease;
-            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15);
         }
 
         .sidebar .brand-container {
-            padding: 20px 15px;
-            background: rgba(0, 0, 0, 0.1);
+            padding: 24px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .sidebar .nav-link-custom {
             display: flex;
             align-items: center;
-            padding: 12px 20px;
-            color: rgba(255, 255, 255, 0.85);
+            padding: 14px 20px;
+            margin: 4px 12px;
+            color: rgba(255, 255, 255, 0.75);
             text-decoration: none;
             font-weight: 500;
-            border-left: 4px solid transparent;
-            transition: all 0.2s ease;
+            border-radius: 12px;
+            transition: all 0.25s ease;
         }
 
         .sidebar .nav-link-custom:hover {
             color: #ffffff;
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(4px);
         }
 
         .sidebar .nav-link-custom.active {
             color: #ffffff;
-            background: rgba(255, 255, 255, 0.2);
-            border-left-color: #ffd54f;
-            font-weight: 600;
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+            font-weight: 700;
         }
 
-        /* Main Content */
+        /* --- Main Content --- */
         .content {
             margin-left: var(--sidebar-width);
-            padding: 30px;
+            padding: 35px;
             transition: all 0.3s ease;
+        }
+
+        /* Decorative Header Card */
+        .page-header-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            color: #4338ca;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
         }
 
         .custom-card {
             border: none;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(226, 232, 240, 0.8);
         }
 
-        .table th {
-            font-weight: 600;
+        /* --- Custom Table Styling --- */
+        .table {
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .table thead th {
+            font-weight: 700;
             text-transform: uppercase;
             font-size: 0.75rem;
-            letter-spacing: 0.5px;
-            color: #6c757d;
-            background-color: #f8f9fa;
+            letter-spacing: 0.8px;
+            color: #64748b;
+            background-color: transparent;
+            border: none;
+            padding: 12px 16px;
         }
 
-        /* Responsive Mobile Layout */
-        .mobile-header {
-            display: none;
+        .table tbody tr {
+            background-color: #f8fafc;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
         }
 
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(2px);
-            z-index: 998;
+        .table tbody tr:hover {
+            background-color: #eff6ff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.1);
         }
 
-        @media (max-width: 991.98px) {
-            .sidebar {
-                left: calc(-1 * var(--sidebar-width));
-            }
-
-            .sidebar.active {
-                left: 0;
-            }
-
-            .content {
-                margin-left: 0;
-                padding: 20px 15px;
-            }
-
-            .mobile-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background: #0d6efd;
-                color: white;
-                padding: 12px 20px;
-                position: sticky;
-                top: 0;
-                z-index: 999;
-            }
-
-            .overlay.active {
-                display: block;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="mobile-header shadow-sm">
-        <button class="btn text-white p-0 border-0" onclick="toggleSidebar()">
-            <i class="bi bi-list fs-1"></i>
-        </button>
-        <h4 class="m-0 fw-bold">WANTO<span class="text-warning">wash</span></h4>
-        <div style="width: 32px;"></div>
-    </div>
-
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
-
-    <aside class="sidebar d-flex flex-column" id="sidebar">
-        <div class="brand-container text-center">
-            <img src="img/logo.jpeg" alt="Logo WANTOwash" class="shadow-sm mb-2"
-                style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid white;"
-                onerror="this.onerror=null; this.src='https://via.placeholder.com/70?text=Wash';">
-            <h4 class="m-0 fw-bold">WANTO<span class="text-warning">wash</span></h4>
-        </div>
-
-        <nav class="nav flex-column my-3 flex-grow-1">
-            <a href="dashboard.html" class="nav-link-custom"><i class="bi bi-speedometer2 me-3 fs-5"></i> Dashboard</a>
-            <a href="pelanggan.html" class="nav-link-custom"><i class="bi bi-people me-3 fs-5"></i> Data Pelanggan</a>
-            <a href="motor.html" class="nav-link-custom active"><i class="bi bi-bicycle me-3 fs-5"></i> Data Motor</a>
-            <a href="paket.html" class="nav-link-custom"><i class="bi bi-tags me-3 fs-5"></i> Paket Cuci</a>
-            <a href="transaksi.html" class="nav-link-custom"><i class="bi bi-cart-check me-3 fs-5"></i> Transaksi</a>
-            <a href="pembayaran.html" class="nav-link-custom"><i class="bi bi-cash-stack me-3 fs-5"></i> Pembayaran</a>
-            <a href="laporan.html" class="nav-link-custom"><i class="bi bi-bar-chart me-3 fs-5"></i> Laporan</a>
-            <a href="karyawan.html" class="nav-link-custom"><i class="bi bi-person-badge me-3 fs-5"></i> Karyawan</a>
-        </nav>
-
-        <div class="p-3 border-top border-white-10">
-            <a href="#" onclick="logout()" class="nav-link-custom text-danger bg-white bg-opacity-10 rounded-3">
-                <i class="bi bi-box-arrow-right me-3 fs-5"></i> Logout
-            </a>
-        </div>
-    </aside>
-
-    <main class="content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h3 class="fw-bold mb-1"><i class="bi bi-bicycle text-primary me-2"></i>Data Motor</h3>
-                <p class="text-muted mb-0">Kelola data kendaraan pelanggan WANTOwash</p>
-            </div>
-            <button class="btn btn-primary shadow-sm rounded-3 px-3 py-2 fw-semibold" onclick="bukaModalTambah()">
-                <i class="bi bi-plus-lg me-1"></i> Tambah Motor
-            </button>
-        </div>
-
-        <div class="card custom-card p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <input type="text" id="cariMotor" class="form-control w-auto" placeholder="Cari Plat / Merk / Pemilik..." onkeyup="renderTabel()">
-            </div>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th class="border-0">No</th>
-                            <th class="border-0">Plat Nomor</th>
-                            <th class="border-0">Merk / Tipe Motor</th>
-                            <th class="border-0">Pemilik (Pelanggan)</th>
-                            <th class="border-0">Warna</th>
-                            <th class="border-0 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelMotor"></tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-
-    <div class="modal fade" id="modalMotor" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold" id="modalTitle">Tambah Data Motor</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formMotor">
-                        <input type="hidden" id="editIndex">
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Plat Nomor</label>
-                            <input type="text" id="platMotor" class="form-control text-uppercase" placeholder="Contoh: P 1234 ABC" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Merk / Tipe Motor</label>
-                            <input type="text" id="merkMotor" class="form-control" placeholder="Contoh: Honda Vario 160" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Pemilik</label>
-                            <select id="pemilikMotor" class="form-select" required>
-                                <option value="">-- Pilih Pelanggan --</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Warna Kendaraan</label>
-                            <input type="text" id="warnaMotor" class="form-control" placeholder="Contoh: Hitam Doff">
-                        </div>
-                        <div class="text-end">
-                            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary px-4">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        // TOGGLE SIDEBAR MOBILE
-        function toggleSidebar() {
-            document.getElementById("sidebar").classList.toggle("active");
-            document.getElementById("overlay").classList.toggle("active");
-        }
-
-        // CEK LOGIN SIKLUS
-        if (localStorage.getItem("login") !== "true") {
-            location.href = "login.html";
-        }
-
-        let motor = JSON.parse(localStorage.getItem("motor")) || [];
-        let pelanggan = JSON.parse(localStorage.getItem("pelanggan")) || [];
-        const modalMotor = new bootstrap.Modal(document.getElementById('modalMotor'));
-
-        // POPULATE DROPDOWN PEMILIK
-        function muatDropdownPelanggan() {
-            let dropdown = document.getElementById("pemilikMotor");
-            dropdown.innerHTML = '<option value="">-- Pilih Pelanggan --</option>';
-            pelanggan.forEach(p => {
-                let opt = document.createElement("option");
-                opt.value = p.nama;
-                opt.innerText = p.nama + " (" + p.hp + ")";
-                dropdown.appendChild(opt);
-            });
-        }
-
-        // RENDER TABEL
-        function renderTabel() {
-            let keyword = document.getElementById("cariMotor").value.toLowerCase();
-            let html = "";
-            let filtered = motor.filter(m => 
-                m.plat.toLowerCase().includes(keyword) || 
-                m.merk.toLowerCase().includes(keyword) ||
-                m.pemilik.toLowerCase().includes(keyword)
-            );
-
-            if (filtered.length === 0) {
-                html = `
-                    <tr>
-                        <td colspan="6" class="text-center py-4 text-muted">
-                            <i class="bi bi-inbox fs-2 d-block mb-1 opacity-50"></i>
-                            Tidak ada data motor
-                        </td>
-                    </tr>`;
-            } else {
-                filtered.forEach((item, index) => {
-                    html += `
-                        <tr>
-                            <td class="fw-semibold text-muted">${index + 1}</td>
-                            <td><span class="badge bg-dark px-2 py-1 fs-6 font-monospace">${item.plat}</span></td>
-                            <td class="fw-bold">${item.merk}</td>
-                            <td><i class="bi bi-person me-1 text-primary"></i>${item.pemilik}</td>
-                            <td>${item.warna || "-"}</td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-outline-warning me-1" onclick="bukaModalEdit(${index})">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="hapusMotor(${index})">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>`;
-                });
-            }
-            document.getElementById("tabelMotor").innerHTML = html;
-        }
-
-        // BUKA MODAL TAMBAH
-        function bukaModalTambah() {
-            muatDropdownPelanggan();
-            document.getElementById("modalTitle").innerText = "Tambah Data Motor";
-            document.getElementById("editIndex").value = "";
-            document.getElementById("formMotor").reset();
-            modalMotor.show();
-        }
-
-        // BUKA MODAL EDIT
-        function bukaModalEdit(index) {
-            muatDropdownPelanggan();
-            document.getElementById("modalTitle").innerText = "Edit Data Motor";
-            document.getElementById("editIndex").value = index;
-            document.getElementById("platMotor").value = motor[index].plat;
-            document.getElementById("merkMotor").value = motor[index].merk;
-            document.getElementById("pemilikMotor").value = motor[index].pemilik;
-            document.getElementById("warnaMotor").value = motor[index].warna || "";
-            modalMotor.show();
-        }
-
-        // SIMPAN / EDIT MOTOR
-        document.getElementById("formMotor").addEventListener("submit", function(e) {
-            e.preventDefault();
-            let index = document.getElementById("editIndex").value;
-            let dataBaru = {
-                plat: document.getElementById("platMotor").value.toUpperCase(),
-                merk: document.getElementById("merkMotor").value,
-                pemilik: document.getElementById("pemilikMotor").value,
-                warna: document.getElementById("warnaMotor").value
-            };
-
-            if (index === "") {
-                motor.push(dataBaru);
-            } else {
-                motor[index] = dataBaru;
-            }
-
-            localStorage.setItem("motor", JSON.stringify(motor));
-            modalMotor.hide();
-            renderTabel();
-        });
-
-        // HAPUS MOTOR
-        function hapusMotor(index) {
-            if (confirm("Apakah Anda yakin ingin menghapus data motor ini?")) {
-                motor.splice(index, 1);
-                localStorage.setItem("motor", JSON.stringify(motor));
-                renderTabel();
-            }
-        }
-
-        // LOGOUT METHOD
-        function logout() {
-            if (confirm("Apakah Anda yakin ingin keluar dari sistem?")) {
-                localStorage.removeItem("login");
-                localStorage.removeItem("username");
-                location.href = "login.html";
-            }
-        }
-
-        // INITIAL RENDER
-        renderTabel();
-    </script>
-</body>
-
-</html>
+        .table tbody td {
+            padding: 16px;
