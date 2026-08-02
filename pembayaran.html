@@ -147,6 +147,26 @@
                 display: block;
             }
         }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #areaCetakNota, #areaCetakNota * {
+                visibility: visible;
+            }
+            #areaCetakNota {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none !important;
+                box-shadow: none !important;
+            }
+            .modal-footer, .btn-close {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 
@@ -244,3 +264,212 @@
                     </div>
                     
                     <hr class="border-2">
+
+                    <input type="hidden" id="transaksiIndex">
+
+                    <div class="mb-2 d-flex justify-content-between">
+                        <span class="text-muted">No. Nota:</span>
+                        <span class="fw-bold" id="notaNomor">-</span>
+                    </div>
+
+                    <div class="mb-2 d-flex justify-content-between">
+                        <span class="text-muted">Pelanggan:</span>
+                        <span class="fw-bold" id="notaPelanggan">-</span>
+                    </div>
+
+                    <div class="mb-2 d-flex justify-content-between">
+                        <span class="text-muted">Layanan Paket:</span>
+                        <span class="fw-bold text-primary" id="notaPaket">-</span>
+                    </div>
+
+                    <hr>
+
+                    <div class="mb-3 d-flex justify-content-between align-items-center">
+                        <span class="fs-5 fw-bold">Total Tagihan:</span>
+                        <span class="fs-4 fw-bold text-success" id="notaTotalTagihan">Rp 0</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Metode Pembayaran</label>
+                        <select id="selectMetode" class="form-select fw-bold">
+                            <option value="Tunai">Tunai (Cash)</option>
+                            <option value="QRIS">QRIS / E-Wallet</option>
+                            <option value="Transfer Bank">Transfer Bank</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Uang Diterima (Rp)</label>
+                        <input type="number" id="inputUangBayar" class="form-control form-control-lg fw-bold" placeholder="0" oninput="hitungKembalian()">
+                    </div>
+
+                    <div class="p-3 bg-light rounded-3 text-center mb-2">
+                        <small class="text-muted d-block uppercase fw-semibold">Uang Kembalian</small>
+                        <h3 class="fw-bold text-primary m-0" id="textKembalian">Rp 0</h3>
+                    </div>
+                </div>
+
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary" onclick="window.print()">
+                        <i class="bi bi-printer me-1"></i> Cetak Struk
+                    </button>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-success fw-bold px-4" onclick="prosesPelunasan()">
+                            <i class="bi bi-check-circle me-1"></i> Bayar & Lunas
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        if (localStorage.getItem("login") !== "true") {
+            window.location.href = "login.html";
+        }
+
+        const userRole = (localStorage.getItem("role") || "kasir").toLowerCase();
+        let modalBayarInstance = null;
+        let totalHargaAktif = 0;
+
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("active");
+            document.getElementById("overlay").classList.toggle("active");
+        }
+
+        function terapkanHakAkses() {
+            const roleBadge = document.getElementById("userRoleBadge");
+            if (roleBadge) {
+                roleBadge.innerText = userRole;
+            }
+            if (userRole === "admin" || userRole === "kasir") {
+                document.querySelectorAll(".menu-owner-only").forEach(menu => menu.style.display = "none");
+            }
+        }
+
+        function formatRupiah(angka) {
+            return "Rp " + parseInt(angka || 0).toLocaleString("id-ID");
+        }
+
+        function muatDataPembayaran() {
+            let transaksiList = JSON.parse(localStorage.getItem("transaksi")) || [];
+            let tbody = document.getElementById("tabelPembayaranBody");
+            tbody.innerHTML = "";
+
+            if (transaksiList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">Belum ada data transaksi.</td></tr>`;
+                return;
+            }
+
+            transaksiList.forEach((t, idx) => {
+                let badgeStatus = t.statusBayar === "Lunas" ? 
+                    `<span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Lunas</span>` : 
+                    `<span class="badge bg-warning text-dark"><i class="bi bi-clock-history me-1"></i>Belum Bayar</span>`;
+
+                let tombolAksi = "";
+                if (t.statusBayar === "Lunas") {
+                    tombolAksi = `<button class="btn btn-sm btn-outline-secondary" onclick="bukaModalKasir(${idx})"><i class="bi bi-receipt me-1"></i>Lihat Nota</button>`;
+                } else {
+                    tombolAksi = `<button class="btn btn-sm btn-primary fw-bold" onclick="bukaModalKasir(${idx})"><i class="bi bi-cash me-1"></i>Bayar</button>`;
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td class="fw-bold">${t.noNota || '-'}</td>
+                        <td>${t.pelanggan || '-'}</td>
+                        <td>${t.paket || '-'}</td>
+                        <td class="fw-bold text-success">${formatRupiah(t.totalHarga || t.harga)}</td>
+                        <td><span class="badge bg-light text-dark border">${t.metodeBayar || 'Tunai'}</span></td>
+                        <td>${badgeStatus}</td>
+                        <td class="text-center">${tombolAksi}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function bukaModalKasir(idx) {
+            let transaksiList = JSON.parse(localStorage.getItem("transaksi")) || [];
+            let t = transaksiList[idx];
+
+            document.getElementById("transaksiIndex").value = idx;
+            document.getElementById("notaNomor").innerText = t.noNota || `TRX-${idx+1}`;
+            document.getElementById("notaPelanggan").innerText = t.pelanggan || "-";
+            document.getElementById("notaPaket").innerText = t.paket || "-";
+            
+            totalHargaAktif = parseInt(t.totalHarga || t.harga || 0);
+            document.getElementById("notaTotalTagihan").innerText = formatRupiah(totalHargaAktif);
+            
+            document.getElementById("selectMetode").value = t.metodeBayar || "Tunai";
+            document.getElementById("inputUangBayar").value = t.uangBayar || "";
+            
+            hitungKembalian();
+
+            if (!modalBayarInstance) {
+                modalBayarInstance = new bootstrap.Modal(document.getElementById("modalBayar"));
+            }
+            modalBayarInstance.show();
+        }
+
+        function hitungKembalian() {
+            let uangBayar = parseInt(document.getElementById("inputUangBayar").value || 0);
+            let kembalian = uangBayar - totalHargaAktif;
+
+            let textKembalian = document.getElementById("textKembalian");
+            if (kembalian < 0) {
+                textKembalian.className = "fw-bold text-danger m-0";
+                textKembalian.innerText = "Kurang " + formatRupiah(Math.abs(kembalian));
+            } else {
+                textKembalian.className = "fw-bold text-primary m-0";
+                textKembalian.innerText = formatRupiah(kembalian);
+            }
+        }
+
+        function prosesPelunasan() {
+            let idx = document.getElementById("transaksiIndex").value;
+            let uangBayar = parseInt(document.getElementById("inputUangBayar").value || 0);
+            let metode = document.getElementById("selectMetode").value;
+
+            if (uangBayar < totalHargaAktif && metode === "Tunai") {
+                alert("Jumlah uang bayar masih kurang dari total tagihan!");
+                return;
+            }
+
+            let transaksiList = JSON.parse(localStorage.getItem("transaksi")) || [];
+            if (transaksiList[idx]) {
+                transaksiList[idx].statusBayar = "Lunas";
+                transaksiList[idx].metodeBayar = metode;
+                transaksiList[idx].uangBayar = uangBayar;
+                transaksiList[idx].kembalian = uangBayar - totalHargaAktif;
+
+                localStorage.setItem("transaksi", JSON.stringify(transaksiList));
+                
+                alert("Pembayaran berhasil dikonfirmasi!");
+                if (modalBayarInstance) {
+                    modalBayarInstance.hide();
+                }
+                muatDataPembayaran();
+            }
+        }
+
+        function logout() {
+            if (confirm("Apakah Anda yakin ingin keluar?")) {
+                localStorage.removeItem("login");
+                localStorage.removeItem("username");
+                localStorage.removeItem("namaUser");
+                localStorage.removeItem("role");
+                window.location.href = "login.html";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            terapkanHakAkses();
+            muatDataPembayaran();
+        });
+    </script>
+</body>
+
+</html>
