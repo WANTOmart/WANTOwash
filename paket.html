@@ -257,7 +257,7 @@
                 <h3 class="fw-bold mb-1 text-dark"><i class="bi bi-tags-fill text-primary me-2"></i>Kelola Paket Cuci</h3>
                 <p class="text-secondary mb-0">Atur dan modifikasi daftar tarif layanan cuci kendaraan WANTOwash</p>
             </div>
-            <button class="btn btn-primary shadow-sm rounded-3 px-4 py-2.5 fw-bold d-flex align-items-center gap-2" style="background: var(--primary-gradient); border: none;" onclick="bukaModalTambah()">
+            <button class="btn btn-primary shadow-sm rounded-3 px-4 py-2 fw-bold d-flex align-items-center gap-2" style="background: var(--primary-gradient); border: none;" onclick="bukaModalTambah()">
                 <i class="bi bi-plus-circle-fill fs-5"></i> Tambah Paket
             </button>
         </div>
@@ -393,7 +393,7 @@
 
         let defaultPaket = [
             { nama: "Cuci (S)", kategori: "Matic Biasa (Beat, Mio, Vario, dll)", harga: 20000, deskripsi: "Cuci Bersih" },
-            { nama: "Cuci (S)", kategori: "Motor Biasa (Laki, Bebek, dll)", harga: 20000, deskripsi: "Cuci Bersih" },
+            { nama: "Cuci (S)", kategori: "Motor Biasa (Bebek, Supra, dll)", harga: 20000, deskripsi: "Cuci Bersih" },
             { nama: "Cuci (L)", kategori: "Matic Besar (N-MAX, PCX, ADV, Aerox)", harga: 25000, deskripsi: "Cuci Bersih" },
             { nama: "Cuci (XL)", kategori: "Motor Sport (CBR, R15, Ninja, Vixion)", harga: 30000, deskripsi: "Cuci Bersih" }
         ];
@@ -433,6 +433,9 @@
                 html = `<tr><td colspan="6" class="text-center text-muted py-4">Data tidak ditemukan</td></tr>`;
             } else {
                 filtered.forEach((item, index) => {
+                    // Cari indeks asli dari item pada array 'paket' utama
+                    let originalIndex = paket.indexOf(item);
+
                     html += `
                         <tr>
                             <td class="fw-bold">${index + 1}</td>
@@ -441,10 +444,10 @@
                             <td class="fw-bold text-success">Rp ${Number(item.harga).toLocaleString("id-ID")}</td>
                             <td class="text-secondary">${item.deskripsi || '-'}</td>
                             <td class="text-center">
-                                <button class="btn btn-action-edit me-1" onclick="editPaket(${index})">
+                                <button class="btn btn-action-edit me-1" onclick="editPaket(${originalIndex})">
                                     <i class="bi bi-pencil-fill"></i>
                                 </button>
-                                <button class="btn btn-action-delete" onclick="hapusPaket(${index})">
+                                <button class="btn btn-action-delete" onclick="hapusPaket(${originalIndex})">
                                     <i class="bi bi-trash-fill"></i>
                                 </button>
                             </td>
@@ -464,19 +467,19 @@
             modalPaket.show();
         }
 
-        function editPaket(index) {
+        function editPaket(originalIndex) {
             document.getElementById("modalTitle").innerHTML = `<i class="bi bi-pencil-square me-2"></i>Edit Paket Cuci`;
-            document.getElementById("editIndex").value = index;
-            document.getElementById("namaPaket").value = paket[index].nama;
-            document.getElementById("kategoriMotor").value = paket[index].kategori;
-            document.getElementById("hargaPaket").value = paket[index].harga;
-            document.getElementById("deskripsiPaket").value = paket[index].deskripsi;
+            document.getElementById("editIndex").value = originalIndex;
+            document.getElementById("namaPaket").value = paket[originalIndex].nama;
+            document.getElementById("kategoriMotor").value = paket[originalIndex].kategori;
+            document.getElementById("hargaPaket").value = paket[originalIndex].harga;
+            document.getElementById("deskripsiPaket").value = paket[originalIndex].deskripsi;
             modalPaket.show();
         }
 
-        function hapusPaket(index) {
+        function hapusPaket(originalIndex) {
             if (confirm("Apakah Anda yakin ingin menghapus paket ini?")) {
-                paket.splice(index, 1);
+                paket.splice(originalIndex, 1);
                 localStorage.setItem("paket", JSON.stringify(paket));
                 renderTabel();
             }
@@ -488,7 +491,7 @@
             let dataBaru = {
                 nama: document.getElementById("namaPaket").value,
                 kategori: document.getElementById("kategoriMotor").value,
-                harga: document.getElementById("hargaPaket").value,
+                harga: Number(document.getElementById("hargaPaket").value),
                 deskripsi: document.getElementById("deskripsiPaket").value
             };
 
