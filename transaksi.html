@@ -76,15 +76,6 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
         }
 
-        .table th {
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.5px;
-            color: #6c757d;
-            background-color: #f8f9fa;
-        }
-
         .mobile-header {
             display: none;
         }
@@ -152,6 +143,9 @@
                 style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid white;"
                 onerror="this.onerror=null; this.src='https://via.placeholder.com/70?text=Wash';">
             <h4 class="m-0 fw-bold">WANTO<span class="text-warning">wash</span></h4>
+            <div class="mt-2">
+                <span class="badge bg-warning text-dark text-uppercase" id="userRoleBadge">Role</span>
+            </div>
         </div>
 
         <nav class="nav flex-column my-3 flex-grow-1">
@@ -161,8 +155,9 @@
             <a href="paket.html" class="nav-link-custom"><i class="bi bi-tags me-3 fs-5"></i> Paket Cuci</a>
             <a href="transaksi.html" class="nav-link-custom active"><i class="bi bi-cart-check me-3 fs-5"></i> Transaksi</a>
             <a href="pembayaran.html" class="nav-link-custom"><i class="bi bi-cash-stack me-3 fs-5"></i> Pembayaran</a>
-            <a href="laporan.html" class="nav-link-custom"><i class="bi bi-bar-chart me-3 fs-5"></i> Laporan</a>
-            <a href="karyawan.html" class="nav-link-custom"><i class="bi bi-person-badge me-3 fs-5"></i> Karyawan</a>
+            
+            <a href="laporan.html" class="nav-link-custom menu-owner-only"><i class="bi bi-bar-chart me-3 fs-5"></i> Laporan</a>
+            <a href="karyawan.html" class="nav-link-custom menu-owner-only"><i class="bi bi-person-badge me-3 fs-5"></i> Karyawan</a>
         </nav>
 
         <div class="p-3 border-top border-white-10">
@@ -175,86 +170,77 @@
     <main class="content">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h3 class="fw-bold mb-1"><i class="bi bi-cart-check text-primary me-2"></i>Transaksi Cuci</h3>
-                <p class="text-muted mb-0">Input dan kelola transaksi pencucian motor</p>
+                <h3 class="fw-bold mb-1">Transaksi</h3>
+                <p class="text-muted mb-0">Kelola pendaftaran transaksi pencucian motor</p>
             </div>
-            <button class="btn btn-primary shadow-sm rounded-3 px-3 py-2 fw-semibold" onclick="bukaModalTambah()">
+            <button class="btn btn-primary fw-bold px-3 py-2" data-bs-toggle="modal" data-bs-target="#modalTransaksi" onclick="persiapkanDropdownForm()">
                 <i class="bi bi-plus-lg me-1"></i> Transaksi Baru
             </button>
         </div>
 
         <div class="card custom-card p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <input type="text" id="cariTransaksi" class="form-control w-auto" placeholder="Cari Kode / Plat / Pelanggan..." onkeyup="renderTabel()">
-            </div>
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead>
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
                         <tr>
-                            <th class="border-0">No</th>
-                            <th class="border-0">Kode Transaksi</th>
-                            <th class="border-0">Tanggal</th>
-                            <th class="border-0">Pelanggan / Plat</th>
-                            <th class="border-0">Paket Layanan</th>
-                            <th class="border-0">Total</th>
-                            <th class="border-0">Status</th>
-                            <th class="border-0 text-center">Aksi</th>
+                            <th>No</th>
+                            <th>No. Nota</th>
+                            <th>Pelanggan</th>
+                            <th>Motor / Plat</th>
+                            <th>Paket Cuci</th>
+                            <th>Total (Rp)</th>
+                            <th>Status</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="tabelTransaksi"></tbody>
+                    <tbody id="tabelTransaksiBody">
+                    </tbody>
                 </table>
             </div>
         </div>
     </main>
 
     <div class="modal fade" id="modalTransaksi" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold" id="modalTitle">Tambah Transaksi Baru</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <div class="modal-dialog">
+            <div class="modal-content style-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Tambah Transaksi Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <form id="formTransaksi">
-                        <input type="hidden" id="editIndex">
+                <form id="formTransaksi">
+                    <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Kode Transaksi</label>
-                            <input type="text" id="kodeTransaksi" class="form-control bg-light" readonly>
+                            <label class="form-label fw-semibold">No. Nota</label>
+                            <input type="text" id="notaTransaksi" class="form-control" readonly>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Pilih Motor / Pelanggan</label>
-                            <select id="selectMotor" class="form-select" onchange="updatePelangganOtomatis()">
-                                <option value="">-- Pilih Kendaraan --</option>
+                            <label class="form-label fw-semibold">Pelanggan</label>
+                            <select id="selectPelanggan" class="form-select" required>
+                                <option value="">-- Pilih Pelanggan --</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Nama Pelanggan</label>
-                            <input type="text" id="namaPelanggan" class="form-control bg-light" placeholder="Otomatis terisi..." readonly>
+                            <label class="form-label fw-semibold">Motor (Plat Nomor)</label>
+                            <select id="selectMotor" class="form-select" required>
+                                <option value="">-- Pilih Motor --</option>
+                            </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Pilih Paket Cuci</label>
-                            <select id="selectPaket" class="form-select" onchange="updateTotalHarga()">
-                                <option value="">-- Pilih Paket Cuci --</option>
+                            <label class="form-label fw-semibold">Paket Cuci</label>
+                            <select id="selectPaket" class="form-select" onchange="updateTotalHarga()" required>
+                                <option value="">-- Pilih Paket --</option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Total Biaya (Rp)</label>
-                            <input type="number" id="totalBiaya" class="form-control fw-bold text-success fs-5 bg-light" readonly>
+                            <input type="number" id="totalHarga" class="form-control fw-bold text-success" readonly required>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Status Pencucian</label>
-                            <select id="statusProses" class="form-select">
-                                <option value="Antrean">Antrean</option>
-                                <option value="Proses Cuci">Proses Cuci</option>
-                                <option value="Selesai">Selesai</option>
-                            </select>
-                        </div>
-                        <div class="text-end">
-                            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary px-4">Simpan Transaksi</button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary fw-bold">Simpan Transaksi</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -262,216 +248,160 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        // Cek Sesi Login
+        if (localStorage.getItem("login") !== "true") {
+            window.location.href = "login.html";
+        }
+
+        const userRole = localStorage.getItem("role") || "kasir";
+
         function toggleSidebar() {
             document.getElementById("sidebar").classList.toggle("active");
             document.getElementById("overlay").classList.toggle("active");
         }
 
-        if (localStorage.getItem("login") !== "true") {
-            location.href = "login.html";
-        }
+        function terapkanHakAkses() {
+            document.getElementById("userRoleBadge").innerText = userRole;
 
-        let transaksi = JSON.parse(localStorage.getItem("transaksi")) || [];
-        let motor = JSON.parse(localStorage.getItem("motor")) || [];
-        let paket = JSON.parse(localStorage.getItem("paket")) || [];
-
-        const modalTransaksi = new bootstrap.Modal(document.getElementById('modalTransaksi'));
-
-        function muatDropdownData() {
-            let selectMotor = document.getElementById("selectMotor");
-            selectMotor.innerHTML = '<option value="">-- Pilih Kendaraan --</option>';
-            if (motor.length === 0) {
-                selectMotor.innerHTML += '<option value="" disabled>⚠️ Data Motor masih kosong!</option>';
-            } else {
-                motor.forEach((m, idx) => {
-                    selectMotor.innerHTML += `<option value="${idx}">${m.plat} - ${m.merk} (${m.pemilik})</option>`;
-                });
-            }
-
-            let selectPaket = document.getElementById("selectPaket");
-            selectPaket.innerHTML = '<option value="">-- Pilih Paket Cuci --</option>';
-            if (paket.length === 0) {
-                selectPaket.innerHTML += '<option value="" disabled>⚠️ Data Paket Cuci masih kosong!</option>';
-            } else {
-                paket.forEach((p, idx) => {
-                    selectPaket.innerHTML += `<option value="${idx}">${p.nama} - Rp ${Number(p.harga).toLocaleString("id-ID")}</option>`;
+            if (userRole === "admin" || userRole === "kasir") {
+                let ownerMenus = document.querySelectorAll(".menu-owner-only");
+                ownerMenus.forEach(menu => {
+                    menu.style.display = "none";
                 });
             }
         }
 
-        function updatePelangganOtomatis() {
-            let idx = document.getElementById("selectMotor").value;
-            if (idx !== "" && motor[idx]) {
-                document.getElementById("namaPelanggan").value = motor[idx].pemilik;
-            } else {
-                document.getElementById("namaPelanggan").value = "";
-            }
+        function persiapkanDropdownForm() {
+            // Generate Nota Otomatis
+            let nota = "WT-" + Math.floor(1000 + Math.random() * 9000);
+            document.getElementById("notaTransaksi").value = nota;
+
+            // Load Pelanggan
+            let pelanggan = JSON.parse(localStorage.getItem("pelanggan")) || [];
+            let selPelanggan = document.getElementById("selectPelanggan");
+            selPelanggan.innerHTML = '<option value="">-- Pilih Pelanggan --</option>';
+            pelanggan.forEach(p => {
+                selPelanggan.innerHTML += `<option value="${p.nama}">${p.nama}</option>`;
+            });
+
+            // Load Motor
+            let motor = JSON.parse(localStorage.getItem("motor")) || [];
+            let selMotor = document.getElementById("selectMotor");
+            selMotor.innerHTML = '<option value="">-- Pilih Motor --</option>';
+            motor.forEach(m => {
+                selMotor.innerHTML += `<option value="${m.merk} (${m.plat})">${m.merk} - ${m.plat}</option>`;
+            });
+
+            // Load Paket
+            let paket = JSON.parse(localStorage.getItem("paket")) || [];
+            let selPaket = document.getElementById("selectPaket");
+            selPaket.innerHTML = '<option value="">-- Pilih Paket --</option>';
+            paket.forEach((p, idx) => {
+                selPaket.innerHTML += `<option value="${idx}" data-harga="${p.harga}">${p.nama} - Rp ${Number(p.harga).toLocaleString("id-ID")}</option>`;
+            });
+
+            document.getElementById("totalHarga").value = "";
         }
 
         function updateTotalHarga() {
-            let idx = document.getElementById("selectPaket").value;
-            if (idx !== "" && paket[idx]) {
-                document.getElementById("totalBiaya").value = paket[idx].harga;
-            } else {
-                document.getElementById("totalBiaya").value = 0;
-            }
+            let selPaket = document.getElementById("selectPaket");
+            let selectedOption = selPaket.options[selPaket.selectedIndex];
+            let harga = selectedOption.getAttribute("data-harga") || 0;
+            document.getElementById("totalHarga").value = harga;
         }
 
-        function renderTabel() {
-            let keyword = document.getElementById("cariTransaksi").value.toLowerCase();
-            let html = "";
-            
-            let filtered = transaksi
-                .map((item, originalIndex) => ({ ...item, originalIndex }))
-                .filter(t => 
-                    (t.kode && t.kode.toLowerCase().includes(keyword)) || 
-                    (t.plat && t.plat.toLowerCase().includes(keyword)) ||
-                    (t.pelanggan && t.pelanggan.toLowerCase().includes(keyword))
-                );
+        function muatTransaksi() {
+            let transaksi = JSON.parse(localStorage.getItem("transaksi")) || [];
+            let tbody = document.getElementById("tabelTransaksiBody");
+            tbody.innerHTML = "";
 
-            if (filtered.length === 0) {
-                html = `
-                    <tr>
-                        <td colspan="8" class="text-center py-4 text-muted">
-                            <i class="bi bi-inbox fs-2 d-block mb-1 opacity-50"></i>
-                            Tidak ada data transaksi
-                        </td>
-                    </tr>`;
-            } else {
-                filtered.forEach((item, displayIndex) => {
-                    let badgeStatus = 'bg-secondary';
-                    if (item.status === 'Proses Cuci') badgeStatus = 'bg-warning text-dark';
-                    if (item.status === 'Selesai') badgeStatus = 'bg-success';
-
-                    html += `
-                        <tr>
-                            <td class="fw-semibold text-muted">${displayIndex + 1}</td>
-                            <td class="fw-bold font-monospace">${item.kode || '-'}</td>
-                            <td>${item.tanggal || '-'}</td>
-                            <td>
-                                <div><strong>${item.pelanggan || '-'}</strong></div>
-                                <small class="text-muted">${item.plat || '-'}</small>
-                            </td>
-                            <td>${item.paket || '-'}</td>
-                            <td class="fw-bold text-success">Rp ${Number(item.total || 0).toLocaleString("id-ID")}</td>
-                            <td><span class="badge ${badgeStatus}">${item.status || 'Antrean'}</span></td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-outline-warning me-1" onclick="bukaModalEdit(${item.originalIndex})">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="hapusTransaksi(${item.originalIndex})">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>`;
-                });
-            }
-            document.getElementById("tabelTransaksi").innerHTML = html;
-        }
-
-        function bukaModalTambah() {
-            muatDropdownData();
-            document.getElementById("modalTitle").innerText = "Tambah Transaksi Baru";
-            document.getElementById("editIndex").value = "";
-            document.getElementById("formTransaksi").reset();
-            
-            document.getElementById("namaPelanggan").value = "";
-            document.getElementById("totalBiaya").value = 0;
-            
-            const now = new Date();
-            const kode = "TRX-" + now.getFullYear() + 
-                         (now.getMonth()+1).toString().padStart(2, '0') + 
-                         now.getDate().toString().padStart(2, '0') + "-" + 
-                         Math.floor(1000 + Math.random() * 9000);
-                         
-            document.getElementById("kodeTransaksi").value = kode;
-            modalTransaksi.show();
-        }
-
-        function bukaModalEdit(index) {
-            muatDropdownData();
-            document.getElementById("modalTitle").innerText = "Edit Transaksi";
-            document.getElementById("editIndex").value = index;
-            
-            let data = transaksi[index];
-            document.getElementById("kodeTransaksi").value = data.kode;
-            document.getElementById("namaPelanggan").value = data.pelanggan;
-            document.getElementById("totalBiaya").value = data.total;
-            document.getElementById("statusProses").value = data.status;
-
-            let selectMotor = document.getElementById("selectMotor");
-            for (let i = 0; i < selectMotor.options.length; i++) {
-                if (selectMotor.options[i].text.includes(data.plat)) {
-                    selectMotor.selectedIndex = i;
-                    break;
-                }
-            }
-
-            let selectPaket = document.getElementById("selectPaket");
-            for (let i = 0; i < selectPaket.options.length; i++) {
-                if (selectPaket.options[i].text.includes(data.paket)) {
-                    selectPaket.selectedIndex = i;
-                    break;
-                }
-            }
-
-            modalTransaksi.show();
-        }
-
-        document.getElementById("formTransaksi").addEventListener("submit", function(e) {
-            e.preventDefault();
-            
-            let index = document.getElementById("editIndex").value;
-            let motorIdx = document.getElementById("selectMotor").value;
-            let paketIdx = document.getElementById("selectPaket").value;
-
-            if (motorIdx === "" || paketIdx === "") {
-                alert("Peringatan: Harap tambahkan/pilih Data Motor dan Paket Cuci terlebih dahulu!");
+            if (transaksi.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">Belum ada data transaksi.</td></tr>`;
                 return;
             }
 
-            let dataBaru = {
-                kode: document.getElementById("kodeTransaksi").value,
-                tanggal: index !== "" && transaksi[index] ? transaksi[index].tanggal : new Date().toLocaleDateString("id-ID"),
-                plat: motor[motorIdx] ? motor[motorIdx].plat : "-",
-                pelanggan: document.getElementById("namaPelanggan").value,
-                paket: paket[paketIdx] ? paket[paketIdx].nama : "-",
-                total: Number(document.getElementById("totalBiaya").value),
-                status: document.getElementById("statusProses").value,
-                pembayaranStatus: index !== "" && transaksi[index] ? (transaksi[index].pembayaranStatus || "Belum Bayar") : "Belum Bayar",
-                metodeBayar: index !== "" && transaksi[index] ? (transaksi[index].metodeBayar || "-") : "-",
-                jumlahBayar: index !== "" && transaksi[index] ? (transaksi[index].jumlahBayar || 0) : 0,
-                kembalian: index !== "" && transaksi[index] ? (transaksi[index].kembalian || 0) : 0
-            };
+            transaksi.forEach((t, idx) => {
+                let btnHapus = userRole === "owner" ? 
+                    `<button class="btn btn-sm btn-danger" onclick="hapusTransaksi(${idx})"><i class="bi bi-trash"></i> Hapus</button>` : 
+                    `<span class="badge bg-secondary">Akses Terbatas</span>`;
 
-            if (index === "") {
-                transaksi.push(dataBaru);
-            } else {
-                transaksi[index] = dataBaru;
-            }
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td class="fw-bold">${t.nota}</td>
+                        <td>${t.pelanggan || '-'}</td>
+                        <td>${t.motor || '-'}</td>
+                        <td>${t.paket || '-'}</td>
+                        <td class="fw-bold text-success">Rp ${Number(t.total || 0).toLocaleString("id-ID")}</td>
+                        <td><span class="badge bg-warning text-dark">${t.status || 'Proses'}</span></td>
+                        <td class="text-center">${btnHapus}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Simpan Transaksi Baru
+        document.getElementById("formTransaksi").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            let nota = document.getElementById("notaTransaksi").value;
+            let pelanggan = document.getElementById("selectPelanggan").value;
+            let motor = document.getElementById("selectMotor").value;
+            
+            let selPaket = document.getElementById("selectPaket");
+            let paketText = selPaket.options[selPaket.selectedIndex].text.split(" - Rp")[0];
+            let total = document.getElementById("totalHarga").value;
+
+            let transaksi = JSON.parse(localStorage.getItem("transaksi")) || [];
+            transaksi.push({ 
+                nota, 
+                pelanggan, 
+                motor, 
+                paket: paketText, 
+                total: Number(total),
+                status: "Proses",
+                tanggal: new Date().toLocaleDateString("id-ID")
+            });
 
             localStorage.setItem("transaksi", JSON.stringify(transaksi));
-            modalTransaksi.hide();
-            renderTabel();
+
+            document.getElementById("formTransaksi").reset();
+            let modalElement = document.getElementById("modalTransaksi");
+            let modalInstance = bootstrap.Modal.getInstance(modalElement);
+            modalInstance.hide();
+
+            muatTransaksi();
         });
 
-        function hapusTransaksi(index) {
+        // Hapus Transaksi (Proteksi Khusus Owner)
+        function hapusTransaksi(idx) {
+            if (userRole !== "owner") {
+                alert("Hanya OWNER yang diizinkan menghapus data!");
+                return;
+            }
+
             if (confirm("Apakah Anda yakin ingin menghapus transaksi ini?")) {
-                transaksi.splice(index, 1);
+                let transaksi = JSON.parse(localStorage.getItem("transaksi")) || [];
+                transaksi.splice(idx, 1);
                 localStorage.setItem("transaksi", JSON.stringify(transaksi));
-                renderTabel();
+                muatTransaksi();
             }
         }
 
         function logout() {
-            if (confirm("Apakah Anda yakin ingin keluar dari sistem?")) {
+            if (confirm("Apakah Anda yakin ingin keluar?")) {
                 localStorage.removeItem("login");
                 localStorage.removeItem("username");
-                location.href = "login.html";
+                localStorage.removeItem("namaUser");
+                localStorage.removeItem("role");
+                window.location.href = "login.html";
             }
         }
 
-        renderTabel();
+        document.addEventListener("DOMContentLoaded", function () {
+            terapkanHakAkses();
+            muatTransaksi();
+        });
     </script>
 </body>
 
