@@ -173,10 +173,222 @@
                 <h3 class="fw-bold mb-1">Data Motor</h3>
                 <p class="text-muted mb-0">Kelola data sepeda motor pelanggan</p>
             </div>
-            <button class="btn btn-primary fw-bold px-3 py-2" data-bs-toggle="modal" data-bs-target="#modalMotor" onclick="persiapkanSelectPelanggan()">
+            <button class="btn btn-primary fw-bold px-3 py-2" onclick="bukaModalTambahMotor()">
                 <i class="bi bi-plus-lg me-1"></i> Tambah Motor
             </button>
         </div>
 
         <div class="card custom-card p-4">
             <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>No</th>
+                            <th>Plat Nomor</th>
+                            <th>Merk / Tipe Motor</th>
+                            <th>Jenis Motor</th>
+                            <th>Pemilik (Pelanggan)</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelMotorBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal fade" id="modalMotor" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalTitle">Tambah Data Motor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="formMotor" onsubmit="simpanMotor(event)">
+                    <div class="modal-body">
+                        <input type="hidden" id="motorIndex">
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Pelanggan Pemilik</label>
+                            <select id="selectPelanggan" class="form-select" required>
+                                <option value="">-- Pilih Pelanggan --</option>
+                            </select>
+                            <div class="form-text">Data diambil dari Menu Data Pelanggan</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Plat Nomor</label>
+                            <input type="text" id="inputPlat" class="form-control" placeholder="Contoh: N 1234 ABC" style="text-transform: uppercase;" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Merk / Model Motor</label>
+                            <input type="text" id="inputModel" class="form-control" placeholder="Contoh: Vario 160 / NMAX / KLX" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Kategori Jenis</label>
+                            <select id="selectJenis" class="form-select" required>
+                                <option value="Bebek / Matic Kecil">Bebek / Matic Kecil</option>
+                                <option value="Matic Besar / Sport">Matic Besar / Sport</option>
+                                <option value="Trail / Moge">Trail / Moge</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary fw-bold">Simpan Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        if (localStorage.getItem("login") !== "true") {
+            window.location.href = "login.html";
+        }
+
+        const userRole = localStorage.getItem("role") || "kasir";
+        let modalMotorBootstrap;
+
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("active");
+            document.getElementById("overlay").classList.toggle("active");
+        }
+
+        function terapkanHakAkses() {
+            document.getElementById("userRoleBadge").innerText = userRole;
+            if (userRole === "admin" || userRole === "kasir") {
+                document.querySelectorAll(".menu-owner-only").forEach(menu => menu.style.display = "none");
+            }
+        }
+
+        function muatOptionPelanggan() {
+            let pelangganList = JSON.parse(localStorage.getItem("pelanggan")) || [];
+            let select = document.getElementById("selectPelanggan");
+            select.innerHTML = `<option value="">-- Pilih Pelanggan --</option>`;
+
+            if(pelangganList.length === 0) {
+                select.innerHTML += `<option value="" disabled>Belum ada data pelanggan. Tambahkan dulu di Data Pelanggan!</option>`;
+            } else {
+                pelangganList.forEach(p => {
+                    let nama = p.nama || p.namaPelanggan;
+                    select.innerHTML += `<option value="${nama}">${nama} (${p.hp || '-'})</option>`;
+                });
+            }
+        }
+
+        function muatDataMotor() {
+            let motorList = JSON.parse(localStorage.getItem("motor")) || [];
+            let tbody = document.getElementById("tabelMotorBody");
+            tbody.innerHTML = "";
+
+            if (motorList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Belum ada data motor.</td></tr>`;
+                return;
+            }
+
+            motorList.forEach((m, idx) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td class="fw-bold text-primary">${m.plat}</td>
+                        <td>${m.model}</td>
+                        <td><span class="badge bg-info text-dark">${m.jenis}</span></td>
+                        <td>${m.pemilik}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-warning text-white me-1" onclick="editMotor(${idx})"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="hapusMotor(${idx})"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function bukaModalTambahMotor() {
+            document.getElementById("formMotor").reset();
+            document.getElementById("motorIndex").value = "";
+            document.getElementById("modalTitle").innerText = "Tambah Data Motor";
+            muatOptionPelanggan();
+            
+            modalMotorBootstrap = new bootstrap.Modal(document.getElementById("modalMotor"));
+            modalMotorBootstrap.show();
+        }
+
+        function simpanMotor(e) {
+            e.preventDefault();
+
+            let idx = document.getElementById("motorIndex").value;
+            let pemilik = document.getElementById("selectPelanggan").value;
+            let plat = document.getElementById("inputPlat").value.toUpperCase().trim();
+            let model = document.getElementById("inputModel").value.trim();
+            let jenis = document.getElementById("selectJenis").value;
+
+            if(!pemilik) {
+                alert("Silakan pilih pelanggan terlebih dahulu!");
+                return;
+            }
+
+            let motorList = JSON.parse(localStorage.getItem("motor")) || [];
+
+            if (idx === "") {
+                motorList.push({ plat, model, jenis, pemilik });
+            } else {
+                motorList[idx] = { plat, model, jenis, pemilik };
+            }
+
+            localStorage.setItem("motor", JSON.stringify(motorList));
+
+            modalMotorBootstrap.hide();
+            muatDataMotor();
+            alert("Data motor berhasil disimpan!");
+        }
+
+        function editMotor(idx) {
+            let motorList = JSON.parse(localStorage.getItem("motor")) || [];
+            let m = motorList[idx];
+
+            muatOptionPelanggan();
+
+            document.getElementById("motorIndex").value = idx;
+            document.getElementById("selectPelanggan").value = m.pemilik;
+            document.getElementById("inputPlat").value = m.plat;
+            document.getElementById("inputModel").value = m.model;
+            document.getElementById("selectJenis").value = m.jenis;
+            document.getElementById("modalTitle").innerText = "Edit Data Motor";
+
+            modalMotorBootstrap = new bootstrap.Modal(document.getElementById("modalMotor"));
+            modalMotorBootstrap.show();
+        }
+
+        function hapusMotor(idx) {
+            if (confirm("Apakah Anda yakin ingin menghapus data motor ini?")) {
+                let motorList = JSON.parse(localStorage.getItem("motor")) || [];
+                motorList.splice(idx, 1);
+                localStorage.setItem("motor", JSON.stringify(motorList));
+                muatDataMotor();
+            }
+        }
+
+        function logout() {
+            if (confirm("Apakah Anda yakin ingin keluar?")) {
+                localStorage.removeItem("login");
+                localStorage.removeItem("username");
+                localStorage.removeItem("namaUser");
+                localStorage.removeItem("role");
+                window.location.href = "login.html";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            terapkanHakAkses();
+            muatDataMotor();
+        });
+    </script>
+</body>
+
+</html>
