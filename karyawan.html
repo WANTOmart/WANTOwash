@@ -145,6 +145,9 @@
                 style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid white;"
                 onerror="this.onerror=null; this.src='https://via.placeholder.com/70?text=Wash';">
             <h4 class="m-0 fw-bold">WANTO<span class="text-warning">wash</span></h4>
+            <div class="mt-2">
+                <span class="badge bg-warning text-dark text-uppercase" id="userRoleBadge">Role</span>
+            </div>
         </div>
 
         <nav class="nav flex-column my-3 flex-grow-1">
@@ -201,7 +204,7 @@
         </div>
 
         <div class="row g-4">
-            <div class="col-lg-4">
+            <div class="col-lg-4" id="colFormKaryawan">
                 <div class="card custom-card p-4">
                     <h5 class="fw-bold mb-3" id="formTitle"><i class="bi bi-person-plus me-2 text-primary"></i>Tambah Karyawan</h5>
                     
@@ -236,4 +239,345 @@
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Upload Berkas/Foto Ijazah</label>
                             <input type="file" id="fileIjazah" class="form-control" accept="image/*" onchange="bacaFileIjazah(this)">
-                            <div class="form-text">Format Foto (JPG/PNG).
+                            <div class="form-text">Format Foto (JPG/PNG). Gambar dikompres otomatis.</div>
+                            <div id="previewIjazahBox" class="mt-2 text-center" style="display: none;">
+                                <img id="previewIjazahImg" src="" alt="Preview Ijazah" class="img-thumbnail" style="max-height: 120px;">
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary fw-semibold" id="btnSubmit">
+                                <i class="bi bi-save me-1"></i> Simpan Data Karyawan
+                            </button>
+                            <button type="button" class="btn btn-secondary fw-semibold" onclick="resetForm()" id="btnReset" style="display: none;">
+                                Batal Edit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-8" id="colTabelKaryawan">
+                <div class="card custom-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold m-0"><i class="bi bi-people me-2 text-primary"></i>Daftar Karyawan & Pembagian Gaji</h5>
+                        <button class="btn btn-sm btn-outline-success fw-semibold" onclick="kirimRincianGajiWA()">
+                            <i class="bi bi-whatsapp me-1"></i> Kirim Rincian Gaji ke WA
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>No</th>
+                                    <th>NIK</th>
+                                    <th>Nama Karyawan</th>
+                                    <th>Jabatan / HP</th>
+                                    <th class="text-center">Ijazah</th>
+                                    <th class="text-end">Estimasi Gaji (Rp)</th>
+                                    <th class="text-center th-aksi">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelKaryawanBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal fade" id="modalIjazah" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalIjazahTitle">Foto Ijazah Karyawan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="imgModalIjazah" src="" class="img-fluid rounded border" alt="Gambar Ijazah">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Check Authentication and Role Access
+        if (localStorage.getItem("login") !== "true") {
+            location.href = "login.html";
+        }
+
+        const userRole = localStorage.getItem("role") || "admin";
+        const namaUser = localStorage.getItem("namaUser") || "User";
+
+        let dataKaryawan = JSON.parse(localStorage.getItem("dataKaryawan")) || JSON.parse(localStorage.getItem("karyawan")) || [];
+        let transaksi = JSON.parse(localStorage.getItem("transaksi")) || [];
+
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("active");
+            document.getElementById("overlay").classList.toggle("active");
+        }
+
+        function terapkanHakAkses() {
+            document.getElementById("userRoleBadge").innerText = userRole;
+
+            // Jika yang login adalah Kasir, sembunyikan form input dan kolom Aksi
+            if (userRole === "kasir") {
+                let formCol = document.getElementById("colFormKaryawan");
+                let tabelCol = document.getElementById("colTabelKaryawan");
+
+                if (formCol) formCol.style.display = "none";
+                if (tabelCol) {
+                    tabelCol.classList.remove("col-lg-8");
+                    tabelCol.classList.add("col-lg-12");
+                }
+            }
+        }
+
+        function hitungTotalOmsetLunas() {
+            let total = 0;
+            transaksi.forEach(t => {
+                if (t.pembayaranStatus === "Lunas" || t.status === "Selesai") {
+                    total += Number(t.total) || 0;
+                }
+            });
+            return total;
+        }
+
+        function muatKaryawan() {
+            let tbody = document.getElementById("tabelKaryawanBody");
+            tbody.innerHTML = "";
+
+            let omsetLunas = hitungTotalOmsetLunas();
+            let totalGaji40 = omsetLunas * 0.40;
+            let jumlahKaryawan = dataKaryawan.length;
+            let gajiPerKaryawan = jumlahKaryawan > 0 ? (totalGaji40 / jumlahKaryawan) : 0;
+
+            // Update Statistik
+            document.getElementById("statTotalKaryawan").innerText = `${jumlahKaryawan} Orang`;
+            document.getElementById("statTotalOmset").innerText = "Rp " + omsetLunas.toLocaleString("id-ID");
+            document.getElementById("statGajiTotal").innerText = "Rp " + totalGaji40.toLocaleString("id-ID");
+            document.getElementById("statGajiPerOrang").innerText = "Rp " + Math.floor(gajiPerKaryawan).toLocaleString("id-ID");
+
+            let colSpanValue = userRole === "kasir" ? 6 : 7;
+
+            if (jumlahKaryawan === 0) {
+                tbody.innerHTML = `<tr><td colspan="${colSpanValue}" class="text-center text-muted py-4">Belum ada data karyawan.</td></tr>`;
+            } else {
+                dataKaryawan.forEach((k, idx) => {
+                    let tombolIjazah = k.ijazah 
+                        ? `<button class="btn btn-sm btn-outline-info" onclick="lihatIjazah(${idx})"><i class="bi bi-file-image"></i> Lihat</button>`
+                        : `<span class="badge bg-secondary">Tidak Ada</span>`;
+
+                    let tdAksi = userRole !== "kasir" ? `
+                        <td class="text-center text-nowrap">
+                            <button type="button" class="btn btn-sm btn-warning text-white me-1" onclick="editKaryawan(${idx})"><i class="bi bi-pencil-square"></i></button>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="hapusKaryawan(${idx})"><i class="bi bi-trash"></i></button>
+                        </td>
+                    ` : "";
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${idx + 1}</td>
+                            <td class="fw-semibold text-nowrap">${k.nik || '-'}</td>
+                            <td class="fw-bold">${k.nama}</td>
+                            <td>
+                                <div><span class="badge bg-info text-dark">${k.jabatan || 'Tukang Cuci'}</span></div>
+                                <small class="text-muted">${k.hp || '-'}</small>
+                            </td>
+                            <td class="text-center">${tombolIjazah}</td>
+                            <td class="text-end fw-bold text-success">Rp ${Math.floor(gajiPerKaryawan).toLocaleString("id-ID")}</td>
+                            ${tdAksi}
+                        </tr>
+                    `;
+                });
+            }
+
+            // Sembunyikan Header Aksi di Tabel jika role Kasir
+            if (userRole === "kasir") {
+                let thAksi = document.querySelector(".th-aksi");
+                if (thAksi) thAksi.style.display = "none";
+            }
+        }
+
+        // FUNGSI MEMBACA & MENGOMPRES FILE GAMBAR IJAZAH
+        function bacaFileIjazah(input) {
+            if (input.files && input.files[0]) {
+                let file = input.files[0];
+                let reader = new FileReader();
+
+                reader.onload = function (e) {
+                    let img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function () {
+                        let canvas = document.createElement("canvas");
+                        let MAX_WIDTH = 600;
+                        let scaleFactor = MAX_WIDTH / img.width;
+
+                        if (img.width > MAX_WIDTH) {
+                            canvas.width = MAX_WIDTH;
+                            canvas.height = img.height * scaleFactor;
+                        } else {
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                        }
+
+                        let ctx = canvas.getContext("2d");
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        let compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+
+                        document.getElementById("ijazahBase64").value = compressedBase64;
+                        document.getElementById("previewIjazahImg").src = compressedBase64;
+                        document.getElementById("previewIjazahBox").style.display = "block";
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function simpanKaryawan() {
+            if (userRole === "kasir") {
+                alert("Kasir tidak memiliki hak akses untuk menambah atau mengubah data!");
+                return;
+            }
+
+            let nik = document.getElementById("nikKaryawan").value.trim();
+            let nama = document.getElementById("namaKaryawan").value.trim();
+            let hp = document.getElementById("hpKaryawan").value.trim();
+            let jabatan = document.getElementById("jabatanKaryawan").value;
+            let ijazah = document.getElementById("ijazahBase64").value;
+            let editIdx = document.getElementById("editIndex").value;
+
+            if (nik === "" || nama === "") {
+                alert("NIK dan Nama Karyawan wajib diisi!");
+                return;
+            }
+
+            if (editIdx == "-1") {
+                dataKaryawan.push({ nik: nik, nama: nama, hp: hp, jabatan: jabatan, ijazah: ijazah });
+            } else {
+                dataKaryawan[editIdx] = { nik: nik, nama: nama, hp: hp, jabatan: jabatan, ijazah: ijazah };
+            }
+
+            localStorage.setItem("dataKaryawan", JSON.stringify(dataKaryawan));
+            localStorage.setItem("karyawan", JSON.stringify(dataKaryawan));
+
+            alert("Data Karyawan Berhasil Disimpan!");
+            resetForm();
+            muatKaryawan();
+        }
+
+        function editKaryawan(idx) {
+            let k = dataKaryawan[idx];
+            document.getElementById("nikKaryawan").value = k.nik || "";
+            document.getElementById("namaKaryawan").value = k.nama;
+            document.getElementById("hpKaryawan").value = k.hp || "";
+            document.getElementById("jabatanKaryawan").value = k.jabatan || "Tukang Cuci";
+            document.getElementById("ijazahBase64").value = k.ijazah || "";
+            document.getElementById("editIndex").value = idx;
+
+            if (k.ijazah) {
+                document.getElementById("previewIjazahImg").src = k.ijazah;
+                document.getElementById("previewIjazahBox").style.display = "block";
+            } else {
+                document.getElementById("previewIjazahBox").style.display = "none";
+            }
+
+            document.getElementById("formTitle").innerHTML = '<i class="bi bi-pencil-square me-2 text-warning"></i>Edit Data Karyawan';
+            document.getElementById("btnSubmit").className = "btn btn-warning text-white fw-semibold";
+            document.getElementById("btnSubmit").innerHTML = '<i class="bi bi-check-circle me-1"></i> Update Karyawan';
+            document.getElementById("btnReset").style.display = "block";
+        }
+
+        function resetForm() {
+            document.getElementById("formKaryawan").reset();
+            document.getElementById("fileIjazah").value = "";
+            document.getElementById("editIndex").value = "-1";
+            document.getElementById("ijazahBase64").value = "";
+            document.getElementById("previewIjazahBox").style.display = "none";
+            document.getElementById("formTitle").innerHTML = '<i class="bi bi-person-plus me-2 text-primary"></i>Tambah Karyawan';
+            document.getElementById("btnSubmit").className = "btn btn-primary fw-semibold";
+            document.getElementById("btnSubmit").innerHTML = '<i class="bi bi-save me-1"></i> Simpan Data Karyawan';
+            document.getElementById("btnReset").style.display = "none";
+        }
+
+        function hapusKaryawan(idx) {
+            if (userRole === "kasir") {
+                alert("Kasir tidak memiliki hak akses untuk menghapus data!");
+                return;
+            }
+
+            if (confirm("Apakah Anda yakin ingin menghapus data karyawan ini?")) {
+                dataKaryawan.splice(idx, 1);
+                localStorage.setItem("dataKaryawan", JSON.stringify(dataKaryawan));
+                localStorage.setItem("karyawan", JSON.stringify(dataKaryawan));
+                muatKaryawan();
+            }
+        }
+
+        function lihatIjazah(idx) {
+            let k = dataKaryawan[idx];
+            document.getElementById("modalIjazahTitle").innerText = `Foto Ijazah - ${k.nama} (${k.nik || '-'})`;
+            document.getElementById("imgModalIjazah").src = k.ijazah;
+            let modal = new bootstrap.Modal(document.getElementById("modalIjazah"));
+            modal.show();
+        }
+
+        function kirimRincianGajiWA() {
+            let omsetLunas = hitungTotalOmsetLunas();
+            let totalGaji40 = omsetLunas * 0.40;
+            let jumlahKaryawan = dataKaryawan.length;
+            let gajiPerKaryawan = jumlahKaryawan > 0 ? Math.floor(totalGaji40 / jumlahKaryawan) : 0;
+
+            if (jumlahKaryawan === 0) {
+                alert("Belum ada data karyawan!");
+                return;
+            }
+
+            let listKaryawan = "";
+            dataKaryawan.forEach((k, i) => {
+                listKaryawan += `${i + 1}. [NIK: ${k.nik || '-'}] ${k.nama} (${k.jabatan || 'Tukang Cuci'}) -> Rp ${gajiPerKaryawan.toLocaleString("id-ID")}\n`;
+            });
+
+            let pesan = `*WANTOwash - RINCIAN PENGAJIAN KARYAWAN*
+Jl. Raya Utama No. 123 - Telp/WA: 0812-3456-7890
+--------------------------------
+
+\`\`\`
+Total Omset Wash  : Rp ${omsetLunas.toLocaleString("id-ID")}
+Hak Karyawan 40%  : Rp ${totalGaji40.toLocaleString("id-ID")}
+Jumlah Karyawan   : ${jumlahKaryawan} Orang
+--------------------------------
+Gaji Per Orang    : Rp ${gajiPerKaryawan.toLocaleString("id-ID")}
+\`\`\`
+
+Daftar Penerima:
+${listKaryawan}
+Terima kasih atas kerja keras seluruh tim *WANTOwash*! 🛵💨`;
+
+            let url = `https://api.whatsapp.com/send?text=${encodeURIComponent(pesan)}`;
+            window.open(url, '_blank');
+        }
+
+        function logout() {
+            if (confirm("Apakah Anda yakin ingin keluar dari sistem?")) {
+                localStorage.removeItem("login");
+                localStorage.removeItem("username");
+                localStorage.removeItem("namaUser");
+                localStorage.removeItem("role");
+                location.href = "login.html";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            terapkanHakAkses();
+            muatKaryawan();
+        });
+    </script>
+</body>
+
+</html>
