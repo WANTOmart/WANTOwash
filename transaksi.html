@@ -320,11 +320,14 @@
         function renderTabel() {
             let keyword = document.getElementById("cariTransaksi").value.toLowerCase();
             let html = "";
-            let filtered = transaksi.filter(t => 
-                (t.kode && t.kode.toLowerCase().includes(keyword)) || 
-                (t.plat && t.plat.toLowerCase().includes(keyword)) ||
-                (t.pelanggan && t.pelanggan.toLowerCase().includes(keyword))
-            );
+            
+            let filtered = transaksi
+                .map((item, originalIndex) => ({ ...item, originalIndex }))
+                .filter(t => 
+                    (t.kode && t.kode.toLowerCase().includes(keyword)) || 
+                    (t.plat && t.plat.toLowerCase().includes(keyword)) ||
+                    (t.pelanggan && t.pelanggan.toLowerCase().includes(keyword))
+                );
 
             if (filtered.length === 0) {
                 html = `
@@ -335,14 +338,14 @@
                         </td>
                     </tr>`;
             } else {
-                filtered.forEach((item, index) => {
+                filtered.forEach((item, displayIndex) => {
                     let badgeStatus = 'bg-secondary';
                     if (item.status === 'Proses Cuci') badgeStatus = 'bg-warning text-dark';
                     if (item.status === 'Selesai') badgeStatus = 'bg-success';
 
                     html += `
                         <tr>
-                            <td class="fw-semibold text-muted">${index + 1}</td>
+                            <td class="fw-semibold text-muted">${displayIndex + 1}</td>
                             <td class="fw-bold font-monospace">${item.kode || '-'}</td>
                             <td>${item.tanggal || '-'}</td>
                             <td>
@@ -353,10 +356,10 @@
                             <td class="fw-bold text-success">Rp ${Number(item.total || 0).toLocaleString("id-ID")}</td>
                             <td><span class="badge ${badgeStatus}">${item.status || 'Antrean'}</span></td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-outline-warning me-1" onclick="bukaModalEdit(${index})">
+                                <button class="btn btn-sm btn-outline-warning me-1" onclick="bukaModalEdit(${item.originalIndex})">
                                     <i class="bi bi-pencil"></i>
                                 </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="hapusTransaksi(${index})">
+                                <button class="btn btn-sm btn-outline-danger" onclick="hapusTransaksi(${item.originalIndex})">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>
@@ -371,6 +374,9 @@
             document.getElementById("modalTitle").innerText = "Tambah Transaksi Baru";
             document.getElementById("editIndex").value = "";
             document.getElementById("formTransaksi").reset();
+            
+            document.getElementById("namaPelanggan").value = "";
+            document.getElementById("totalBiaya").value = 0;
             
             const now = new Date();
             const kode = "TRX-" + now.getFullYear() + 
