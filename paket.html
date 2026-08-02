@@ -211,7 +211,9 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Nama Paket</label>
-                            <input type="text" id="inputNama" class="form-control" placeholder="Contoh: Cuci Reguler" required>
+                            <select id="selectNama" class="form-select" required>
+                                <option value="Cuci Motor">Cuci Motor</option>
+                            </select>
                         </div>
 
                         <div class="mb-3">
@@ -225,12 +227,18 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Harga (Rp)</label>
-                            <input type="number" id="inputHarga" class="form-control" placeholder="Contoh: 15000" min="0" required>
+                            <select id="selectHarga" class="form-select" required>
+                                <option value="20000">Rp 20.000</option>
+                                <option value="25000">Rp 25.000</option>
+                                <option value="30000">Rp 30.000</option>
+                            </select>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Deskripsi Layanan</label>
-                            <textarea id="inputDeskripsi" class="form-control" rows="3" placeholder="Contoh: Cuci bersih, semir ban, pengeringan micro-fiber"></textarea>
+                            <select id="selectDeskripsi" class="form-select" required>
+                                <option value="Cuci Bersih">Cuci Bersih</option>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -269,11 +277,11 @@
 
         function muatDataPaket() {
             let paketList = JSON.parse(localStorage.getItem("paket")) || [
-                { nama: "Cuci Reguler", kategori: "Bebek / Matic Kecil", harga: 15000, deskripsi: "Cuci sabun, bilas, pengeringan, semir ban" },
-                { nama: "Cuci Express", kategori: "Matic Besar / Sport", harga: 25000, deskripsi: "Cuci hidrolik, wax bodi, semir ban Premium" }
+                { nama: "Cuci Motor", kategori: "Bebek / Matic Kecil", harga: 20000, deskripsi: "Cuci Bersih" },
+                { nama: "Cuci Motor", kategori: "Matic Besar / Sport", harga: 25000, deskripsi: "Cuci Bersih" },
+                { nama: "Cuci Motor", kategori: "Trail / Moge", harga: 30000, deskripsi: "Cuci Bersih" }
             ];
             
-            // Simpan default jika localStorage kosong
             if (!localStorage.getItem("paket")) {
                 localStorage.setItem("paket", JSON.stringify(paketList));
             }
@@ -326,10 +334,10 @@
             e.preventDefault();
 
             let idx = document.getElementById("paketIndex").value;
-            let nama = document.getElementById("inputNama").value.trim();
+            let nama = document.getElementById("selectNama").value;
             let kategori = document.getElementById("selectKategori").value;
-            let harga = document.getElementById("inputHarga").value;
-            let deskripsi = document.getElementById("inputDeskripsi").value.trim();
+            let harga = document.getElementById("selectHarga").value;
+            let deskripsi = document.getElementById("selectDeskripsi").value;
 
             let paketList = JSON.parse(localStorage.getItem("paket")) || [];
 
@@ -359,10 +367,10 @@
             let p = paketList[idx];
 
             document.getElementById("paketIndex").value = idx;
-            document.getElementById("inputNama").value = p.nama;
+            document.getElementById("selectNama").value = p.nama;
             document.getElementById("selectKategori").value = p.kategori;
-            document.getElementById("inputHarga").value = p.harga;
-            document.getElementById("inputDeskripsi").value = p.deskripsi || "";
+            document.getElementById("selectHarga").value = p.harga;
+            document.getElementById("selectDeskripsi").value = p.deskripsi || "Cuci Bersih";
             document.getElementById("modalTitle").innerText = "Edit Paket Cuci";
 
             if (!modalPaketInstance) {
