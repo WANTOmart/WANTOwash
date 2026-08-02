@@ -123,26 +123,23 @@
             }
         }
 
-        /* FIX CSS KHUSUS PRINT - MEMAKSA NOTA MUNCUL UTUH SAAT DICETAK */
+        /* KHUSUS UNTUK MEMAKSA LOGO TRANSPARAN DAN NOTA MUNCUL SAAT DIPRINT */
         @media print {
             body {
-                background: #fff !important;
-                color: #000 !important;
+                background: #ffffff !important;
+                color: #000000 !important;
             }
 
-            /* Sembunyikan elemen utama halaman */
             .sidebar, .mobile-header, .overlay, .content, .modal-backdrop {
                 display: none !important;
             }
 
-            /* Tampilkan area modal secara penuh */
             .modal {
                 position: absolute !important;
                 left: 0 !important;
                 top: 0 !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                overflow: visible !important;
                 display: block !important;
                 opacity: 1 !important;
             }
@@ -150,4 +147,50 @@
             .modal-dialog {
                 max-width: 100% !important;
                 width: 100% !important;
-                margin
+                margin: 0 !important;
+            }
+
+            .modal-content {
+                border: none !important;
+                box-shadow: none !important;
+            }
+
+            /* Memaksa Browser Mencetak Gambar & Background Transparan */
+            #areaCetakNota img {
+                display: block !important;
+                visibility: visible !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .d-print-none {
+                display: none !important;
+            }
+
+            .print-summary {
+                display: block !important;
+            }
+        }
+
+        .print-summary {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="mobile-header shadow-sm">
+        <button class="btn text-white p-0 border-0" onclick="toggleSidebar()">
+            <i class="bi bi-list fs-1"></i>
+        </button>
+        <h4 class="m-0 fw-bold">WANTO<span class="text-warning">wash</span></h4>
+        <div style="width: 32px;"></div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <aside class="sidebar d-flex flex-column" id="sidebar">
+        <div class="brand-container text-center">
+            <img src="img/logo.png" alt="Logo WANTOwash" class="shadow-sm mb-2"
+                style="width
