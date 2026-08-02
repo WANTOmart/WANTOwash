@@ -434,34 +434,36 @@
         function renderTabel() {
             let keyword = document.getElementById("cariPelanggan").value.toLowerCase();
             let html = "";
-            let filtered = pelanggan.filter(p => 
-                p.nama.toLowerCase().includes(keyword) || p.hp.includes(keyword)
-            );
 
             // Update Counter Stats
             document.getElementById("totalPelangganCount").innerText = pelanggan.length;
             document.getElementById("pelangganAktifCount").innerText = pelanggan.length;
+
+            // Filter data sambil mempertahankan index aslinya agar pencarian tidak merusak aksi Edit/Hapus
+            let filtered = pelanggan
+                .map((item, index) => ({ ...item, originalIndex: index }))
+                .filter(p => p.nama.toLowerCase().includes(keyword) || p.hp.includes(keyword));
 
             if (filtered.length === 0) {
                 html = `
                     <tr>
                         <td colspan="5" class="text-center py-5 text-muted">
                             <i class="bi bi-inbox-fill fs-1 d-block mb-2 text-indigo-300 opacity-50"></i>
-                            <span class="fw-medium">Belum ada data pelanggan yang tersimpan</span>
+                            <span class="fw-medium">Belum ada data pelanggan yang cocok</span>
                         </td>
                     </tr>`;
             } else {
-                filtered.forEach((item, index) => {
+                filtered.forEach((item, displayIndex) => {
                     let initials = getInitials(item.nama);
                     html += `
                         <tr>
-                            <td class="fw-bold text-muted fs-7">${index + 1}</td>
+                            <td class="fw-bold text-muted fs-7">${displayIndex + 1}</td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="avatar-circle me-3">${initials}</div>
                                     <div>
                                         <div class="fw-bold text-dark">${item.nama}</div>
-                                        <small class="text-muted fs-7">ID: PLG-${1000 + index + 1}</small>
+                                        <small class="text-muted fs-7">ID: PLG-${1000 + item.originalIndex + 1}</small>
                                     </div>
                                 </div>
                             </td>
@@ -472,10 +474,10 @@
                             </td>
                             <td class="text-secondary">${item.alamat || "-"}</td>
                             <td class="text-center">
-                                <button class="btn btn-action-edit btn-sm rounded-3 me-1 p-2" onclick="bukaModalEdit(${index})" title="Edit Data">
+                                <button class="btn btn-action-edit btn-sm rounded-3 me-1 p-2" onclick="bukaModalEdit(${item.originalIndex})" title="Edit Data">
                                     <i class="bi bi-pencil-fill"></i>
                                 </button>
-                                <button class="btn btn-action-delete btn-sm rounded-3 p-2" onclick="hapusPelanggan(${index})" title="Hapus Data">
+                                <button class="btn btn-action-delete btn-sm rounded-3 p-2" onclick="hapusPelanggan(${item.originalIndex})" title="Hapus Data">
                                     <i class="bi bi-trash-fill"></i>
                                 </button>
                             </td>
@@ -487,7 +489,7 @@
 
         // BUKA MODAL TAMBAH
         function bukaModalTambah() {
-            document.getElementById("modalTitle").innerText = "Tambah Pelanggan";
+            document.getElementById("modalTitle").innerText = "Tambah Pelanggan Baru";
             document.getElementById("editIndex").value = "";
             document.getElementById("formPelanggan").reset();
             modalPelanggan.show();
@@ -495,7 +497,7 @@
 
         // BUKA MODAL EDIT
         function bukaModalEdit(index) {
-            document.getElementById("modalTitle").innerText = "Edit Pelanggan";
+            document.getElementById("modalTitle").innerText = "Edit Data Pelanggan";
             document.getElementById("editIndex").value = index;
             document.getElementById("namaPelanggan").value = pelanggan[index].nama;
             document.getElementById("hpPelanggan").value = pelanggan[index].hp;
@@ -508,15 +510,15 @@
             e.preventDefault();
             let index = document.getElementById("editIndex").value;
             let dataBaru = {
-                nama: document.getElementById("namaPelanggan").value,
-                hp: document.getElementById("hpPelanggan").value,
-                alamat: document.getElementById("alamatPelanggan").value
+                nama: document.getElementById("namaPelanggan").value.trim(),
+                hp: document.getElementById("hpPelanggan").value.trim(),
+                alamat: document.getElementById("alamatPelanggan").value.trim()
             };
 
             if (index === "") {
                 pelanggan.push(dataBaru);
             } else {
-                pelanggan[index] = dataBaru;
+                pelanggan[parseInt(index)] = dataBaru;
             }
 
             localStorage.setItem("pelanggan", JSON.stringify(pelanggan));
@@ -526,7 +528,7 @@
 
         // HAPUS PELANGGAN
         function hapusPelanggan(index) {
-            if (confirm("Apakah Anda yakin ingin menghapus pelanggan ini?")) {
+            if (confirm(`Apakah Anda yakin ingin menghapus pelanggan "${pelanggan[index].nama}"?`)) {
                 pelanggan.splice(index, 1);
                 localStorage.setItem("pelanggan", JSON.stringify(pelanggan));
                 renderTabel();
