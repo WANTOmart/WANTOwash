@@ -123,13 +123,15 @@
             }
         }
 
-        /* Cetak Nota Thermal / Kertas biasa */
+        /* PERBAIKAN CETAK PRINT: Memaksa Gambar & Warna Muncul Saat Diprint */
         @media print {
             body * {
                 visibility: hidden;
             }
             #areaCetakNota, #areaCetakNota * {
                 visibility: visible;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             #areaCetakNota {
                 position: absolute;
@@ -155,8 +157,8 @@
 
     <aside class="sidebar d-flex flex-column" id="sidebar">
         <div class="brand-container text-center">
-            <img src="img/logo.jpeg" alt="Logo WANTOwash" class="shadow-sm mb-2"
-                style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid white;"
+            <img src="img/logo.png" alt="Logo WANTOwash" class="shadow-sm mb-2"
+                style="width: 70px; height: 70px; border-radius: 50%; object-fit: contain; background: transparent;"
                 onerror="this.onerror=null; this.src='https://via.placeholder.com/70?text=Wash';">
             <h4 class="m-0 fw-bold">WANTO<span class="text-warning">wash</span></h4>
             <div class="mt-2">
@@ -222,6 +224,10 @@
                 </div>
                 <div class="modal-body">
                     <div class="text-center mb-3">
+                        <img src="img/logo.png" alt="Logo WANTOwash" 
+                             style="width: 80px; height: 80px; object-fit: contain; background: transparent;" 
+                             class="mb-2 d-block mx-auto"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/80?text=WANTOwash';">
                         <h4 class="fw-bold m-0">WANTOwash</h4>
                         <small class="text-muted">Jasa Pencucian Motor Professional</small>
                     </div>
@@ -260,7 +266,7 @@
 
                         <div class="mb-2 d-print-none">
                             <label class="form-label fw-semibold small">Uang Dibayar (Rp)</label>
-                            <input type="number" id="inputBayar" class="form-control fw-bold text-success" placeholder="Masukkan nominal uang" oninput="hitungKembalian()">
+                            <input type="number" id="inputBayar" class="form-control fw-bold text-success" placeholder="Masukkan nominal uang (misal: 50000)" oninput="hitungKembalian()">
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
@@ -356,7 +362,6 @@
             document.getElementById("paketModal").innerText = item.paket || '-';
             document.getElementById("totalModal").innerText = `Rp ${totalTagihanAktif.toLocaleString("id-ID")}`;
 
-            // Reset Kalkulator
             document.getElementById("inputBayar").value = item.bayar || "";
             document.getElementById("metodeBayar").value = item.metode || "Tunai / Cash";
             
@@ -366,7 +371,7 @@
             modal.show();
         }
 
-        // Fungsi Kalkulator Hitung Kembalian Otomatis
+        // Fungsi Hitung Kembalian Otomatis
         function hitungKembalian() {
             let bayar = Number(document.getElementById("inputBayar").value) || 0;
             let kembalian = bayar - totalTagihanAktif;
