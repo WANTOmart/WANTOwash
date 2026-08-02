@@ -66,14 +66,14 @@
             font-weight: 600;
         }
 
-        /* Main Content */
+        /* Main Content Layout */
         .content {
             margin-left: var(--sidebar-width);
             padding: 32px;
             transition: all 0.3s ease;
         }
 
-        /* Metric Cards - Enhanced Colors & Gradients */
+        /* Metric Cards Styling */
         .card-stat {
             border: none;
             border-radius: 18px;
@@ -98,7 +98,7 @@
             flex-shrink: 0;
         }
 
-        /* Gradient Theme Accents */
+        /* Stat Card Theme Accents */
         .stat-pelanggan { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); }
         .icon-pelanggan { background: #2563eb; color: #ffffff; }
 
@@ -114,7 +114,7 @@
         .stat-pendapatan { background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #ffffff; }
         .icon-pendapatan { background: rgba(255, 255, 255, 0.2); color: #ffffff; }
 
-        /* Custom Refresh Button Styling */
+        /* Buttons & Components */
         .btn-refresh-custom {
             background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             color: #ffffff !important;
@@ -132,7 +132,6 @@
             box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
         }
 
-        /* Custom Cards & Tables */
         .custom-card {
             border: none;
             border-radius: 18px;
@@ -156,7 +155,7 @@
             vertical-align: middle;
         }
 
-        /* Responsive Mobile Header */
+        /* Responsive Mobile Layout */
         .mobile-header {
             display: none;
         }
@@ -229,11 +228,7 @@
         <nav class="nav flex-column my-3 flex-grow-1">
             <a href="dashboard.html" class="nav-link-custom active"><i class="bi bi-speedometer2 me-3 fs-5"></i> Dashboard</a>
             <a href="pelanggan.html" class="nav-link-custom"><i class="bi bi-people me-3 fs-5"></i> Data Pelanggan</a>
-            
-            <a href="motor.html" class="nav-link-custom">
-                <i class="bi bi-bicycle me-3 fs-5"></i> Data Motor
-            </a>
-            
+            <a href="motor.html" class="nav-link-custom"><i class="bi bi-bicycle me-3 fs-5"></i> Data Motor</a>
             <a href="paket.html" class="nav-link-custom"><i class="bi bi-tags me-3 fs-5"></i> Paket Cuci</a>
             <a href="transaksi.html" class="nav-link-custom"><i class="bi bi-cart-check me-3 fs-5"></i> Transaksi</a>
             <a href="pembayaran.html" class="nav-link-custom"><i class="bi bi-cash-stack me-3 fs-5"></i> Pembayaran</a>
@@ -390,28 +385,33 @@
             document.getElementById("overlay").classList.toggle("active");
         }
 
+        // Auth Check
         if (localStorage.getItem("login") !== "true") {
             location.href = "login.html";
         }
 
         document.getElementById("admin").innerText = localStorage.getItem("username") || "Admin";
 
+        // Fetch Local Data
         let pelanggan = JSON.parse(localStorage.getItem("pelanggan")) || [];
         let motor = JSON.parse(localStorage.getItem("motor")) || [];
         let transaksi = JSON.parse(localStorage.getItem("transaksi")) || [];
         let karyawan = JSON.parse(localStorage.getItem("karyawan")) || [];
 
+        // Update Stat Counters
         document.getElementById("jumlahPelanggan").innerText = pelanggan.length;
         document.getElementById("jumlahMotor").innerText = motor.length;
         document.getElementById("jumlahTransaksi").innerText = transaksi.length;
         document.getElementById("jumlahKaryawan").innerText = karyawan.length;
 
+        // Calculate Revenue
         let total = 0;
         transaksi.forEach(function (item) {
             total += Number(item.total || 0);
         });
         document.getElementById("pendapatan").innerText = "Rp " + total.toLocaleString("id-ID");
 
+        // Render Recent Transactions Table
         let htmlTransaksi = "";
         let terbaru = transaksi.slice(-5).reverse();
 
@@ -425,7 +425,10 @@
                 </tr>`;
         } else {
             terbaru.forEach(function (item, index) {
-                let badgeColor = item.status === "Selesai" ? "bg-success bg-opacity-10 text-success border border-success border-opacity-25" : "bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25";
+                let badgeColor = item.status === "Selesai" 
+                    ? "bg-success bg-opacity-10 text-success border border-success border-opacity-25" 
+                    : "bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25";
+                
                 htmlTransaksi += `
                     <tr>
                         <td class="fw-semibold text-muted">${index + 1}</td>
@@ -435,12 +438,12 @@
                         <td><span class="badge bg-light text-dark border">${item.paket || "-"}</span></td>
                         <td class="fw-bold text-dark">Rp ${Number(item.total || 0).toLocaleString("id-ID")}</td>
                         <td class="text-center"><span class="badge ${badgeColor} rounded-pill px-3 py-2 fw-semibold">${item.status || "Selesai"}</span></td>
-                    </tr>
-                `;
+                    </tr>`;
             });
         }
         document.getElementById("tabelTransaksi").innerHTML = htmlTransaksi;
 
+        // Render Best Selling Packages Table
         let paket = {};
         transaksi.forEach(function (item) {
             let nama = item.paket || "Lainnya";
@@ -464,8 +467,7 @@
                     <tr>
                         <td class="fw-medium text-dark">${item[0]}</td>
                         <td class="text-end fw-bold text-primary">${item[1]} Unit Motor</td>
-                    </tr>
-                `;
+                    </tr>`;
             });
         }
         document.getElementById("paketTerlaris").innerHTML = htmlPaket;
