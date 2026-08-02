@@ -293,10 +293,16 @@
             }
 
             motorList.forEach((m, idx) => {
-                // Tombol Hapus hanya disiapkan jika role adalah 'owner'
-                let btnHapus = userRole === "owner" ? 
-                    `<button class="btn btn-sm btn-danger" onclick="hapusMotor(${idx})"><i class="bi bi-trash"></i></button>` : 
-                    ``;
+                let tombolAksi = "";
+
+                if (userRole === "owner") {
+                    tombolAksi = `
+                        <button class="btn btn-sm btn-warning text-white me-1" onclick="editMotor(${idx})"><i class="bi bi-pencil"></i> Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="hapusMotor(${idx})"><i class="bi bi-trash"></i> Hapus</button>
+                    `;
+                } else {
+                    tombolAksi = `<span class="badge bg-warning text-dark"><i class="bi bi-lock-fill me-1"></i>Akses Terbatas</span>`;
+                }
 
                 tbody.innerHTML += `
                     <tr>
@@ -305,10 +311,7 @@
                         <td>${m.model}</td>
                         <td><span class="badge bg-info text-dark">${m.jenis}</span></td>
                         <td>${m.pemilik}</td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-warning text-white me-1" onclick="editMotor(${idx})"><i class="bi bi-pencil"></i></button>
-                            ${btnHapus}
-                        </td>
+                        <td class="text-center">${tombolAksi}</td>
                     </tr>
                 `;
             });
@@ -354,6 +357,11 @@
         }
 
         function editMotor(idx) {
+            if (userRole !== "owner") {
+                alert("Akses ditolak! Hanya OWNER yang memiliki wewenang untuk mengubah data motor.");
+                return;
+            }
+
             let motorList = JSON.parse(localStorage.getItem("motor")) || [];
             let m = motorList[idx];
 
@@ -363,43 +371,4 @@
             document.getElementById("selectPelanggan").value = m.pemilik;
             document.getElementById("inputPlat").value = m.plat;
             document.getElementById("inputModel").value = m.model;
-            document.getElementById("selectJenis").value = m.jenis;
-            document.getElementById("modalTitle").innerText = "Edit Data Motor";
-
-            modalMotorBootstrap = new bootstrap.Modal(document.getElementById("modalMotor"));
-            modalMotorBootstrap.show();
-        }
-
-        function hapusMotor(idx) {
-            // Proteksi Sisi JavaScript: Hanya Owner yang bisa lanjut menghapus
-            if (userRole !== "owner") {
-                alert("Akses ditolak! Hanya OWNER yang memiliki wewenang untuk menghapus data motor.");
-                return;
-            }
-
-            if (confirm("Apakah Anda yakin ingin menghapus data motor ini?")) {
-                let motorList = JSON.parse(localStorage.getItem("motor")) || [];
-                motorList.splice(idx, 1);
-                localStorage.setItem("motor", JSON.stringify(motorList));
-                muatDataMotor();
-            }
-        }
-
-        function logout() {
-            if (confirm("Apakah Anda yakin ingin keluar?")) {
-                localStorage.removeItem("login");
-                localStorage.removeItem("username");
-                localStorage.removeItem("namaUser");
-                localStorage.removeItem("role");
-                window.location.href = "login.html";
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            terapkanHakAkses();
-            muatDataMotor();
-        });
-    </script>
-</body>
-
-</html>
+            document.getElementById("selectJenis").
