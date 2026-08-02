@@ -253,7 +253,7 @@
         }
 
         const userRole = (localStorage.getItem("role") || "kasir").toLowerCase();
-        let modalMotorBootstrap;
+        let modalMotorBootstrap = null;
 
         function toggleSidebar() {
             document.getElementById("sidebar").classList.toggle("active");
@@ -272,7 +272,7 @@
             let select = document.getElementById("selectPelanggan");
             select.innerHTML = `<option value="">-- Pilih Pelanggan --</option>`;
 
-            if(pelangganList.length === 0) {
+            if (pelangganList.length === 0) {
                 select.innerHTML += `<option value="" disabled>Belum ada data pelanggan. Tambahkan dulu di Data Pelanggan!</option>`;
             } else {
                 pelangganList.forEach(p => {
@@ -323,7 +323,9 @@
             document.getElementById("modalTitle").innerText = "Tambah Data Motor";
             muatOptionPelanggan();
             
-            modalMotorBootstrap = new bootstrap.Modal(document.getElementById("modalMotor"));
+            if (!modalMotorBootstrap) {
+                modalMotorBootstrap = new bootstrap.Modal(document.getElementById("modalMotor"));
+            }
             modalMotorBootstrap.show();
         }
 
@@ -336,7 +338,7 @@
             let model = document.getElementById("inputModel").value.trim();
             let jenis = document.getElementById("selectJenis").value;
 
-            if(!pemilik) {
+            if (!pemilik) {
                 alert("Silakan pilih pelanggan terlebih dahulu!");
                 return;
             }
@@ -351,7 +353,10 @@
 
             localStorage.setItem("motor", JSON.stringify(motorList));
 
-            modalMotorBootstrap.hide();
+            if (modalMotorBootstrap) {
+                modalMotorBootstrap.hide();
+            }
+            
             muatDataMotor();
             alert("Data motor berhasil disimpan!");
         }
@@ -371,4 +376,45 @@
             document.getElementById("selectPelanggan").value = m.pemilik;
             document.getElementById("inputPlat").value = m.plat;
             document.getElementById("inputModel").value = m.model;
-            document.getElementById("selectJenis").
+            document.getElementById("selectJenis").value = m.jenis;
+            document.getElementById("modalTitle").innerText = "Edit Data Motor";
+
+            if (!modalMotorBootstrap) {
+                modalMotorBootstrap = new bootstrap.Modal(document.getElementById("modalMotor"));
+            }
+            modalMotorBootstrap.show();
+        }
+
+        function hapusMotor(idx) {
+            if (userRole !== "owner") {
+                alert("Akses ditolak! Hanya OWNER yang memiliki wewenang untuk menghapus data motor.");
+                return;
+            }
+
+            if (confirm("Apakah Anda yakin ingin menghapus data motor ini?")) {
+                let motorList = JSON.parse(localStorage.getItem("motor")) || [];
+                motorList.splice(idx, 1);
+                localStorage.setItem("motor", JSON.stringify(motorList));
+                muatDataMotor();
+                alert("Data motor berhasil dihapus!");
+            }
+        }
+
+        function logout() {
+            if (confirm("Apakah Anda yakin ingin keluar?")) {
+                localStorage.removeItem("login");
+                localStorage.removeItem("username");
+                localStorage.removeItem("namaUser");
+                localStorage.removeItem("role");
+                window.location.href = "login.html";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            terapkanHakAkses();
+            muatDataMotor();
+        });
+    </script>
+</body>
+
+</html>
