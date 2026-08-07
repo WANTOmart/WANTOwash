@@ -1,18 +1,4 @@
-<div class="modal fade" id="modalBayar" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content style-modal nota-container" id="areaCetakNota">
-                
-                <img src="img/logo.png" class="watermark-bg" id="imgWatermark" alt="Watermark Logo" onerror="this.onerror=null; this.src='img/logo.jpeg';">
-
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-calculator me-2"></i>Kalkulator Pembayaran</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                
-                <div class="modal-body p-4 nota-content">
-                    <div class="text-center mb-3">
-                        <img src="img/logo.png" id="imgLogoHeader" alt="Logo WANTOwash" 
-                             style="width: 75px; height: 75px; object-fit: contain; margin-bottom: 5px;" 
+height: 75px; object-fit: contain; margin-bottom: 5px;" 
                              onerror="this.onerror=null; this.src='img/logo.jpeg';">
                         <h4 class="fw-bold m-0">WANTO<span class="text-primary">wash</span></h4>
                         <small class="text-muted">Struk Pembayaran Cuci Motor</small>
@@ -20,63 +6,63 @@
 
                     <hr>
 
-                  <form id="formPembayaran">
-                      <input type="hidden" id="indexTransaksi">
+                    <form id="formPembayaran">
+                        <input type="hidden" id="indexTransaksi">
                     
-                      <div class="mb-2 row">
-                          <label class="col-sm-5 col-form-label fw-semibold text-muted">No. Nota</label>
-                          <div class="col-sm-7">
-                              <input type="text" id="valNota" class="form-control-plaintext fw-bold" readonly>
-                          </div>
-                      </div>
-                      <div class="mb-2 row">
-                          <label class="col-sm-5 col-form-label fw-semibold text-muted">Pelanggan</label>
-                          <div class="col-sm-7">
-                              <input type="text" id="valPelanggan" class="form-control-plaintext" readonly>
-                          </div>
-                      </div>
-                      <div class="mb-2 row">
-                          <label class="col-sm-5 col-form-label fw-semibold text-muted">Paket Cuci</label>
-                          <div class="col-sm-7">
-                              <input type="text" id="valPaket" class="form-control-plaintext" readonly>
-                          </div>
-                      </div>
-                      <div class="mb-3 row">
-                          <label class="col-sm-5 col-form-label fw-semibold text-muted">Total Tagihan</label>
-                          <div class="col-sm-7">
-                              <input type="text" id="valTotalTagihanText" class="form-control-plaintext fw-bold text-success fs-5" readonly>
-                              <input type="hidden" id="valTotalTagihan">
-                          </div>
-                      </div>
+                        <div class="mb-2 row">
+                            <label class="col-sm-5 col-form-label fw-semibold text-muted">No. Nota</label>
+                            <div class="col-sm-7">
+                                <input type="text" id="valNota" class="form-control-plaintext fw-bold" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-2 row">
+                            <label class="col-sm-5 col-form-label fw-semibold text-muted">Pelanggan</label>
+                            <div class="col-sm-7">
+                                <input type="text" id="valPelanggan" class="form-control-plaintext" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-2 row">
+                            <label class="col-sm-5 col-form-label fw-semibold text-muted">Paket Cuci</label>
+                            <div class="col-sm-7">
+                                <input type="text" id="valPaket" class="form-control-plaintext" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-sm-5 col-form-label fw-semibold text-muted">Total Tagihan</label>
+                            <div class="col-sm-7">
+                                <input type="text" id="valTotalTagihanText" class="form-control-plaintext fw-bold text-success fs-5" readonly>
+                                <input type="hidden" id="valTotalTagihan">
+                            </div>
+                        </div>
 
-                      <hr>
+                        <hr>
 
-                      <div class="mb-3">
-                          <label class="form-label fw-semibold">Metode Pembayaran</label>
-                          <select id="selectMetode" class="form-select" required>
-                              <option value="Tunai">Tunai (Cash)</option>
-                              <option value="QRIS">QRIS / Transfer</option>
-                          </select>
-                      </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Metode Pembayaran</label>
+                            <select id="selectMetode" class="form-select" required>
+                                <option value="Tunai">Tunai (Cash)</option>
+                                <option value="QRIS">QRIS / Transfer</option>
+                            </select>
+                        </div>
 
-                      <div class="mb-3">
-                          <label class="form-label fw-semibold">Uang Tunai Diterima (Rp)</label>
-                          <input type="number" id="inputUangBayar" class="form-control" placeholder="Masukkan jumlah uang..." required>
-                      </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Uang Tunai Diterima (Rp)</label>
+                            <input type="number" id="inputUangBayar" class="form-control" placeholder="Masukkan jumlah uang..." required>
+                        </div>
 
-                      <div class="mb-3 p-3 bg-light rounded-3">
-                          <div class="d-flex justify-content-between align-items-center">
-                              <span class="fw-semibold text-muted">Kembalian:</span>
-                              <span id="valKembalian" class="fw-bold fs-5 text-primary">Rp 0</span>
-                          </div>
-                      </div>
-                  </form>
+                        <div class="mb-3 p-3 bg-light rounded-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-semibold text-muted">Kembalian:</span>
+                                <span id="valKembalian" class="fw-bold fs-5 text-primary">Rp 0</span>
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                      <button type="button" class="btn btn-success fw-bold" onclick="prosesBayar()"><i class="bi bi-check-circle me-1"></i> Selesaikan Pembayaran</button>
-                      <button type="button" class="btn btn-primary fw-bold" onclick="cetakNota()"><i class="bi bi-printer me-1"></i> Cetak Nota</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-success fw-bold" onclick="prosesBayar()"><i class="bi bi-check-circle me-1"></i> Selesaikan Pembayaran</button>
+                    <button type="button" class="btn btn-primary fw-bold" onclick="cetakNota()"><i class="bi bi-printer me-1"></i> Cetak Nota</button>
                 </div>
             </div>
         </div>
@@ -218,5 +204,4 @@
         });
     </script>
 </body>
-
 </html>
